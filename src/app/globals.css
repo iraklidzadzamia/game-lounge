@@ -1,0 +1,417 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@400;500;600;700;800;900&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --void: #050505;
+  --neon-cyan: #00f3ff;
+  --electric-purple: #bc13fe;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--void);
+  color: rgba(255, 255, 255, 0.95);
+  font-family: 'Inter', sans-serif;
+  overflow-x: hidden;
+}
+
+/* Hide scrollbar completely for app-like feel */
+::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for Firefox */
+html {
+  scrollbar-width: none;
+}
+
+/* Glitch Text Effect */
+.glitch-text {
+  position: relative;
+  animation: glitch-skew 1s infinite linear alternate-reverse;
+}
+
+.glitch-text::before,
+.glitch-text::after {
+  content: attr(data-text);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.glitch-text::before {
+  left: 2px;
+  text-shadow: -2px 0 var(--neon-cyan);
+  clip: rect(44px, 450px, 56px, 0);
+  animation: glitch-anim 5s infinite linear alternate-reverse;
+}
+
+.glitch-text::after {
+  left: -2px;
+  text-shadow: -2px 0 var(--electric-purple), 2px 2px var(--neon-cyan);
+  animation: glitch-anim2 1s infinite linear alternate-reverse;
+}
+
+@keyframes glitch-anim {
+  0% {
+    clip: rect(31px, 9999px, 94px, 0);
+    transform: skew(0.85deg);
+  }
+
+  5% {
+    clip: rect(70px, 9999px, 71px, 0);
+    transform: skew(0.1deg);
+  }
+
+  10% {
+    clip: rect(29px, 9999px, 24px, 0);
+    transform: skew(0.27deg);
+  }
+
+  15% {
+    clip: rect(45px, 9999px, 56px, 0);
+    transform: skew(0.84deg);
+  }
+
+  20% {
+    clip: rect(69px, 9999px, 26px, 0);
+    transform: skew(0.48deg);
+  }
+
+  25% {
+    clip: rect(50px, 9999px, 85px, 0);
+    transform: skew(0.33deg);
+  }
+
+  30% {
+    clip: rect(88px, 9999px, 98px, 0);
+    transform: skew(0.4deg);
+  }
+
+  35% {
+    clip: rect(19px, 9999px, 68px, 0);
+    transform: skew(0.11deg);
+  }
+
+  40% {
+    clip: rect(60px, 9999px, 15px, 0);
+    transform: skew(0.79deg);
+  }
+
+  45% {
+    clip: rect(10px, 9999px, 35px, 0);
+    transform: skew(0.08deg);
+  }
+
+  50% {
+    clip: rect(43px, 9999px, 19px, 0);
+    transform: skew(0.28deg);
+  }
+
+  55% {
+    clip: rect(89px, 9999px, 63px, 0);
+    transform: skew(0.7deg);
+  }
+
+  60% {
+    clip: rect(47px, 9999px, 91px, 0);
+    transform: skew(0.67deg);
+  }
+
+  65% {
+    clip: rect(19px, 9999px, 73px, 0);
+    transform: skew(0.95deg);
+  }
+
+  70% {
+    clip: rect(17px, 9999px, 33px, 0);
+    transform: skew(0.8deg);
+  }
+
+  75% {
+    clip: rect(84px, 9999px, 97px, 0);
+    transform: skew(0.31deg);
+  }
+
+  80% {
+    clip: rect(46px, 9999px, 41px, 0);
+    transform: skew(0.09deg);
+  }
+
+  85% {
+    clip: rect(90px, 9999px, 20px, 0);
+    transform: skew(0.27deg);
+  }
+
+  90% {
+    clip: rect(28px, 9999px, 87px, 0);
+    transform: skew(0.9deg);
+  }
+
+  95% {
+    clip: rect(56px, 9999px, 53px, 0);
+    transform: skew(0.47deg);
+  }
+
+  100% {
+    clip: rect(38px, 9999px, 76px, 0);
+    transform: skew(0.33deg);
+  }
+}
+
+@keyframes glitch-anim2 {
+  0% {
+    clip: rect(65px, 9999px, 99px, 0);
+    transform: skew(0.4deg);
+  }
+
+  5% {
+    clip: rect(73px, 9999px, 10px, 0);
+    transform: skew(0.61deg);
+  }
+
+  10% {
+    clip: rect(29px, 9999px, 53px, 0);
+    transform: skew(0.74deg);
+  }
+
+  15% {
+    clip: rect(24px, 9999px, 39px, 0);
+    transform: skew(0.28deg);
+  }
+
+  20% {
+    clip: rect(84px, 9999px, 43px, 0);
+    transform: skew(0.94deg);
+  }
+
+  25% {
+    clip: rect(19px, 9999px, 67px, 0);
+    transform: skew(0.18deg);
+  }
+
+  30% {
+    clip: rect(58px, 9999px, 91px, 0);
+    transform: skew(0.68deg);
+  }
+
+  35% {
+    clip: rect(46px, 9999px, 12px, 0);
+    transform: skew(0.87deg);
+  }
+
+  40% {
+    clip: rect(71px, 9999px, 78px, 0);
+    transform: skew(0.51deg);
+  }
+
+  45% {
+    clip: rect(35px, 9999px, 95px, 0);
+    transform: skew(0.39deg);
+  }
+
+  50% {
+    clip: rect(87px, 9999px, 63px, 0);
+    transform: skew(0.75deg);
+  }
+
+  55% {
+    clip: rect(13px, 9999px, 27px, 0);
+    transform: skew(0.19deg);
+  }
+
+  60% {
+    clip: rect(69px, 9999px, 82px, 0);
+    transform: skew(0.92deg);
+  }
+
+  65% {
+    clip: rect(41px, 9999px, 16px, 0);
+    transform: skew(0.66deg);
+  }
+
+  70% {
+    clip: rect(26px, 9999px, 58px, 0);
+    transform: skew(0.33deg);
+  }
+
+  75% {
+    clip: rect(93px, 9999px, 72px, 0);
+    transform: skew(0.46deg);
+  }
+
+  80% {
+    clip: rect(17px, 9999px, 44px, 0);
+    transform: skew(0.81deg);
+  }
+
+  85% {
+    clip: rect(52px, 9999px, 89px, 0);
+    transform: skew(0.24deg);
+  }
+
+  90% {
+    clip: rect(38px, 9999px, 31px, 0);
+    transform: skew(0.56deg);
+  }
+
+  95% {
+    clip: rect(76px, 9999px, 97px, 0);
+    transform: skew(0.12deg);
+  }
+
+  100% {
+    clip: rect(64px, 9999px, 48px, 0);
+    transform: skew(0.69deg);
+  }
+}
+
+@keyframes glitch-skew {
+  0% {
+    transform: skew(-2deg);
+  }
+
+  10% {
+    transform: skew(2deg);
+  }
+
+  20% {
+    transform: skew(-1deg);
+  }
+
+  30% {
+    transform: skew(1deg);
+  }
+
+  40% {
+    transform: skew(-0.5deg);
+  }
+
+  50% {
+    transform: skew(0.5deg);
+  }
+
+  60% {
+    transform: skew(-1deg);
+  }
+
+  70% {
+    transform: skew(1deg);
+  }
+
+  80% {
+    transform: skew(-2deg);
+  }
+
+  90% {
+    transform: skew(2deg);
+  }
+
+  100% {
+    transform: skew(-2deg);
+  }
+}
+
+/* Neon Glow Button */
+.neon-button {
+  position: relative;
+  padding: 1rem 2.5rem;
+  font-family: 'Orbitron', sans-serif;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  background: transparent;
+  border: 2px solid var(--neon-cyan);
+  color: var(--neon-cyan);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  overflow: hidden;
+}
+
+.neon-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg,
+      transparent,
+      rgba(0, 243, 255, 0.4),
+      transparent);
+  transition: 0.5s;
+}
+
+.neon-button:hover::before {
+  left: 100%;
+}
+
+.neon-button:hover {
+  background: rgba(0, 243, 255, 0.1);
+  box-shadow: 0 0 30px rgba(0, 243, 255, 0.6),
+    0 0 60px rgba(0, 243, 255, 0.4),
+    0 0 100px rgba(0, 243, 255, 0.2),
+    inset 0 0 30px rgba(0, 243, 255, 0.1);
+  text-shadow: 0 0 10px var(--neon-cyan);
+}
+
+/* Glass Card - reduced blur on mobile for performance */
+.glass-card {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+}
+
+@media (min-width: 768px) {
+  .glass-card {
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+  }
+}
+
+/* Gradient Text */
+.gradient-text {
+  background: linear-gradient(135deg, var(--neon-cyan), var(--electric-purple));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Scan Line Effect */
+.scan-line {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--neon-cyan), transparent);
+  opacity: 0.3;
+  animation: scan-line 4s linear infinite;
+  pointer-events: none;
+  z-index: 9999;
+}
+
+@keyframes scan-line {
+  0% {
+    transform: translateY(-100%);
+  }
+
+  100% {
+    transform: translateY(100vh);
+  }
+}
