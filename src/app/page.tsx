@@ -9,12 +9,23 @@ import PricingSection from "@/components/PricingSection";
 import TestimonialsSection from "@/components/TestimonialsSection";
 import ContactSection from "@/components/ContactSection";
 import Footer from "@/components/Footer";
+import ScrollToTop from "@/components/ScrollToTop";
 
 export default function Home() {
     const [isLoading, setIsLoading] = useState(true);
 
     return (
         <main className="relative bg-void min-h-screen">
+            {/* Hidden Video Preloader - loads during BIOS screen */}
+            <video
+                src="/video/main video.MP4"
+                preload="auto"
+                muted
+                playsInline
+                className="hidden"
+                aria-hidden="true"
+            />
+
             {/* BIOS Loader */}
             <AnimatePresence mode="wait">
                 {isLoading && (
@@ -25,11 +36,7 @@ export default function Home() {
             {/* Main Content */}
             <AnimatePresence>
                 {!isLoading && (
-                    <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ duration: 0.5 }}
-                    >
+                    <div>
                         {/* Video Hero Section */}
                         <VideoHero />
 
@@ -47,7 +54,10 @@ export default function Home() {
 
                         {/* Footer */}
                         <Footer />
-                    </motion.div>
+
+                        {/* Scroll to Top Button */}
+                        <ScrollToTop />
+                    </div>
                 )}
             </AnimatePresence>
         </main>
