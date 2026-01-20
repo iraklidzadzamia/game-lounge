@@ -18,7 +18,7 @@ export default function Home() {
         <main className="relative bg-void min-h-screen">
             {/* Hidden Video Preloader - loads during BIOS screen */}
             <video
-                src="/video/main video.MP4"
+                src="/video/snaptik_7597248535855123730_v2 2.mp4"
                 preload="auto"
                 muted
                 playsInline

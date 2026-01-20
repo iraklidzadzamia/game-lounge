@@ -17,7 +17,7 @@ export default function VideoHero() {
                     className="absolute inset-0 w-full h-full object-cover"
                     poster="/video/poster.jpg"
                 >
-                    <source src="/video/main video.MP4" type="video/mp4" />
+                    <source src="/video/snaptik_7597248535855123730_v2 2.mp4" type="video/mp4" />
                 </video>
 
                 {/* Dark overlay for text readability - Stronger gradient */}
