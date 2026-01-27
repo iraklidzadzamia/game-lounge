@@ -5,6 +5,7 @@ import Link from "next/link";
 import FloorMap from "@/components/booking/FloorMap";
 import BookingSummary from "@/components/booking/BookingSummary";
 
+// Deployment trigger: Force update
 const isSameDate = (d1: Date, d2: Date) => {
     return d1.getFullYear() === d2.getFullYear() &&
         d1.getMonth() === d2.getMonth() &&
