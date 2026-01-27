@@ -48,6 +48,7 @@ export default function BookingPage() {
                 const res = await fetch('/api/check-availability', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
+                    cache: 'no-store',
                     body: JSON.stringify({
                         // Fetch conflicts for all stations to map them out
                         stationIds: getAllStationIds(),
