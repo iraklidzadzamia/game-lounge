@@ -28,12 +28,7 @@ export default function BookingPage() {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        stationIds: ["ALL"], // Or just fetch all conflicts for time range
-                        // Actually our API expects specific IDs or we can modify it to return ALL busy.
-                        // For Map optimization, better to send a "check all" signal or just query conflicts.
-                        // Let's adjust the API usage: The API I wrote takes `stationIds`.
-                        // Using a trick: I will pass a list of ALL possible IDs or mod the API.
-                        // SIMPLER: Let's pass all known IDs.
+                        // Fetch conflicts for all stations to map them out
                         stationIds: getAllStationIds(),
                         startTime: selectedDate.toISOString(),
                         endTime: endTime.toISOString()
@@ -125,8 +120,8 @@ export default function BookingPage() {
                                             key={hr}
                                             onClick={() => setDuration(hr)}
                                             className={`px-4 py-2 rounded font-orbitron transition-all duration-300 border ${duration === hr
-                                                    ? "bg-neon-cyan/20 border-neon-cyan text-neon-cyan shadow-[0_0_15px_rgba(0,243,255,0.3)]"
-                                                    : "border-white/10 text-white/50 hover:border-white/30 hover:text-white"
+                                                ? "bg-neon-cyan/20 border-neon-cyan text-neon-cyan shadow-[0_0_15px_rgba(0,243,255,0.3)]"
+                                                : "border-white/10 text-white/50 hover:border-white/30 hover:text-white"
                                                 }`}
                                         >
                                             {hr}H
