@@ -91,7 +91,7 @@ export default function FloorMap({ selectedSeats, onToggle, unavailableIds = [] 
         <div className="relative w-full h-[500px] md:h-[600px] bg-black/20 p-4 rounded-xl overflow-hidden flex flex-row">
 
             {/* Street View Indicator (Left Side - Vertical) */}
-            <div className="h-full flex flex-col items-center justify-center mr-4 md:mr-10 z-10 w-8 flex-shrink-0 border-r border-white/5">
+            <div className="h-full flex flex-col items-center justify-center mr-4 md:mr-8 z-10 w-8 flex-shrink-0 border-r border-white/5">
                 <div className="flex flex-col items-center h-full justify-center gap-4">
                     <div className="h-24 md:h-32 w-1 bg-gradient-to-b from-transparent via-neon-cyan/40 to-transparent rounded-full" />
                     <span className="text-[10px] text-neon-cyan/50 font-orbitron tracking-widest whitespace-nowrap -rotate-90 origin-center">
@@ -102,10 +102,10 @@ export default function FloorMap({ selectedSeats, onToggle, unavailableIds = [] 
             </div>
 
             {/* Main Layout Area */}
-            <div className="flex flex-1 gap-4 md:gap-16 z-20 h-full relative">
+            <div className="flex flex-1 gap-4 md:gap-12 z-20 h-full relative">
 
                 {/* 1. Zone C (Pro) - Vertical Column (Left) */}
-                <div className="flex flex-col justify-center items-center h-full">
+                <div className="flex flex-col justify-center items-center h-full pt-8">
                     <h4 className="text-white/30 text-[10px] mb-4 uppercase tracking-widest font-orbitron -rotate-90 md:rotate-0 whitespace-nowrap">
                         Zone C (Pro)
                     </h4>
@@ -115,11 +115,12 @@ export default function FloorMap({ selectedSeats, onToggle, unavailableIds = [] 
                 </div>
 
                 {/* 2. Right Side Area (Zone B & A) - Horizontal Rows */}
-                <div className="flex flex-col justify-center gap-8 md:gap-20 flex-1 items-start mt-8 md:mt-0 ml-4 md:ml-0">
+                {/* UPDATED: Aligned to bottom (justify-end) with padding to match user drawing */}
+                <div className="flex flex-col justify-end gap-12 flex-1 items-start pb-12 ml-4 md:ml-12">
 
-                    {/* Zone B (Pro) - Horizontal Row */}
+                    {/* Zone B (Pro) - Horizontal Row (Middle) */}
                     <div className="flex flex-col w-full">
-                        <h4 className="text-white/30 text-[10px] mb-2 uppercase tracking-widest font-orbitron ml-2">
+                        <h4 className="text-white/30 text-[10px] mb-2 uppercase tracking-widest font-orbitron ml-1">
                             Zone B (Pro)
                         </h4>
                         <div className="flex flex-wrap gap-2 md:gap-3">
@@ -129,7 +130,7 @@ export default function FloorMap({ selectedSeats, onToggle, unavailableIds = [] 
 
                     {/* Zone A (Prem) - Horizontal Row (Bottom) */}
                     <div className="flex flex-col w-full">
-                        <h4 className="text-white/30 text-[10px] mb-2 uppercase tracking-widest font-orbitron ml-2">
+                        <h4 className="text-white/30 text-[10px] mb-2 uppercase tracking-widest font-orbitron ml-1">
                             Zone A (Prem)
                         </h4>
                         <div className="flex flex-wrap gap-2 md:gap-3">
