@@ -10,6 +10,12 @@ export default function BookingPage() {
     const [duration, setDuration] = useState<number>(3);
     const [isCustomTime, setIsCustomTime] = useState(false);
 
+    // Date Helpers
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+
     // Selection State
     const [selectedSeats, setSelectedSeats] = useState<string[]>([]);
     const [selectedSeatTypes, setSelectedSeatTypes] = useState<Record<string, string>>({});
@@ -112,13 +118,12 @@ export default function BookingPage() {
                                 <div className="flex gap-2">
                                     <button
                                         onClick={() => {
-                                            const now = new Date();
                                             const newDate = new Date(selectedDate);
-                                            newDate.setFullYear(now.getFullYear(), now.getMonth(), now.getDate());
+                                            newDate.setFullYear(today.getFullYear(), today.getMonth(), today.getDate());
                                             setSelectedDate(newDate);
                                             setIsCustomTime(false);
                                         }}
-                                        className={`flex-1 py-3 rounded font-orbitron text-sm tracking-wider transition-all border ${new Date().toDateString() === selectedDate.toDateString()
+                                        className={`flex-1 py-3 rounded font-orbitron text-sm tracking-wider transition-all border ${selectedDate.toDateString() === today.toDateString()
                                             ? "bg-neon-cyan text-black border-neon-cyan shadow-[0_0_15px_rgba(0,243,255,0.4)]"
                                             : "bg-white/5 text-white/50 border-white/10 hover:bg-white/10 hover:text-white"
                                             }`}
@@ -127,14 +132,12 @@ export default function BookingPage() {
                                     </button>
                                     <button
                                         onClick={() => {
-                                            const tmr = new Date();
-                                            tmr.setDate(tmr.getDate() + 1);
                                             const newDate = new Date(selectedDate);
-                                            newDate.setFullYear(tmr.getFullYear(), tmr.getMonth(), tmr.getDate());
+                                            newDate.setFullYear(tomorrow.getFullYear(), tomorrow.getMonth(), tomorrow.getDate());
                                             setSelectedDate(newDate);
                                             setIsCustomTime(false);
                                         }}
-                                        className={`flex-1 py-3 rounded font-orbitron text-sm tracking-wider transition-all border ${new Date(new Date().setDate(new Date().getDate() + 1)).toDateString() === selectedDate.toDateString()
+                                        className={`flex-1 py-3 rounded font-orbitron text-sm tracking-wider transition-all border ${selectedDate.toDateString() === tomorrow.toDateString()
                                             ? "bg-neon-cyan text-black border-neon-cyan shadow-[0_0_15px_rgba(0,243,255,0.4)]"
                                             : "bg-white/5 text-white/50 border-white/10 hover:bg-white/10 hover:text-white"
                                             }`}
@@ -154,11 +157,11 @@ export default function BookingPage() {
                                                 setIsCustomTime(false);
                                             }}
                                         />
-                                        <button className={`w-full py-3 rounded font-orbitron text-sm tracking-wider transition-all border ${![new Date().toDateString(), new Date(new Date().setDate(new Date().getDate() + 1)).toDateString()].includes(selectedDate.toDateString())
+                                        <button className={`w-full py-3 rounded font-orbitron text-sm tracking-wider transition-all border ${![today.toDateString(), tomorrow.toDateString()].includes(selectedDate.toDateString())
                                             ? "bg-neon-cyan text-black border-neon-cyan shadow-[0_0_15px_rgba(0,243,255,0.4)]"
                                             : "bg-white/5 text-white/50 border-white/10 hover:bg-white/10 hover:text-white"
                                             }`}>
-                                            {![new Date().toDateString(), new Date(new Date().setDate(new Date().getDate() + 1)).toDateString()].includes(selectedDate.toDateString())
+                                            {![today.toDateString(), tomorrow.toDateString()].includes(selectedDate.toDateString())
                                                 ? selectedDate.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }).toUpperCase()
                                                 : "CUSTOM"}
                                         </button>
