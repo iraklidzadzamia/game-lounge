@@ -14,7 +14,7 @@ const getStationType = async (id: string) => {
 export async function POST(request: Request) {
     try {
         const body = await request.json();
-        const { startTime, endTime, stationIds, customerName, customerPhone, duration } = body;
+        const { startTime, endTime, stationIds, customerName, customerPhone, customerEmail, duration } = body;
 
         // 1. Basic Validation
         if (!startTime || !endTime || !stationIds || !stationIds.length || !customerName || !customerPhone) {
@@ -51,6 +51,7 @@ export async function POST(request: Request) {
                 end_time: end,
                 customer_name: customerName,
                 customer_phone: customerPhone,
+                customer_email: customerEmail,
                 total_price: price,
                 status: 'CONFIRMED'
             };

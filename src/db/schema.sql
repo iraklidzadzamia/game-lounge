@@ -15,6 +15,7 @@ create table bookings (
   end_time timestamptz not null,
   customer_name text not null,
   customer_phone text not null,
+  customer_email text,
   total_price integer,
   status text default 'CONFIRMED', -- 'CONFIRMED', 'CANCELLED'
   created_at timestamptz default now()

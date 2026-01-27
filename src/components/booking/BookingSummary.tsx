@@ -15,6 +15,7 @@ export default function BookingSummary({ date, duration, seats, seatTypes }: Boo
     const router = useRouter();
     const [customerName, setCustomerName] = useState("");
     const [customerPhone, setCustomerPhone] = useState("");
+    const [customerEmail, setCustomerEmail] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     // Calculate Total Price based on all selected seats
@@ -23,7 +24,7 @@ export default function BookingSummary({ date, duration, seats, seatTypes }: Boo
         return total + (type ? calculatePrice(type as StationType, duration) : 0);
     }, 0);
 
-    // Validation: Needs seats, and non-empty name/phone
+    // Validation: Needs seats, and non-empty name/phone/email
     const isFormValid = seats.length > 0 && customerName.trim().length > 0 && customerPhone.trim().length > 0;
 
     const handleConfirm = async () => {
@@ -42,6 +43,7 @@ export default function BookingSummary({ date, duration, seats, seatTypes }: Boo
                     endTime: endTime.toISOString(),
                     customerName,
                     customerPhone,
+                    customerEmail,
                     duration
                 })
             });
@@ -83,7 +85,7 @@ export default function BookingSummary({ date, duration, seats, seatTypes }: Boo
                     <div className="flex justify-between items-center border-b border-white/10 pb-2">
                         <span className="text-white/50 font-inter">Start Time</span>
                         <span className="text-white font-orbitron">
-                            {date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                            {date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - {new Date(date.getTime() + duration * 3600000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                         </span>
                     </div>
 

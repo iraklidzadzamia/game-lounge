@@ -179,7 +179,7 @@ export default function BookingPage() {
                                             }`}>
                                             {!isSameDate(selectedDate, today) && !isSameDate(selectedDate, tomorrow)
                                                 ? selectedDate.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }).toUpperCase()
-                                                : "CUSTOM"}
+                                                : "PICK DATE"}
                                         </button>
                                     </div>
                                 </div>
@@ -190,9 +190,20 @@ export default function BookingPage() {
 
                             {/* Time Selection */}
                             <div>
-                                <h3 className="text-white/50 text-xs font-inter uppercase tracking-widest mb-3">Start Time</h3>
+                                <h3 className="text-white/50 text-xs font-inter uppercase tracking-widest mb-3 flex justify-between">
+                                    <span>Start Time</span>
+                                    <span className="text-neon-cyan">
+                                        SESSION: {selectedDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - {new Date(selectedDate.getTime() + duration * 3600000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                    </span>
+                                </h3>
                                 {!isCustomTime ? (
                                     <div className="flex gap-2 overflow-x-auto pb-4 scrollbar-hide mask-fade-right w-full max-w-[85vw] md:max-w-full">
+                                        <button
+                                            onClick={() => setIsCustomTime(true)}
+                                            className="flex-shrink-0 px-4 py-2 rounded font-orbitron text-sm border bg-white/5 border-white/20 text-neon-cyan hover:bg-white/10 hover:border-neon-cyan transition-all"
+                                        >
+                                            MANUAL
+                                        </button>
                                         {Array.from({ length: 48 }).map((_, i) => {
                                             const hour = Math.floor(i / 2);
                                             const min = (i % 2) * 30;
@@ -224,12 +235,7 @@ export default function BookingPage() {
                                                 </button>
                                             );
                                         })}
-                                        <button
-                                            onClick={() => setIsCustomTime(true)}
-                                            className="flex-shrink-0 px-4 py-2 rounded font-orbitron text-sm border bg-white/5 border-white/20 text-neon-cyan hover:bg-white/10 hover:border-neon-cyan transition-all"
-                                        >
-                                            CUSTOM
-                                        </button>
+
                                     </div>
                                 ) : (
                                     <div className="flex items-center gap-4 bg-black/40 p-4 rounded border border-white/10 animate-fadeIn">
