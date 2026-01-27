@@ -158,7 +158,9 @@ export default function BookingPage() {
                                             ? "bg-neon-cyan text-black border-neon-cyan shadow-[0_0_15px_rgba(0,243,255,0.4)]"
                                             : "bg-white/5 text-white/50 border-white/10 hover:bg-white/10 hover:text-white"
                                             }`}>
-                                            CUSTOM
+                                            {![new Date().toDateString(), new Date(new Date().setDate(new Date().getDate() + 1)).toDateString()].includes(selectedDate.toDateString())
+                                                ? selectedDate.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }).toUpperCase()
+                                                : "CUSTOM"}
                                         </button>
                                     </div>
                                 </div>
@@ -194,8 +196,8 @@ export default function BookingPage() {
                                                         setIsCustomTime(false);
                                                     }}
                                                     className={`flex-shrink-0 px-4 py-2 rounded font-orbitron text-sm border transition-all ${isSelected
-                                                            ? "bg-neon-cyan text-black border-neon-cyan shadow-[0_0_10px_rgba(0,243,255,0.3)] scale-110 z-10"
-                                                            : "bg-black/40 text-white/70 border-white/10 hover:border-neon-cyan/50 hover:text-white"
+                                                        ? "bg-neon-cyan text-black border-neon-cyan shadow-[0_0_10px_rgba(0,243,255,0.3)] scale-110 z-10"
+                                                        : "bg-black/40 text-white/70 border-white/10 hover:border-neon-cyan/50 hover:text-white"
                                                         }`}
                                                 >
                                                     {timeString}
