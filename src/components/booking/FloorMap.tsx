@@ -102,7 +102,7 @@ export default function FloorMap({ selectedSeats, onToggle, unavailableIds = [] 
 
             {/* Layout Grid using Absolute or strict flex positioning to match user request */}
             {/* Zone C (Right Bank) - Top Right */}
-            <div className="absolute top-16 right-2 md:right-8 flex flex-col items-center">
+            <div className="absolute top-16 right-4 md:right-8 flex flex-col items-center">
                 <h4 className="text-white/30 text-[10px] mb-2 uppercase tracking-widest font-orbitron">Zone C (Pro)</h4>
                 {/* Single Row of 6 */}
                 <div className="flex gap-1 md:gap-2">
@@ -111,7 +111,7 @@ export default function FloorMap({ selectedSeats, onToggle, unavailableIds = [] 
             </div>
 
             {/* Zone A (Left) & Zone B (Center) - Clustered Bottom Left */}
-            <div className="absolute bottom-12 left-8 flex gap-16 items-end">
+            <div className="absolute bottom-12 left-4 md:left-8 flex gap-4 md:gap-16 items-end">
                 {/* Zone A - Left Vertical */}
                 <div className="flex flex-col items-center">
                     <h4 className="text-white/30 text-[10px] mb-2 uppercase tracking-widest font-orbitron">Zone A (Prem)</h4>
@@ -196,7 +196,7 @@ export default function FloorMap({ selectedSeats, onToggle, unavailableIds = [] 
                 className={`
                     group relative rounded-md border transition-all duration-300 flex flex-col items-center justify-center
                     ${borderColor} ${bgColor}
-                    ${isBig ? 'h-40 w-full md:w-80' : 'h-11 w-11 md:h-16 md:w-16'}
+                    ${isBig ? 'h-40 w-full md:w-80' : 'h-9 w-9 md:h-16 md:w-16'}
                     ${isUnavailable ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}
                 `}
                 style={{ boxShadow: shadow }}
