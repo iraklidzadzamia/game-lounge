@@ -167,40 +167,93 @@ export default function BookingPage() {
                             {/* Time Selection */}
                             <div>
                                 <h3 className="text-white/50 text-xs font-inter uppercase tracking-widest mb-3">Start Time</h3>
-                                <div className="flex gap-2 overflow-x-auto pb-4 scrollbar-hide mask-fade-right">
-                                    {Array.from({ length: 48 }).map((_, i) => {
-                                        // Generate 30min intervals starting from 00:00 or current hour?
-                                        // Let's do 24h for simplicity, filtered by "now" if today
-                                        const hour = Math.floor(i / 2);
-                                        const min = (i % 2) * 30;
-                                        const timeString = `${hour.toString().padStart(2, '0')}:${min.toString().padStart(2, '0')}`;
+                                {!isCustomTime ? (
+                                    <div className="flex gap-2 overflow-x-auto pb-4 scrollbar-hide mask-fade-right">
+                                        {Array.from({ length: 48 }).map((_, i) => {
+                                            const hour = Math.floor(i / 2);
+                                            const min = (i % 2) * 30;
+                                            const timeString = `${hour.toString().padStart(2, '0')}:${min.toString().padStart(2, '0')}`;
+                                            const slotDate = new Date(selectedDate);
+                                            slotDate.setHours(hour, min, 0, 0);
 
-                                        // Create a date for this slot to compare
-                                        const slotDate = new Date(selectedDate);
-                                        slotDate.setHours(hour, min, 0, 0);
+                                            const now = new Date();
+                                            const isPast = slotDate.getTime() < now.getTime() + 15 * 60000;
+                                            if (isPast) return null;
 
-                                        // Filter past times if "Today"
-                                        const now = new Date();
-                                        // Add buffer (e.g. 15 mins)
-                                        const isPast = slotDate.getTime() < now.getTime() + 15 * 60000;
-                                        if (isPast) return null;
+                                            const isSelected = selectedDate.getHours() === hour && selectedDate.getMinutes() === min;
 
-                                        const isSelected = selectedDate.getHours() === hour && selectedDate.getMinutes() === min;
-
-                                        return (
+                                            return (
+                                                <button
+                                                    key={i}
+                                                    onClick={() => {
+                                                        setSelectedDate(slotDate);
+                                                        setIsCustomTime(false);
+                                                    }}
+                                                    className={`flex-shrink-0 px-4 py-2 rounded font-orbitron text-sm border transition-all ${isSelected
+                                                            ? "bg-neon-cyan text-black border-neon-cyan shadow-[0_0_10px_rgba(0,243,255,0.3)] scale-105"
+                                                            : "bg-black/40 text-white/70 border-white/10 hover:border-neon-cyan/50 hover:text-white"
+                                                        }`}
+                                                >
+                                                    {timeString}
+                                                </button>
+                                            );
+                                        })}
+                                        <button
+                                            onClick={() => setIsCustomTime(true)}
+                                            className="flex-shrink-0 px-4 py-2 rounded font-orbitron text-sm border bg-white/5 border-white/20 text-neon-cyan hover:bg-white/10 hover:border-neon-cyan transition-all"
+                                        >
+                                            CUSTOM
+                                        </button>
+                                    </div>
+                                ) : (
+                                    <div className="flex items-center gap-4 bg-black/40 p-4 rounded border border-white/10 animate-fadeIn">
+                                        <div className="flex items-center gap-2">
+                                            <div className="flex flex-col">
+                                                <label className="text-[10px] text-white/50 mb-1">HH</label>
+                                                <input
+                                                    type="number"
+                                                    min="0" max="23"
+                                                    value={selectedDate.getHours().toString().padStart(2, '0')}
+                                                    onChange={(e) => {
+                                                        const val = Math.min(23, Math.max(0, parseInt(e.target.value) || 0));
+                                                        const newDate = new Date(selectedDate);
+                                                        newDate.setHours(val);
+                                                        setSelectedDate(newDate);
+                                                    }}
+                                                    className="w-16 bg-black border border-white/20 rounded p-2 text-center text-white font-orbitron focus:border-neon-cyan outline-none"
+                                                />
+                                            </div>
+                                            <span className="text-white/50 text-2xl mt-4">:</span>
+                                            <div className="flex flex-col">
+                                                <label className="text-[10px] text-white/50 mb-1">MM</label>
+                                                <input
+                                                    type="number"
+                                                    min="0" max="59"
+                                                    value={selectedDate.getMinutes().toString().padStart(2, '0')}
+                                                    onChange={(e) => {
+                                                        const val = Math.min(59, Math.max(0, parseInt(e.target.value) || 0));
+                                                        const newDate = new Date(selectedDate);
+                                                        newDate.setMinutes(val);
+                                                        setSelectedDate(newDate);
+                                                    }}
+                                                    className="w-16 bg-black border border-white/20 rounded p-2 text-center text-white font-orbitron focus:border-neon-cyan outline-none"
+                                                />
+                                            </div>
                                             <button
-                                                key={i}
-                                                onClick={() => setSelectedDate(slotDate)}
-                                                className={`flex-shrink-0 px-4 py-2 rounded font-orbitron text-sm border transition-all ${isSelected
-                                                    ? "bg-neon-cyan text-black border-neon-cyan shadow-[0_0_10px_rgba(0,243,255,0.3)] scale-105"
-                                                    : "bg-black/40 text-white/70 border-white/10 hover:border-neon-cyan/50 hover:text-white"
-                                                    }`}
+                                                onClick={() => setIsCustomTime(false)}
+                                                className="ml-4 px-4 py-2 bg-neon-cyan text-black rounded font-orbitron text-sm hover:shadow-[0_0_10px_rgba(0,243,255,0.4)] transition-all"
                                             >
-                                                {timeString}
+                                                OK
                                             </button>
-                                        );
-                                    })}
-                                </div>
+                                        </div>
+                                        <button
+                                            onClick={() => setIsCustomTime(false)}
+                                            className="ml-auto text-xs text-white/50 hover:text-white underline"
+                                        >
+                                            Back to List
+                                        </button>
+                                    </div>
+                                )}
                             </div>
 
                             {/* Duration Selection */}
