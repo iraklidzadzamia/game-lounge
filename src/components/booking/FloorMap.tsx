@@ -198,16 +198,16 @@ export default function FloorMap({ selectedSeats, onToggle, unavailableIds = [] 
                 className={`
                     group relative rounded-md border transition-all duration-300 flex flex-col items-center justify-center
                     ${borderColor} ${bgColor}
-                    ${isBig ? 'h-40 w-full md:w-80' : 'h-11 w-11 md:h-16 md:w-16'}
+                    ${isBig ? 'h-40 w-full md:w-80' : 'h-11 w-11 md:h-20 md:w-20'}
                     ${isUnavailable ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}
                 `}
                 style={{ boxShadow: shadow }}
             >
-                <div className={`font-orbitron font-bold ${isBig ? 'text-2xl' : 'text-[10px] md:text-2xl'} ${textColor}`}>
+                <div className={`font-orbitron font-bold ${isBig ? 'text-2xl' : 'text-[10px] md:text-xl'} ${textColor}`}>
                     {station.name}
                 </div>
                 {!isBig && (
-                    <div className={`text-[9px] uppercase tracking-wider opacity-60 font-inter ${textColor}`}>
+                    <div className={`text-[9px] md:text-[10px] uppercase tracking-wider opacity-60 font-inter ${textColor}`}>
                         {station.type.substring(0, 4)}
                     </div>
                 )}
