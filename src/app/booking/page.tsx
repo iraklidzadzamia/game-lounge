@@ -22,6 +22,7 @@ export default function BookingPage() {
 
     const [duration, setDuration] = useState<number>(3);
     const [isCustomTime, setIsCustomTime] = useState(false);
+    const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
 
     // Date Helpers
     const today = new Date();
@@ -161,26 +162,58 @@ export default function BookingPage() {
                                         TOMORROW
                                     </button>
                                     <div className="relative flex-1">
-                                        <input
-                                            type="date"
-                                            className="absolute inset-0 opacity-0 cursor-pointer z-10 w-full h-full"
-                                            onChange={(e) => {
-                                                if (!e.target.value) return;
-                                                const [y, m, d] = e.target.value.split('-').map(Number);
-                                                const newDate = new Date(selectedDate);
-                                                newDate.setFullYear(y, m - 1, d);
-                                                setSelectedDate(newDate);
-                                                setIsCustomTime(false);
-                                            }}
-                                        />
-                                        <button className={`w-full py-3 rounded font-orbitron text-sm tracking-wider transition-all border ${!isSameDate(selectedDate, today) && !isSameDate(selectedDate, tomorrow)
-                                            ? "bg-neon-cyan text-black border-neon-cyan shadow-[0_0_15px_rgba(0,243,255,0.4)]"
-                                            : "bg-white/5 text-white/70 border-white/10 hover:bg-white/10 hover:text-white"
-                                            }`}>
+                                        <button
+                                            onClick={() => setIsDatePickerOpen(!isDatePickerOpen)}
+                                            className={`w-full py-3 rounded font-orbitron text-sm tracking-wider transition-all border ${!isSameDate(selectedDate, today) && !isSameDate(selectedDate, tomorrow)
+                                                ? "bg-neon-cyan text-black border-neon-cyan shadow-[0_0_15px_rgba(0,243,255,0.4)]"
+                                                : "bg-white/5 text-white/70 border-white/10 hover:bg-white/10 hover:text-white"
+                                                }`}
+                                        >
                                             {!isSameDate(selectedDate, today) && !isSameDate(selectedDate, tomorrow)
                                                 ? selectedDate.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }).toUpperCase()
                                                 : "PICK DATE"}
                                         </button>
+
+                                        {/* Custom Date Dropdown */}
+                                        {isDatePickerOpen && (
+                                            <div className="absolute top-full mt-2 right-0 w-[200px] md:w-[300px] bg-black/95 border border-white/20 rounded-xl p-2 shadow-[0_0_30px_rgba(0,0,0,0.8)] z-50 flex flex-col gap-1 max-h-[300px] overflow-y-auto backdrop-blur-xl">
+                                                {/* Generate next 10 days starting after tomorrow */}
+                                                {Array.from({ length: 10 }).map((_, i) => {
+                                                    const d = new Date(today);
+                                                    d.setDate(today.getDate() + 2 + i); // Start from day after tomorrow
+
+                                                    const isSelected = isSameDate(selectedDate, d);
+
+                                                    return (
+                                                        <button
+                                                            key={i}
+                                                            onClick={() => {
+                                                                setSelectedDate(d);
+                                                                setIsCustomTime(false);
+                                                                setIsDatePickerOpen(false);
+                                                            }}
+                                                            className={`w-full text-left px-4 py-3 rounded font-orbitron text-xs tracking-wider transition-all flex justify-between items-center group ${isSelected
+                                                                ? "bg-neon-cyan text-black"
+                                                                : "hover:bg-white/10 text-white/70 hover:text-white"
+                                                                }`}
+                                                        >
+                                                            <span>{d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }).toUpperCase()}</span>
+                                                            <span className={`text-[10px] uppercase opacity-50 ${isSelected ? 'text-black' : 'text-neon-cyan'}`}>
+                                                                {d.toLocaleDateString('en-GB', { weekday: 'short' })}
+                                                            </span>
+                                                        </button>
+                                                    );
+                                                })}
+                                            </div>
+                                        )}
+
+                                        {/* Backdrop to close */}
+                                        {isDatePickerOpen && (
+                                            <div
+                                                className="fixed inset-0 z-40 bg-transparent"
+                                                onClick={() => setIsDatePickerOpen(false)}
+                                            />
+                                        )}
                                     </div>
                                 </div>
                                 <div className="text-right mt-2 text-xs text-white/30 font-inter">
