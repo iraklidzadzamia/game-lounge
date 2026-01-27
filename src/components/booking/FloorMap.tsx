@@ -88,10 +88,10 @@ export default function FloorMap({ selectedSeats, onToggle, unavailableIds = [] 
 
     // Render logic for PC Floors (2 & 3)
     const renderPcFloor = (groups: any[]) => (
-        <div className="relative w-full h-[500px] md:h-[600px] bg-black/20 p-4 rounded-xl overflow-hidden flex flex-row">
+        <div className="relative w-full h-[550px] md:h-[700px] bg-black/20 p-4 rounded-xl overflow-hidden flex flex-row">
 
             {/* Street View Indicator (Left Side - Vertical) */}
-            <div className="h-full flex flex-col items-center justify-center mr-4 md:mr-8 z-10 w-8 flex-shrink-0 border-r border-white/5">
+            <div className="h-full flex flex-col items-center justify-center mr-2 md:mr-8 z-10 w-8 flex-shrink-0 border-r border-white/5">
                 <div className="flex flex-col items-center h-full justify-center gap-4">
                     <div className="h-24 md:h-32 w-1 bg-gradient-to-b from-transparent via-neon-cyan/40 to-transparent rounded-full" />
                     <span className="text-[10px] text-neon-cyan/50 font-orbitron tracking-widest whitespace-nowrap -rotate-90 origin-center">
@@ -102,10 +102,10 @@ export default function FloorMap({ selectedSeats, onToggle, unavailableIds = [] 
             </div>
 
             {/* Main Layout Area */}
-            <div className="flex flex-1 gap-4 md:gap-12 z-20 h-full relative">
+            <div className="flex flex-1 gap-2 md:gap-12 z-20 h-full relative">
 
-                {/* 1. Zone C (Pro) - Vertical Column (Left) */}
-                <div className="flex flex-col justify-center items-center h-full pt-8">
+                {/* 1. Zone C (Pro) - Vertical Column (Left) - Top Aligned */}
+                <div className="flex flex-col justify-start items-center h-full pt-4 md:pt-8">
                     <h4 className="text-white/30 text-[10px] mb-4 uppercase tracking-widest font-orbitron -rotate-90 md:rotate-0 whitespace-nowrap">
                         Zone C (Pro)
                     </h4>
@@ -114,9 +114,8 @@ export default function FloorMap({ selectedSeats, onToggle, unavailableIds = [] 
                     </div>
                 </div>
 
-                {/* 2. Right Side Area (Zone B & A) - Horizontal Rows */}
-                {/* UPDATED: Aligned to bottom (justify-end) with padding to match user drawing */}
-                <div className="flex flex-col justify-end gap-12 flex-1 items-start pb-12 ml-4 md:ml-12">
+                {/* 2. Right Side Area (Zone B & A) - Horizontal Rows - Bottom Aligned */}
+                <div className="flex flex-col justify-end gap-8 flex-1 items-start pb-4 md:pb-8 ml-2 md:ml-12">
 
                     {/* Zone B (Pro) - Horizontal Row (Middle) */}
                     <div className="flex flex-col w-full">
@@ -208,7 +207,7 @@ export default function FloorMap({ selectedSeats, onToggle, unavailableIds = [] 
                 className={`
                     group relative rounded-md border transition-all duration-300 flex flex-col items-center justify-center
                     ${borderColor} ${bgColor}
-                    ${isBig ? 'h-40 w-full md:w-80' : 'h-11 w-11 md:h-20 md:w-20'}
+                    ${isBig ? 'h-40 w-full md:w-80' : 'h-11 w-11 md:h-16 md:w-16'}
                     ${isUnavailable ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}
                 `}
                 style={{ boxShadow: shadow }}
