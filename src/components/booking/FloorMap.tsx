@@ -88,51 +88,50 @@ export default function FloorMap({ selectedSeats, onToggle, unavailableIds = [] 
 
     // Render logic for PC Floors (2 & 3)
     const renderPcFloor = (groups: any[]) => (
-        <div className="relative w-full h-[500px] md:h-[600px] bg-black/20 p-4 rounded-xl overflow-hidden">
+        <div className="relative w-full h-[500px] md:h-[600px] bg-black/20 p-4 rounded-xl overflow-hidden flex flex-row items-center">
 
-            {/* Compass / Street View Indicator (For PC Floors - Top Side) */}
-            <div className="absolute top-4 left-0 right-0 flex justify-center z-10">
-                <div className="flex flex-col items-center">
-                    <span className="text-xs text-neon-cyan/50 font-orbitron tracking-widest mb-1">
+            {/* Street View Indicator (Left Side - Vertical) */}
+            <div className="h-full flex flex-col items-center justify-center mr-8 z-10 w-8 flex-shrink-0 border-r border-white/5">
+                <div className="flex flex-col items-center h-full justify-center gap-4">
+                    <div className="h-32 w-1 bg-gradient-to-b from-transparent via-neon-cyan/40 to-transparent rounded-full" />
+                    <span className="text-[10px] text-neon-cyan/50 font-orbitron tracking-widest whitespace-nowrap -rotate-90 origin-center">
                         STREET VIEW
                     </span>
-                    <div className="w-32 h-1 bg-gradient-to-r from-transparent via-neon-cyan/40 to-transparent rounded-full" />
+                    <div className="h-32 w-1 bg-gradient-to-b from-transparent via-neon-cyan/40 to-transparent rounded-full" />
                 </div>
             </div>
 
-            {/* Layout Grid using Absolute or strict flex positioning to match user request */}
-            {/* Zone C (Right Bank) - Top (Centered on Mobile, Right on Desktop) */}
-            <div className="absolute top-16 w-full flex flex-col items-center md:w-auto md:right-8 md:items-end z-20">
-                <div className="flex flex-col items-center">
-                    <h4 className="text-white/30 text-[10px] mb-2 uppercase tracking-widest font-orbitron">Zone C (Pro)</h4>
-                    {/* Single Row of 6 */}
-                    <div className="flex gap-1 md:gap-2">
+            {/* Zones - 3 Vertical Columns (C -> B -> A) */}
+            <div className="flex flex-1 justify-around items-center h-full z-20">
+
+                {/* Zone C (Pro) - Closest to Street (Left) */}
+                <div className="flex flex-col items-center justify-center h-full">
+                    <h4 className="text-white/30 text-[10px] mb-4 uppercase tracking-widest font-orbitron -rotate-90 md:rotate-0">Zone C (Pro)</h4>
+                    <div className="flex flex-col gap-2">
                         {groups[2].stations.map((s: any) => renderStation(s))}
                     </div>
                 </div>
-            </div>
 
-            {/* Zone A (Left) & Zone B (Center) - Clustered Bottom (Centered on Mobile, Left on Desktop) */}
-            <div className="absolute bottom-8 md:bottom-12 w-full flex justify-center gap-4 md:w-auto md:left-8 md:justify-start md:gap-24 items-end z-20">
-                {/* Zone A - Left Vertical */}
-                <div className="flex flex-col items-center">
-                    <h4 className="text-white/30 text-[10px] mb-2 uppercase tracking-widest font-orbitron">Zone A (Prem)</h4>
-                    <div className="grid grid-cols-1 gap-3">
+                {/* Zone B (Pro) - Center */}
+                <div className="flex flex-col items-center justify-center h-full">
+                    <h4 className="text-white/30 text-[10px] mb-4 uppercase tracking-widest font-orbitron -rotate-90 md:rotate-0">Zone B (Pro)</h4>
+                    <div className="flex flex-col gap-2">
+                        {groups[1].stations.map((s: any) => renderStation(s))}
+                    </div>
+                </div>
+
+                {/* Zone A (Prem) - Furthest (Right) */}
+                <div className="flex flex-col items-center justify-center h-full">
+                    <h4 className="text-white/30 text-[10px] mb-4 uppercase tracking-widest font-orbitron -rotate-90 md:rotate-0">Zone A (Prem)</h4>
+                    <div className="flex flex-col gap-2">
                         {groups[0].stations.map((s: any) => renderStation(s))}
                     </div>
                 </div>
 
-                {/* Zone B - Center Vertical (Close to A) */}
-                <div className="flex flex-col items-center">
-                    <h4 className="text-white/30 text-[10px] mb-2 uppercase tracking-widest font-orbitron">Zone B (Pro)</h4>
-                    <div className="grid grid-cols-1 gap-3">
-                        {groups[1].stations.map((s: any) => renderStation(s))}
-                    </div>
-                </div>
             </div>
 
             {/* Decorative Grid Lines */}
-            <div className="absolute inset-0 pointer-events-none"
+            <div className="absolute inset-0 pointer-events-none -z-0"
                 style={{
                     backgroundImage: 'linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px)',
                     backgroundSize: '20px 20px'
