@@ -88,13 +88,13 @@ export default function FloorMap({ selectedSeats, onToggle, unavailableIds = [] 
 
     // Render logic for PC Floors (2 & 3)
     const renderPcFloor = (groups: any[]) => (
-        <div className="relative w-full h-[550px] md:h-[700px] bg-black/20 p-4 rounded-xl overflow-hidden flex flex-row">
+        <div className="relative w-full h-[550px] md:h-[700px] bg-black/20 p-2 md:p-4 rounded-xl overflow-hidden flex flex-row">
 
             {/* Street View Indicator (Left Side - Vertical) */}
-            <div className="h-full flex flex-col items-center justify-center mr-2 md:mr-8 z-10 w-8 flex-shrink-0 border-r border-white/5">
+            <div className="h-full flex flex-col items-center justify-center mr-1 md:mr-8 z-10 w-6 md:w-8 flex-shrink-0 border-r border-white/5">
                 <div className="flex flex-col items-center h-full justify-center gap-4">
                     <div className="h-24 md:h-32 w-1 bg-gradient-to-b from-transparent via-neon-cyan/40 to-transparent rounded-full" />
-                    <span className="text-[10px] text-neon-cyan/50 font-orbitron tracking-widest whitespace-nowrap -rotate-90 origin-center">
+                    <span className="text-[8px] md:text-[10px] text-neon-cyan/50 font-orbitron tracking-widest whitespace-nowrap -rotate-90 origin-center">
                         STREET VIEW
                     </span>
                     <div className="h-24 md:h-32 w-1 bg-gradient-to-b from-transparent via-neon-cyan/40 to-transparent rounded-full" />
@@ -102,11 +102,11 @@ export default function FloorMap({ selectedSeats, onToggle, unavailableIds = [] 
             </div>
 
             {/* Main Layout Area */}
-            <div className="flex flex-1 gap-2 md:gap-12 z-20 h-full relative">
+            <div className="flex flex-1 gap-1 md:gap-12 z-20 h-full relative">
 
                 {/* 1. Zone C (Pro) - Vertical Column (Left) - Top Aligned */}
-                <div className="flex flex-col justify-start items-center h-full pt-4 md:pt-8">
-                    <h4 className="text-white/30 text-[10px] mb-4 uppercase tracking-widest font-orbitron -rotate-90 md:rotate-0 whitespace-nowrap">
+                <div className="flex flex-col justify-start items-center h-full pt-4 md:pt-8 w-1/4 md:w-auto">
+                    <h4 className="text-white/30 text-[8px] md:text-[10px] mb-4 uppercase tracking-widest font-orbitron -rotate-90 md:rotate-0 whitespace-nowrap">
                         Zone C (Pro)
                     </h4>
                     <div className="flex flex-col gap-2">
@@ -115,24 +115,26 @@ export default function FloorMap({ selectedSeats, onToggle, unavailableIds = [] 
                 </div>
 
                 {/* 2. Right Side Area (Zone B & A) - Horizontal Rows - Bottom Aligned */}
-                <div className="flex flex-col justify-end gap-8 flex-1 items-start pb-4 md:pb-8 ml-2 md:ml-12">
+                <div className="flex flex-col justify-end gap-6 md:gap-8 flex-1 items-start pb-4 md:pb-8 ml-1 md:ml-12 overflow-x-visible">
 
                     {/* Zone B (Pro) - Horizontal Row (Middle) */}
                     <div className="flex flex-col w-full">
-                        <h4 className="text-white/30 text-[10px] mb-2 uppercase tracking-widest font-orbitron ml-1">
+                        <h4 className="text-white/30 text-[8px] md:text-[10px] mb-2 uppercase tracking-widest font-orbitron ml-1">
                             Zone B (Pro)
                         </h4>
-                        <div className="flex flex-wrap gap-2 md:gap-3">
+                        {/* Using flex-nowrap to prevent breaking on mobile */}
+                        <div className="flex flex-wrap md:flex-wrap gap-1 md:gap-3">
                             {groups[1].stations.map((s: any) => renderStation(s))}
                         </div>
                     </div>
 
                     {/* Zone A (Prem) - Horizontal Row (Bottom) */}
                     <div className="flex flex-col w-full">
-                        <h4 className="text-white/30 text-[10px] mb-2 uppercase tracking-widest font-orbitron ml-1">
+                        <h4 className="text-white/30 text-[8px] md:text-[10px] mb-2 uppercase tracking-widest font-orbitron ml-1">
                             Zone A (Prem)
                         </h4>
-                        <div className="flex flex-wrap gap-2 md:gap-3">
+                        {/* Using flex-nowrap to prevent breaking on mobile */}
+                        <div className="flex flex-wrap md:flex-wrap gap-1 md:gap-3">
                             {groups[0].stations.map((s: any) => renderStation(s))}
                         </div>
                     </div>
@@ -207,22 +209,23 @@ export default function FloorMap({ selectedSeats, onToggle, unavailableIds = [] 
                 className={`
                     group relative rounded-md border transition-all duration-300 flex flex-col items-center justify-center
                     ${borderColor} ${bgColor}
-                    ${isBig ? 'h-40 w-full md:w-80' : 'h-11 w-11 md:h-16 md:w-16'}
+                    ${isBig ? 'h-40 w-full md:w-80' : 'h-9 w-9 md:h-16 md:w-16'}
                     ${isUnavailable ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}
                 `}
                 style={{ boxShadow: shadow }}
             >
-                <div className={`font-orbitron font-bold ${isBig ? 'text-2xl' : 'text-[10px] md:text-xl'} ${textColor}`}>
+                {/* Font Size Tweak: Smaller for better fill */}
+                <div className={`font-orbitron font-bold ${isBig ? 'text-xl md:text-2xl' : 'text-[8px] md:text-base'} ${textColor}`}>
                     {station.name}
                 </div>
                 {!isBig && (
-                    <div className={`text-[9px] md:text-[10px] uppercase tracking-wider opacity-60 font-inter ${textColor}`}>
+                    <div className={`text-[6px] md:text-[8px] uppercase tracking-wider opacity-60 font-inter ${textColor}`}>
                         {station.type.substring(0, 4)}
                     </div>
                 )}
 
                 {/* Status Indicator */}
-                <div className={`absolute top-1 right-1 w-1 h-1 rounded-full shadow-[0_0_5px] 
+                <div className={`absolute top-0.5 right-0.5 md:top-1 md:right-1 w-0.5 h-0.5 md:w-1 md:h-1 rounded-full shadow-[0_0_5px] 
                     ${isUnavailable
                         ? "bg-red-500 shadow-red-500"
                         : "bg-green-500 shadow-[#22c55e]"
