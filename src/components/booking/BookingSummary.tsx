@@ -138,6 +138,15 @@ export default function BookingSummary({ date, duration, seats, seatTypes }: Boo
                             className="w-full bg-black/50 border border-white/20 rounded-md p-3 text-white text-sm focus:border-neon-cyan outline-none font-inter"
                         />
                     </div>
+                    <div>
+                        <input
+                            type="email"
+                            placeholder="Email Address (Optional)"
+                            value={customerEmail}
+                            onChange={(e) => setCustomerEmail(e.target.value)}
+                            className="w-full bg-black/50 border border-white/20 rounded-md p-3 text-white text-sm focus:border-neon-cyan outline-none font-inter"
+                        />
+                    </div>
                 </div>
 
                 {/* Total */}

@@ -113,7 +113,7 @@ export default function FloorMap({ selectedSeats, onToggle, unavailableIds = [] 
             </div>
 
             {/* Zone A (Left) & Zone B (Center) - Clustered Bottom (Centered on Mobile, Left on Desktop) */}
-            <div className="absolute bottom-8 md:bottom-12 w-full flex justify-center gap-4 md:w-auto md:left-8 md:justify-start md:gap-16 items-end z-20">
+            <div className="absolute bottom-8 md:bottom-12 w-full flex justify-center gap-4 md:w-auto md:left-8 md:justify-start md:gap-24 items-end z-20">
                 {/* Zone A - Left Vertical */}
                 <div className="flex flex-col items-center">
                     <h4 className="text-white/30 text-[10px] mb-2 uppercase tracking-widest font-orbitron">Zone A (Prem)</h4>
