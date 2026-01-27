@@ -139,10 +139,10 @@ export default function BookingPage() {
                                     >
                                         TOMORROW
                                     </button>
-                                    <div className="relative">
+                                    <div className="relative flex-1">
                                         <input
                                             type="date"
-                                            className="absolute inset-0 opacity-0 cursor-pointer z-10"
+                                            className="absolute inset-0 opacity-0 cursor-pointer z-10 w-full h-full"
                                             onChange={(e) => {
                                                 if (!e.target.value) return;
                                                 const [y, m, d] = e.target.value.split('-').map(Number);
@@ -151,11 +151,11 @@ export default function BookingPage() {
                                                 setSelectedDate(newDate);
                                             }}
                                         />
-                                        <button className={`h-full px-4 rounded border flex items-center justify-center transition-all ${![new Date().toDateString(), new Date(new Date().setDate(new Date().getDate() + 1)).toDateString()].includes(selectedDate.toDateString())
-                                            ? "bg-neon-cyan text-black border-neon-cyan"
-                                            : "bg-white/5 text-white/50 border-white/10"
+                                        <button className={`w-full py-3 rounded font-orbitron text-sm tracking-wider transition-all border ${![new Date().toDateString(), new Date(new Date().setDate(new Date().getDate() + 1)).toDateString()].includes(selectedDate.toDateString())
+                                            ? "bg-neon-cyan text-black border-neon-cyan shadow-[0_0_15px_rgba(0,243,255,0.4)]"
+                                            : "bg-white/5 text-white/50 border-white/10 hover:bg-white/10 hover:text-white"
                                             }`}>
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="18" height="18" x="3" y="4" rx="2" ry="2" /><line x1="16" x2="16" y1="2" y2="6" /><line x1="8" x2="8" y1="2" y2="6" /><line x1="3" x2="21" y1="10" y2="10" /><path d="M8 14h.01" /><path d="M12 14h.01" /><path d="M16 14h.01" /><path d="M8 18h.01" /><path d="M12 18h.01" /><path d="M16 18h.01" /></svg>
+                                            CUSTOM
                                         </button>
                                     </div>
                                 </div>
@@ -190,8 +190,8 @@ export default function BookingPage() {
                                                         setIsCustomTime(false);
                                                     }}
                                                     className={`flex-shrink-0 px-4 py-2 rounded font-orbitron text-sm border transition-all ${isSelected
-                                                            ? "bg-neon-cyan text-black border-neon-cyan shadow-[0_0_10px_rgba(0,243,255,0.3)] scale-105"
-                                                            : "bg-black/40 text-white/70 border-white/10 hover:border-neon-cyan/50 hover:text-white"
+                                                        ? "bg-neon-cyan text-black border-neon-cyan shadow-[0_0_10px_rgba(0,243,255,0.3)] scale-105"
+                                                        : "bg-black/40 text-white/70 border-white/10 hover:border-neon-cyan/50 hover:text-white"
                                                         }`}
                                                 >
                                                     {timeString}
