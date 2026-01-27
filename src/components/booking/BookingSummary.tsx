@@ -16,6 +16,7 @@ export default function BookingSummary({ date, duration, seats, seatTypes }: Boo
     const [customerName, setCustomerName] = useState("");
     const [customerPhone, setCustomerPhone] = useState("");
     const [customerEmail, setCustomerEmail] = useState("");
+    const [customerEmail, setCustomerEmail] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     // Calculate Total Price based on all selected seats
