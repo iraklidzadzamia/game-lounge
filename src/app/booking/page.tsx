@@ -147,7 +147,10 @@ export default function BookingPage() {
                                     </button>
                                     <button
                                         onClick={() => {
-                                            setSelectedDate(new Date(tomorrow));
+                                            const t = new Date();
+                                            t.setDate(t.getDate() + 1);
+                                            t.setHours(0, 0, 0, 0);
+                                            setSelectedDate(t);
                                             setIsCustomTime(false);
                                         }}
                                         className={`flex-1 py-3 rounded font-orbitron text-sm tracking-wider transition-all border ${isSameDate(selectedDate, tomorrow)
@@ -198,9 +201,10 @@ export default function BookingPage() {
                                             slotDate.setHours(hour, min, 0, 0);
 
                                             const now = new Date();
-                                            // Add buffer (e.g. 15 mins)
-                                            const isPast = slotDate.getTime() < now.getTime() + 15 * 60000;
-                                            if (isPast) return null;
+                                            const isPast = slotDate < now;
+
+                                            // Only hide past times if we are on TODAY
+                                            if (isSameDate(selectedDate, now) && isPast) return null;
 
                                             const isSelected = selectedDate.getHours() === hour && selectedDate.getMinutes() === min;
 
