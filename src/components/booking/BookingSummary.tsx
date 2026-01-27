@@ -68,7 +68,7 @@ export default function BookingSummary({ date, duration, seats, seatTypes }: Boo
 
     return (
         <div className="sticky top-24 space-y-6">
-            <div className="glass-card p-6 md:p-8 border-t-4 border-neon-cyan">
+            <div className="glass-card p-4 md:p-8 border-t-4 border-neon-cyan">
                 {/* Header */}
                 <h2 className="font-orbitron text-2xl text-white mb-6">SUMMARY</h2>
 

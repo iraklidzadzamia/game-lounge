@@ -99,7 +99,7 @@ export default function BookingPage() {
 
                 <div className="grid lg:grid-cols-3 gap-8">
                     {/* Left Column: Interactive Map & Selection */}
-                    <div className="lg:col-span-2 space-y-8 order-2 lg:order-1">
+                    <div className="lg:col-span-2 space-y-8">
 
                         {/* Step 1: Time & Date */}
                         <section className="glass-card p-6 md:p-8">
@@ -155,7 +155,7 @@ export default function BookingPage() {
                     </div>
 
                     {/* Right Column: Summary & Checkout */}
-                    <div className="lg:col-span-1 order-1 lg:order-2">
+                    <div className="lg:col-span-1">
                         <BookingSummary
                             date={selectedDate}
                             duration={duration}
