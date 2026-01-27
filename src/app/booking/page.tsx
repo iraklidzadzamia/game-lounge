@@ -102,35 +102,128 @@ export default function BookingPage() {
                     <div className="lg:col-span-2 space-y-8">
 
                         {/* Step 1: Time & Date */}
-                        <section className="glass-card p-6 md:p-8">
-                            <h2 className="font-orbitron text-xl text-white mb-6 flex items-center gap-3">
-                                <span className="text-neon-cyan/50">01.</span> SELECT TIME
-                            </h2>
-                            <div className="flex flex-wrap gap-4 items-center">
-                                <input
-                                    type="datetime-local"
-                                    className="bg-black/50 border border-white/20 rounded-md p-3 text-white focus:border-neon-cyan outline-none w-full md:w-auto"
-                                    // Default to now for demo, in prod use controlled value carefully
-                                    onChange={(e) => setSelectedDate(new Date(e.target.value))}
-                                />
-
+                        <section className="glass-card p-6 md:p-8 space-y-8">
+                            {/* Date Selection */}
+                            <div>
+                                <h2 className="font-orbitron text-xl text-white mb-4 flex items-center gap-3">
+                                    <span className="text-neon-cyan/50">01.</span> SELECT DATE
+                                </h2>
                                 <div className="flex gap-2">
-                                    {[1, 2, 3, 5].map((hr) => (
+                                    <button
+                                        onClick={() => {
+                                            const now = new Date();
+                                            const newDate = new Date(selectedDate);
+                                            newDate.setFullYear(now.getFullYear(), now.getMonth(), now.getDate());
+                                            setSelectedDate(newDate);
+                                        }}
+                                        className={`flex-1 py-3 rounded font-orbitron text-sm tracking-wider transition-all border ${new Date().toDateString() === selectedDate.toDateString()
+                                                ? "bg-neon-cyan text-black border-neon-cyan shadow-[0_0_15px_rgba(0,243,255,0.4)]"
+                                                : "bg-white/5 text-white/50 border-white/10 hover:bg-white/10 hover:text-white"
+                                            }`}
+                                    >
+                                        TODAY
+                                    </button>
+                                    <button
+                                        onClick={() => {
+                                            const tmr = new Date();
+                                            tmr.setDate(tmr.getDate() + 1);
+                                            const newDate = new Date(selectedDate);
+                                            newDate.setFullYear(tmr.getFullYear(), tmr.getMonth(), tmr.getDate());
+                                            setSelectedDate(newDate);
+                                        }}
+                                        className={`flex-1 py-3 rounded font-orbitron text-sm tracking-wider transition-all border ${new Date(new Date().setDate(new Date().getDate() + 1)).toDateString() === selectedDate.toDateString()
+                                                ? "bg-neon-cyan text-black border-neon-cyan shadow-[0_0_15px_rgba(0,243,255,0.4)]"
+                                                : "bg-white/5 text-white/50 border-white/10 hover:bg-white/10 hover:text-white"
+                                            }`}
+                                    >
+                                        TOMORROW
+                                    </button>
+                                    <div className="relative">
+                                        <input
+                                            type="date"
+                                            className="absolute inset-0 opacity-0 cursor-pointer z-10"
+                                            onChange={(e) => {
+                                                if (!e.target.value) return;
+                                                const [y, m, d] = e.target.value.split('-').map(Number);
+                                                const newDate = new Date(selectedDate);
+                                                newDate.setFullYear(y, m - 1, d);
+                                                setSelectedDate(newDate);
+                                            }}
+                                        />
+                                        <button className={`h-full px-4 rounded border flex items-center justify-center transition-all ${![new Date().toDateString(), new Date(new Date().setDate(new Date().getDate() + 1)).toDateString()].includes(selectedDate.toDateString())
+                                                ? "bg-neon-cyan text-black border-neon-cyan"
+                                                : "bg-white/5 text-white/50 border-white/10"
+                                            }`}>
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="18" height="18" x="3" y="4" rx="2" ry="2" /><line x1="16" x2="16" y1="2" y2="6" /><line x1="8" x2="8" y1="2" y2="6" /><line x1="3" x2="21" y1="10" y2="10" /><path d="M8 14h.01" /><path d="M12 14h.01" /><path d="M16 14h.01" /><path d="M8 18h.01" /><path d="M12 18h.01" /><path d="M16 18h.01" /></svg>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div className="text-right mt-2 text-xs text-white/30 font-inter">
+                                    Selected: {selectedDate.toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric' })}
+                                </div>
+                            </div>
+
+                            {/* Time Selection */}
+                            <div>
+                                <h3 className="text-white/50 text-xs font-inter uppercase tracking-widest mb-3">Start Time</h3>
+                                <div className="flex gap-2 overflow-x-auto pb-4 scrollbar-hide mask-fade-right">
+                                    {Array.from({ length: 48 }).map((_, i) => {
+                                        // Generate 30min intervals starting from 00:00 or current hour?
+                                        // Let's do 24h for simplicity, filtered by "now" if today
+                                        const hour = Math.floor(i / 2);
+                                        const min = (i % 2) * 30;
+                                        const timeString = `${hour.toString().padStart(2, '0')}:${min.toString().padStart(2, '0')}`;
+
+                                        // Create a date for this slot to compare
+                                        const slotDate = new Date(selectedDate);
+                                        slotDate.setHours(hour, min, 0, 0);
+
+                                        // Filter past times if "Today"
+                                        const now = new Date();
+                                        // Add buffer (e.g. 15 mins)
+                                        const isPast = slotDate.getTime() < now.getTime() + 15 * 60000;
+                                        if (isPast) return null;
+
+                                        const isSelected = selectedDate.getHours() === hour && selectedDate.getMinutes() === min;
+
+                                        return (
+                                            <button
+                                                key={i}
+                                                onClick={() => setSelectedDate(slotDate)}
+                                                className={`flex-shrink-0 px-4 py-2 rounded font-orbitron text-sm border transition-all ${isSelected
+                                                        ? "bg-neon-cyan text-black border-neon-cyan shadow-[0_0_10px_rgba(0,243,255,0.3)] scale-105"
+                                                        : "bg-black/40 text-white/70 border-white/10 hover:border-neon-cyan/50 hover:text-white"
+                                                    }`}
+                                            >
+                                                {timeString}
+                                            </button>
+                                        );
+                                    })}
+                                </div>
+                            </div>
+
+                            {/* Duration Selection */}
+                            <div>
+                                <h3 className="text-white/50 text-xs font-inter uppercase tracking-widest mb-3">Session Duration</h3>
+                                <div className="flex flex-wrap gap-2 text-sm">
+                                    {[1, 2, 3, 5, 8].map((hr) => (
                                         <button
                                             key={hr}
                                             onClick={() => setDuration(hr)}
-                                            className={`px-4 py-2 rounded font-orbitron transition-all duration-300 border ${duration === hr
+                                            className={`px-6 py-3 rounded font-orbitron transition-all duration-300 border flex-1 md:flex-none text-center ${duration === hr
                                                 ? "bg-neon-cyan/20 border-neon-cyan text-neon-cyan shadow-[0_0_15px_rgba(0,243,255,0.3)]"
-                                                : "border-white/10 text-white/50 hover:border-white/30 hover:text-white"
+                                                : "bg-black/40 border-white/10 text-white/50 hover:border-white/30 hover:text-white"
                                                 }`}
                                         >
-                                            {hr}H
+                                            {hr} Hour{hr > 1 ? 's' : ''}
                                         </button>
                                     ))}
                                 </div>
-
                                 {isLoadingAvailability && (
-                                    <span className="text-neon-cyan/50 text-xs animate-pulse ml-auto">Checking availability...</span>
+                                    <div className="mt-2 text-neon-cyan/50 text-xs animate-pulse flex items-center gap-2">
+                                        <span className="w-2 h-2 rounded-full bg-neon-cyan"></span>
+                                        Checking availability...
+                                    </div>
                                 )}
                             </div>
                         </section>
