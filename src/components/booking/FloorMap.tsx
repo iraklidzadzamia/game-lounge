@@ -102,10 +102,10 @@ export default function FloorMap({ selectedSeats, onToggle, unavailableIds = [] 
 
             {/* Layout Grid using Absolute or strict flex positioning to match user request */}
             {/* Zone C (Right Bank) - Top Right */}
-            <div className="absolute top-16 right-8 flex flex-col items-center">
+            <div className="absolute top-16 right-2 md:right-8 flex flex-col items-center">
                 <h4 className="text-white/30 text-[10px] mb-2 uppercase tracking-widest font-orbitron">Zone C (Pro)</h4>
                 {/* Single Row of 6 */}
-                <div className="flex gap-2">
+                <div className="flex gap-1 md:gap-2">
                     {groups[2].stations.map((s: any) => renderStation(s))}
                 </div>
             </div>
@@ -196,7 +196,7 @@ export default function FloorMap({ selectedSeats, onToggle, unavailableIds = [] 
                 className={`
                     group relative rounded-md border transition-all duration-300 flex flex-col items-center justify-center
                     ${borderColor} ${bgColor}
-                    ${isBig ? 'h-40 w-full md:w-80' : 'h-16 w-16'}
+                    ${isBig ? 'h-40 w-full md:w-80' : 'h-11 w-11 md:h-16 md:w-16'}
                     ${isUnavailable ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}
                 `}
                 style={{ boxShadow: shadow }}
@@ -230,8 +230,8 @@ export default function FloorMap({ selectedSeats, onToggle, unavailableIds = [] 
                         key={floor.id}
                         onClick={() => setActiveFloor(floor.id)}
                         className={`px-6 py-2 font-orbitron text-sm tracking-wider transition-all duration-300 rounded ${activeFloor === floor.id
-                                ? "bg-white/10 text-white shadow-[0_0_10px_rgba(255,255,255,0.1)] border border-white/20"
-                                : "text-white/40 hover:text-white"
+                            ? "bg-white/10 text-white shadow-[0_0_10px_rgba(255,255,255,0.1)] border border-white/20"
+                            : "text-white/40 hover:text-white"
                             }`}
                     >
                         {floor.name}
