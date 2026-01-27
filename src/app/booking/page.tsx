@@ -192,7 +192,7 @@ export default function BookingPage() {
                             <div>
                                 <h3 className="text-white/50 text-xs font-inter uppercase tracking-widest mb-3">Start Time</h3>
                                 {!isCustomTime ? (
-                                    <div className="flex gap-2 overflow-x-auto pb-4 scrollbar-hide mask-fade-right">
+                                    <div className="flex gap-2 overflow-x-auto pb-4 scrollbar-hide mask-fade-right w-full max-w-[85vw] md:max-w-full">
                                         {Array.from({ length: 48 }).map((_, i) => {
                                             const hour = Math.floor(i / 2);
                                             const min = (i % 2) * 30;
