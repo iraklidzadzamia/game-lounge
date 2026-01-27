@@ -177,10 +177,16 @@ export default function BookingPage() {
                                             slotDate.setHours(hour, min, 0, 0);
 
                                             const now = new Date();
+                                            // Add buffer (e.g. 15 mins)
                                             const isPast = slotDate.getTime() < now.getTime() + 15 * 60000;
                                             if (isPast) return null;
 
-                                            const isSelected = selectedDate.getHours() === hour && selectedDate.getMinutes() === min;
+                                            const startEpoch = selectedDate.getTime();
+                                            const endEpoch = startEpoch + duration * 60 * 60 * 1000;
+                                            const slotEpoch = slotDate.getTime();
+
+                                            const isSelected = slotEpoch === startEpoch;
+                                            const isCovered = slotEpoch > startEpoch && slotEpoch < endEpoch;
 
                                             return (
                                                 <button
@@ -190,8 +196,10 @@ export default function BookingPage() {
                                                         setIsCustomTime(false);
                                                     }}
                                                     className={`flex-shrink-0 px-4 py-2 rounded font-orbitron text-sm border transition-all ${isSelected
-                                                        ? "bg-neon-cyan text-black border-neon-cyan shadow-[0_0_10px_rgba(0,243,255,0.3)] scale-105"
-                                                        : "bg-black/40 text-white/70 border-white/10 hover:border-neon-cyan/50 hover:text-white"
+                                                            ? "bg-neon-cyan text-black border-neon-cyan shadow-[0_0_10px_rgba(0,243,255,0.3)] scale-110 z-10"
+                                                            : isCovered
+                                                                ? "bg-neon-cyan/20 text-neon-cyan border-neon-cyan shadow-[0_0_5px_rgba(0,243,255,0.2)]"
+                                                                : "bg-black/40 text-white/70 border-white/10 hover:border-neon-cyan/50 hover:text-white"
                                                         }`}
                                                 >
                                                     {timeString}
