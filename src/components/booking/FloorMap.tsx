@@ -88,46 +88,56 @@ export default function FloorMap({ selectedSeats, onToggle, unavailableIds = [] 
 
     // Render logic for PC Floors (2 & 3)
     const renderPcFloor = (groups: any[]) => (
-        <div className="relative w-full h-[500px] md:h-[600px] bg-black/20 p-4 rounded-xl overflow-hidden flex flex-row items-center">
+        <div className="relative w-full h-[500px] md:h-[600px] bg-black/20 p-4 rounded-xl overflow-hidden flex flex-row">
 
             {/* Street View Indicator (Left Side - Vertical) */}
-            <div className="h-full flex flex-col items-center justify-center mr-8 z-10 w-8 flex-shrink-0 border-r border-white/5">
+            <div className="h-full flex flex-col items-center justify-center mr-4 md:mr-10 z-10 w-8 flex-shrink-0 border-r border-white/5">
                 <div className="flex flex-col items-center h-full justify-center gap-4">
-                    <div className="h-32 w-1 bg-gradient-to-b from-transparent via-neon-cyan/40 to-transparent rounded-full" />
+                    <div className="h-24 md:h-32 w-1 bg-gradient-to-b from-transparent via-neon-cyan/40 to-transparent rounded-full" />
                     <span className="text-[10px] text-neon-cyan/50 font-orbitron tracking-widest whitespace-nowrap -rotate-90 origin-center">
                         STREET VIEW
                     </span>
-                    <div className="h-32 w-1 bg-gradient-to-b from-transparent via-neon-cyan/40 to-transparent rounded-full" />
+                    <div className="h-24 md:h-32 w-1 bg-gradient-to-b from-transparent via-neon-cyan/40 to-transparent rounded-full" />
                 </div>
             </div>
 
-            {/* Zones - 3 Vertical Columns (C -> B -> A) */}
-            <div className="flex flex-1 justify-around items-center h-full z-20">
+            {/* Main Layout Area */}
+            <div className="flex flex-1 gap-4 md:gap-16 z-20 h-full relative">
 
-                {/* Zone C (Pro) - Closest to Street (Left) */}
-                <div className="flex flex-col items-center justify-center h-full">
-                    <h4 className="text-white/30 text-[10px] mb-4 uppercase tracking-widest font-orbitron -rotate-90 md:rotate-0">Zone C (Pro)</h4>
+                {/* 1. Zone C (Pro) - Vertical Column (Left) */}
+                <div className="flex flex-col justify-center items-center h-full">
+                    <h4 className="text-white/30 text-[10px] mb-4 uppercase tracking-widest font-orbitron -rotate-90 md:rotate-0 whitespace-nowrap">
+                        Zone C (Pro)
+                    </h4>
                     <div className="flex flex-col gap-2">
                         {groups[2].stations.map((s: any) => renderStation(s))}
                     </div>
                 </div>
 
-                {/* Zone B (Pro) - Center */}
-                <div className="flex flex-col items-center justify-center h-full">
-                    <h4 className="text-white/30 text-[10px] mb-4 uppercase tracking-widest font-orbitron -rotate-90 md:rotate-0">Zone B (Pro)</h4>
-                    <div className="flex flex-col gap-2">
-                        {groups[1].stations.map((s: any) => renderStation(s))}
-                    </div>
-                </div>
+                {/* 2. Right Side Area (Zone B & A) - Horizontal Rows */}
+                <div className="flex flex-col justify-center gap-8 md:gap-20 flex-1 items-start mt-8 md:mt-0 ml-4 md:ml-0">
 
-                {/* Zone A (Prem) - Furthest (Right) */}
-                <div className="flex flex-col items-center justify-center h-full">
-                    <h4 className="text-white/30 text-[10px] mb-4 uppercase tracking-widest font-orbitron -rotate-90 md:rotate-0">Zone A (Prem)</h4>
-                    <div className="flex flex-col gap-2">
-                        {groups[0].stations.map((s: any) => renderStation(s))}
+                    {/* Zone B (Pro) - Horizontal Row */}
+                    <div className="flex flex-col w-full">
+                        <h4 className="text-white/30 text-[10px] mb-2 uppercase tracking-widest font-orbitron ml-2">
+                            Zone B (Pro)
+                        </h4>
+                        <div className="flex flex-wrap gap-2 md:gap-3">
+                            {groups[1].stations.map((s: any) => renderStation(s))}
+                        </div>
                     </div>
-                </div>
 
+                    {/* Zone A (Prem) - Horizontal Row (Bottom) */}
+                    <div className="flex flex-col w-full">
+                        <h4 className="text-white/30 text-[10px] mb-2 uppercase tracking-widest font-orbitron ml-2">
+                            Zone A (Prem)
+                        </h4>
+                        <div className="flex flex-wrap gap-2 md:gap-3">
+                            {groups[0].stations.map((s: any) => renderStation(s))}
+                        </div>
+                    </div>
+
+                </div>
             </div>
 
             {/* Decorative Grid Lines */}
