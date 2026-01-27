@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import Link from "next/link";
 import GlitchText from "./GlitchText";
 
 export default function VideoHero() {
@@ -64,14 +65,12 @@ export default function VideoHero() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.8, delay: 0.6 }}
                 >
-                    <a
-                        href="https://api.whatsapp.com/send?phone=995555201414"
-                        target="_blank"
-                        rel="noopener noreferrer"
+                    <Link
+                        href="/booking"
                         className="px-10 py-5 bg-neon-cyan text-black font-orbitron font-bold tracking-wider text-xl rounded-2xl hover:bg-white transition-all duration-300 shadow-[0_0_20px_rgba(0,243,255,0.4)] hover:shadow-[0_0_40px_rgba(0,243,255,0.6)] hover:-translate-y-1 transform active:scale-95"
                     >
                         BOOK YOUR STATION
-                    </a>
+                    </Link>
 
                     {/* Quick Action Icons */}
                     <div className="flex items-center gap-6">
