@@ -33,33 +33,17 @@ const pcZoneTiers: PriceTier[] = [
             { duration: "5 hours", price: "35₾", originalPrice: "40₾" },
         ],
     },
-    {
-        name: "STANDARD",
-        specs: "i5 • GTX 1060 • 144Hz",
-        prices: [
-            { duration: "1 hour", price: "6₾" },
-            { duration: "2 hours", price: "12₾" },
-        ],
-    },
 ];
 
 const psZoneTiers: PriceTier[] = [
     {
         name: "VIP ROOMS",
-        specs: "Private • Soundproof",
+        specs: "Private • Soundproof • PS5",
         highlight: true,
         prices: [
             { duration: "1 hour", price: "25₾" },
             { duration: "2 hours", price: "45₾", originalPrice: "50₾" },
             { duration: "3 hours", price: "60₾", originalPrice: "75₾" },
-        ],
-    },
-    {
-        name: "STANDARD PS5",
-        specs: "Open Area",
-        prices: [
-            { duration: "1 player", price: "8₾/hr" },
-            { duration: "2+ players", price: "12₾/hr" },
         ],
     },
 ];
