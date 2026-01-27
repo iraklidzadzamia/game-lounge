@@ -5,6 +5,12 @@ import Link from "next/link";
 import FloorMap from "@/components/booking/FloorMap";
 import BookingSummary from "@/components/booking/BookingSummary";
 
+const isSameDate = (d1: Date, d2: Date) => {
+    return d1.getFullYear() === d2.getFullYear() &&
+        d1.getMonth() === d2.getMonth() &&
+        d1.getDate() === d2.getDate();
+};
+
 export default function BookingPage() {
     const [selectedDate, setSelectedDate] = useState<Date>(new Date());
     const [duration, setDuration] = useState<number>(3);
@@ -118,28 +124,24 @@ export default function BookingPage() {
                                 <div className="flex gap-2">
                                     <button
                                         onClick={() => {
-                                            const newDate = new Date(selectedDate);
-                                            newDate.setFullYear(today.getFullYear(), today.getMonth(), today.getDate());
-                                            setSelectedDate(newDate);
+                                            setSelectedDate(new Date(today));
                                             setIsCustomTime(false);
                                         }}
-                                        className={`flex-1 py-3 rounded font-orbitron text-sm tracking-wider transition-all border ${selectedDate.toDateString() === today.toDateString()
+                                        className={`flex-1 py-3 rounded font-orbitron text-sm tracking-wider transition-all border ${isSameDate(selectedDate, today)
                                             ? "bg-neon-cyan text-black border-neon-cyan shadow-[0_0_15px_rgba(0,243,255,0.4)]"
-                                            : "bg-white/5 text-white/50 border-white/10 hover:bg-white/10 hover:text-white"
+                                            : "bg-white/5 text-white/70 border-white/10 hover:bg-white/10 hover:text-white"
                                             }`}
                                     >
                                         TODAY
                                     </button>
                                     <button
                                         onClick={() => {
-                                            const newDate = new Date(selectedDate);
-                                            newDate.setFullYear(tomorrow.getFullYear(), tomorrow.getMonth(), tomorrow.getDate());
-                                            setSelectedDate(newDate);
+                                            setSelectedDate(new Date(tomorrow));
                                             setIsCustomTime(false);
                                         }}
-                                        className={`flex-1 py-3 rounded font-orbitron text-sm tracking-wider transition-all border ${selectedDate.toDateString() === tomorrow.toDateString()
+                                        className={`flex-1 py-3 rounded font-orbitron text-sm tracking-wider transition-all border ${isSameDate(selectedDate, tomorrow)
                                             ? "bg-neon-cyan text-black border-neon-cyan shadow-[0_0_15px_rgba(0,243,255,0.4)]"
-                                            : "bg-white/5 text-white/50 border-white/10 hover:bg-white/10 hover:text-white"
+                                            : "bg-white/5 text-white/70 border-white/10 hover:bg-white/10 hover:text-white"
                                             }`}
                                     >
                                         TOMORROW
@@ -157,11 +159,11 @@ export default function BookingPage() {
                                                 setIsCustomTime(false);
                                             }}
                                         />
-                                        <button className={`w-full py-3 rounded font-orbitron text-sm tracking-wider transition-all border ${![today.toDateString(), tomorrow.toDateString()].includes(selectedDate.toDateString())
+                                        <button className={`w-full py-3 rounded font-orbitron text-sm tracking-wider transition-all border ${!isSameDate(selectedDate, today) && !isSameDate(selectedDate, tomorrow)
                                             ? "bg-neon-cyan text-black border-neon-cyan shadow-[0_0_15px_rgba(0,243,255,0.4)]"
-                                            : "bg-white/5 text-white/50 border-white/10 hover:bg-white/10 hover:text-white"
+                                            : "bg-white/5 text-white/70 border-white/10 hover:bg-white/10 hover:text-white"
                                             }`}>
-                                            {![today.toDateString(), tomorrow.toDateString()].includes(selectedDate.toDateString())
+                                            {!isSameDate(selectedDate, today) && !isSameDate(selectedDate, tomorrow)
                                                 ? selectedDate.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }).toUpperCase()
                                                 : "CUSTOM"}
                                         </button>
