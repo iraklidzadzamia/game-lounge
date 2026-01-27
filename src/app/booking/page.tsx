@@ -116,6 +116,7 @@ export default function BookingPage() {
                                             const newDate = new Date(selectedDate);
                                             newDate.setFullYear(now.getFullYear(), now.getMonth(), now.getDate());
                                             setSelectedDate(newDate);
+                                            setIsCustomTime(false);
                                         }}
                                         className={`flex-1 py-3 rounded font-orbitron text-sm tracking-wider transition-all border ${new Date().toDateString() === selectedDate.toDateString()
                                             ? "bg-neon-cyan text-black border-neon-cyan shadow-[0_0_15px_rgba(0,243,255,0.4)]"
@@ -131,6 +132,7 @@ export default function BookingPage() {
                                             const newDate = new Date(selectedDate);
                                             newDate.setFullYear(tmr.getFullYear(), tmr.getMonth(), tmr.getDate());
                                             setSelectedDate(newDate);
+                                            setIsCustomTime(false);
                                         }}
                                         className={`flex-1 py-3 rounded font-orbitron text-sm tracking-wider transition-all border ${new Date(new Date().setDate(new Date().getDate() + 1)).toDateString() === selectedDate.toDateString()
                                             ? "bg-neon-cyan text-black border-neon-cyan shadow-[0_0_15px_rgba(0,243,255,0.4)]"
@@ -149,6 +151,7 @@ export default function BookingPage() {
                                                 const newDate = new Date(selectedDate);
                                                 newDate.setFullYear(y, m - 1, d);
                                                 setSelectedDate(newDate);
+                                                setIsCustomTime(false);
                                             }}
                                         />
                                         <button className={`w-full py-3 rounded font-orbitron text-sm tracking-wider transition-all border ${![new Date().toDateString(), new Date(new Date().setDate(new Date().getDate() + 1)).toDateString()].includes(selectedDate.toDateString())
@@ -196,10 +199,10 @@ export default function BookingPage() {
                                                         setIsCustomTime(false);
                                                     }}
                                                     className={`flex-shrink-0 px-4 py-2 rounded font-orbitron text-sm border transition-all ${isSelected
-                                                            ? "bg-neon-cyan text-black border-neon-cyan shadow-[0_0_10px_rgba(0,243,255,0.3)] scale-110 z-10"
-                                                            : isCovered
-                                                                ? "bg-neon-cyan/20 text-neon-cyan border-neon-cyan shadow-[0_0_5px_rgba(0,243,255,0.2)]"
-                                                                : "bg-black/40 text-white/70 border-white/10 hover:border-neon-cyan/50 hover:text-white"
+                                                        ? "bg-neon-cyan text-black border-neon-cyan shadow-[0_0_10px_rgba(0,243,255,0.3)] scale-110 z-10"
+                                                        : isCovered
+                                                            ? "bg-neon-cyan/20 text-neon-cyan border-neon-cyan shadow-[0_0_5px_rgba(0,243,255,0.2)]"
+                                                            : "bg-black/40 text-white/70 border-white/10 hover:border-neon-cyan/50 hover:text-white"
                                                         }`}
                                                 >
                                                     {timeString}
