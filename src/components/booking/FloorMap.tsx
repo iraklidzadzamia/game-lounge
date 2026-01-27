@@ -101,17 +101,19 @@ export default function FloorMap({ selectedSeats, onToggle, unavailableIds = [] 
             </div>
 
             {/* Layout Grid using Absolute or strict flex positioning to match user request */}
-            {/* Zone C (Right Bank) - Top Right */}
-            <div className="absolute top-16 right-4 md:right-8 flex flex-col items-center">
-                <h4 className="text-white/30 text-[10px] mb-2 uppercase tracking-widest font-orbitron">Zone C (Pro)</h4>
-                {/* Single Row of 6 */}
-                <div className="flex gap-1 md:gap-2">
-                    {groups[2].stations.map((s: any) => renderStation(s))}
+            {/* Zone C (Right Bank) - Top (Centered on Mobile, Right on Desktop) */}
+            <div className="absolute top-16 w-full flex flex-col items-center md:w-auto md:right-8 md:items-end">
+                <div className="flex flex-col items-center">
+                    <h4 className="text-white/30 text-[10px] mb-2 uppercase tracking-widest font-orbitron">Zone C (Pro)</h4>
+                    {/* Single Row of 6 */}
+                    <div className="flex gap-1 md:gap-2">
+                        {groups[2].stations.map((s: any) => renderStation(s))}
+                    </div>
                 </div>
             </div>
 
-            {/* Zone A (Left) & Zone B (Center) - Clustered Bottom Left */}
-            <div className="absolute bottom-12 left-4 md:left-8 flex gap-4 md:gap-16 items-end">
+            {/* Zone A (Left) & Zone B (Center) - Clustered Bottom (Centered on Mobile, Left on Desktop) */}
+            <div className="absolute bottom-12 w-full flex justify-center gap-4 md:w-auto md:left-8 md:justify-start md:gap-16 items-end">
                 {/* Zone A - Left Vertical */}
                 <div className="flex flex-col items-center">
                     <h4 className="text-white/30 text-[10px] mb-2 uppercase tracking-widest font-orbitron">Zone A (Prem)</h4>
