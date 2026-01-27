@@ -88,7 +88,7 @@ export default function FloorMap({ selectedSeats, onToggle, unavailableIds = [] 
 
     // Render logic for PC Floors (2 & 3)
     const renderPcFloor = (groups: any[]) => (
-        <div className="relative w-full h-[600px] bg-black/20 p-4 rounded-xl overflow-hidden">
+        <div className="relative w-full h-[500px] md:h-[600px] bg-black/20 p-4 rounded-xl overflow-hidden">
 
             {/* Compass / Street View Indicator (For PC Floors - Top Side) */}
             <div className="absolute top-4 left-0 right-0 flex justify-center z-10">
@@ -102,7 +102,7 @@ export default function FloorMap({ selectedSeats, onToggle, unavailableIds = [] 
 
             {/* Layout Grid using Absolute or strict flex positioning to match user request */}
             {/* Zone C (Right Bank) - Top (Centered on Mobile, Right on Desktop) */}
-            <div className="absolute top-16 w-full flex flex-col items-center md:w-auto md:right-8 md:items-end">
+            <div className="absolute top-16 w-full flex flex-col items-center md:w-auto md:right-8 md:items-end z-20">
                 <div className="flex flex-col items-center">
                     <h4 className="text-white/30 text-[10px] mb-2 uppercase tracking-widest font-orbitron">Zone C (Pro)</h4>
                     {/* Single Row of 6 */}
@@ -113,7 +113,7 @@ export default function FloorMap({ selectedSeats, onToggle, unavailableIds = [] 
             </div>
 
             {/* Zone A (Left) & Zone B (Center) - Clustered Bottom (Centered on Mobile, Left on Desktop) */}
-            <div className="absolute bottom-12 w-full flex justify-center gap-4 md:w-auto md:left-8 md:justify-start md:gap-16 items-end">
+            <div className="absolute bottom-8 md:bottom-12 w-full flex justify-center gap-4 md:w-auto md:left-8 md:justify-start md:gap-16 items-end z-20">
                 {/* Zone A - Left Vertical */}
                 <div className="flex flex-col items-center">
                     <h4 className="text-white/30 text-[10px] mb-2 uppercase tracking-widest font-orbitron">Zone A (Prem)</h4>

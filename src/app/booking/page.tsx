@@ -122,7 +122,7 @@ export default function BookingPage() {
                                 <h2 className="font-orbitron text-xl text-white mb-4 flex items-center gap-3">
                                     <span className="text-neon-cyan/50">01.</span> SELECT DATE
                                 </h2>
-                                <div className="flex gap-2">
+                                <div className="flex flex-wrap gap-2">
                                     <button
                                         onClick={() => {
                                             setSelectedDate(new Date(today));
