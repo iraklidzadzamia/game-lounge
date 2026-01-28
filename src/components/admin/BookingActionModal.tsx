@@ -537,32 +537,38 @@ export default function BookingActionModal({
                                     </div>
                                 </div>
 
-                                {/* End Date & Time */}
-                                <div>
-                                    <label className="block text-xs font-semibold text-gray-400 uppercase mb-1">End</label>
-                                    <div className="flex gap-2">
-                                        <input
-                                            type="date"
-                                            required
-                                            className="flex-1 bg-black border border-white/20 rounded-lg px-3 py-2 text-white focus:border-blue-500 outline-none text-xs [color-scheme:dark]"
-                                            value={endDate}
-                                            onChange={e => setEndDate(e.target.value)}
-                                        />
-                                        <input
-                                            type="time"
-                                            required
-                                            list="time-slots"
-                                            className="w-32 bg-black border border-white/20 rounded-lg px-3 py-2 text-white focus:border-blue-500 outline-none text-xs [color-scheme:dark]"
-                                            value={endClock}
-                                            onChange={e => setEndClock(e.target.value)}
-                                        />
+                                {/* End Date & Time - Hidden for Open Session */}
+                                {!isOpenSession && (
+                                    <div>
+                                        <label className="block text-xs font-semibold text-gray-400 uppercase mb-1">End</label>
+                                        <div className="flex gap-2">
+                                            <input
+                                                type="date"
+                                                required={!isOpenSession}
+                                                className="flex-1 bg-black border border-white/20 rounded-lg px-3 py-2 text-white focus:border-blue-500 outline-none text-xs [color-scheme:dark]"
+                                                value={endDate}
+                                                onChange={e => setEndDate(e.target.value)}
+                                            />
+                                            <input
+                                                type="time"
+                                                required={!isOpenSession}
+                                                list="time-slots"
+                                                className="w-32 bg-black border border-white/20 rounded-lg px-3 py-2 text-white focus:border-blue-500 outline-none text-xs [color-scheme:dark]"
+                                                value={endClock}
+                                                onChange={e => setEndClock(e.target.value)}
+                                            />
+                                        </div>
                                     </div>
-                                </div>
+                                )}
 
                                 {/* Duration Display */}
                                 <div className="text-right">
-                                    <span className="text-xs text-gray-400 uppercase mr-2">Calculated Duration:</span>
-                                    <span className="text-sm font-bold text-blue-400">{getDurationDisplay()}</span>
+                                    <span className="text-xs text-gray-400 uppercase mr-2">
+                                        {isOpenSession ? 'Session Type:' : 'Calculated Duration:'}
+                                    </span>
+                                    <span className={`text-sm font-bold ${isOpenSession ? 'text-green-400' : 'text-blue-400'}`}>
+                                        {isOpenSession ? 'Open-Ended ♾️' : getDurationDisplay()}
+                                    </span>
                                 </div>
                             </div>
 
