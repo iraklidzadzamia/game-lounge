@@ -222,8 +222,8 @@ export default function FloorMap({ selectedSeats, onToggle, unavailableIds = [],
                 <div className="flex justify-between items-center flex-1 pt-12 px-2">
                     {/* Left Side: 2 PS5s */}
                     <div className="flex flex-col gap-4">
-                        {renderStation({ id: `chikovani-ps5-3`, name: `PS5 3`, type: 'PS5', branch_id: 'chikovani' })}
-                        {renderStation({ id: `chikovani-ps5-4`, name: `PS5 4`, type: 'PS5', branch_id: 'chikovani' })}
+                        {renderStation({ id: `chikovani-ps5-3`, name: `PS5 3`, type: 'PS5', branch_id: 'chikovani' }, 'medium')}
+                        {renderStation({ id: `chikovani-ps5-4`, name: `PS5 4`, type: 'PS5', branch_id: 'chikovani' }, 'medium')}
                     </div>
 
                     {/* Center Void */}
@@ -233,8 +233,8 @@ export default function FloorMap({ selectedSeats, onToggle, unavailableIds = [],
 
                     {/* Right Side: 2 PS5s */}
                     <div className="flex flex-col gap-4">
-                        {renderStation({ id: `chikovani-ps5-5`, name: `PS5 5`, type: 'PS5', branch_id: 'chikovani' })}
-                        {renderStation({ id: `chikovani-ps5-6`, name: `PS5 6`, type: 'PS5', branch_id: 'chikovani' })}
+                        {renderStation({ id: `chikovani-ps5-5`, name: `PS5 5`, type: 'PS5', branch_id: 'chikovani' }, 'medium')}
+                        {renderStation({ id: `chikovani-ps5-6`, name: `PS5 6`, type: 'PS5', branch_id: 'chikovani' }, 'medium')}
                     </div>
                 </div>
             </div>
@@ -330,7 +330,7 @@ export default function FloorMap({ selectedSeats, onToggle, unavailableIds = [],
         </div>
     );
 
-    const renderStation = (station: any, isBig = false) => {
+    const renderStation = (station: any, isBig: boolean | 'medium' = false) => {
         const realId = getRealId(station.id);
         const isSelected = selectedSeats.includes(realId);
         const isUnavailable = unavailableIds.includes(realId);
@@ -363,6 +363,18 @@ export default function FloorMap({ selectedSeats, onToggle, unavailableIds = [],
             shadow = "none";
         }
 
+        // Size Classes
+        let sizeClass = 'h-9 w-9 md:h-16 md:w-16';
+        let textSizeClass = 'text-[8px] md:text-base';
+
+        if (isBig === true) {
+            sizeClass = 'h-40 w-full md:w-80';
+            textSizeClass = 'text-xl md:text-2xl';
+        } else if (isBig === 'medium') {
+            sizeClass = 'h-14 w-14 md:h-16 md:w-16'; // Bigger on mobile as requested
+            textSizeClass = 'text-[10px] md:text-base';
+        }
+
         return (
             <motion.button
                 key={station.id}
@@ -373,13 +385,13 @@ export default function FloorMap({ selectedSeats, onToggle, unavailableIds = [],
                 className={`
                     group relative rounded-md border transition-all duration-300 flex flex-col items-center justify-center
                     ${borderColor} ${bgColor}
-                    ${isBig ? 'h-40 w-full md:w-80' : 'h-9 w-9 md:h-16 md:w-16'}
+                    ${sizeClass}
                     ${isUnavailable ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}
                 `}
                 style={{ boxShadow: shadow }}
             >
                 {/* Font Size Tweak: Smaller for better fill */}
-                <div className={`font-orbitron font-bold ${isBig ? 'text-xl md:text-2xl' : 'text-[8px] md:text-base'} ${textColor}`}>
+                <div className={`font-orbitron font-bold ${textSizeClass} ${textColor}`}>
                     {station.name}
                 </div>
                 {!isBig && (
