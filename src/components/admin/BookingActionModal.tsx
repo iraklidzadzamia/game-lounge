@@ -41,7 +41,8 @@ export default function BookingActionModal({
     const [customerName, setCustomerName] = useState('');
     const [customerPhone, setCustomerPhone] = useState('');
     const [startTime, setStartTime] = useState('');
-    const [duration, setDuration] = useState('60');
+    // const [duration, setDuration] = useState('60'); // Removed
+    const [endTime, setEndTime] = useState('');
     const [paymentStatus, setPaymentStatus] = useState<'paid' | 'unpaid'>('unpaid');
     const [paymentMethod, setPaymentMethod] = useState<'cash' | 'card_bog' | 'card_tbc' | null>(null);
     const [notes, setNotes] = useState('');
@@ -57,6 +58,20 @@ export default function BookingActionModal({
     const [elapsedMinutes, setElapsedMinutes] = useState(0);
     const [reservedMinutes, setReservedMinutes] = useState(0);
 
+    // Derived Duration for Display
+    const getDurationDisplay = () => {
+        if (!startTime || !endTime) return '0 min';
+        const start = new Date(startTime);
+        const end = new Date(endTime);
+        const diffMs = end.getTime() - start.getTime();
+        const minutes = Math.round(diffMs / 60000);
+        if (minutes < 0) return 'Invalid dates';
+
+        const h = Math.floor(minutes / 60);
+        const m = minutes % 60;
+        return h > 0 ? `${h}h ${m}m (${minutes} min)` : `${minutes} min`;
+    };
+
     useEffect(() => {
         if (isOpen) {
             setStopMode(false);
@@ -69,10 +84,10 @@ export default function BookingActionModal({
                 start.setMinutes(start.getMinutes() - start.getTimezoneOffset());
                 setStartTime(start.toISOString().slice(0, 16));
 
-                const durationMin = Math.round(
-                    (new Date(existingBooking.end_time).getTime() - new Date(existingBooking.start_time).getTime()) / 60000
-                );
-                setDuration(durationMin.toString());
+                const end = new Date(existingBooking.end_time);
+                end.setMinutes(end.getMinutes() - end.getTimezoneOffset());
+                setEndTime(end.toISOString().slice(0, 16));
+
                 setPaymentStatus(existingBooking.payment_status || 'unpaid');
                 setPaymentMethod(existingBooking.payment_method || null);
                 setNotes(existingBooking.notes || '');
@@ -86,7 +101,11 @@ export default function BookingActionModal({
                 now.setSeconds(0);
                 now.setMilliseconds(0);
                 setStartTime(now.toISOString().slice(0, 16));
-                setDuration('60');
+
+                // Default 1 hour
+                const end = new Date(now.getTime() + 60 * 60000);
+                setEndTime(end.toISOString().slice(0, 16));
+
                 setPaymentStatus('unpaid');
                 setPaymentMethod(null);
                 setNotes('');
@@ -95,12 +114,14 @@ export default function BookingActionModal({
         }
     }, [isOpen, existingBooking]);
 
-    // Force 3h if Open Session is checked for new booking
+    // Force 3h if Mimdinare is checked for new booking
     useEffect(() => {
-        if (isOpenSession && !existingBooking) {
-            setDuration('180');
+        if (isOpenSession && !existingBooking && startTime) {
+            const start = new Date(startTime);
+            const end = new Date(start.getTime() + 180 * 60000); // 3 hours
+            setEndTime(end.toISOString().slice(0, 16));
         }
-    }, [isOpenSession, existingBooking]);
+    }, [isOpenSession, existingBooking, startTime]);
 
     // Calculate Prices when entering Stop Mode
     useEffect(() => {
@@ -160,11 +181,11 @@ export default function BookingActionModal({
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (targetStationIds.length === 0 || !startTime) return;
+        if (targetStationIds.length === 0 || !startTime || !endTime) return;
         setLoading(true);
 
         const start = new Date(startTime);
-        const end = new Date(start.getTime() + parseInt(duration) * 60000);
+        const end = new Date(endTime);
 
         let finalNotes = notes;
         if (isOpenSession && !existingBooking) {
@@ -447,28 +468,33 @@ export default function BookingActionModal({
                                 </div>
                             </div>
 
-                            <div className="grid grid-cols-2 gap-4">
-                                <div>
-                                    <label className="block text-xs font-semibold text-gray-400 uppercase mb-1">Start Time</label>
-                                    <input
-                                        type="datetime-local"
-                                        required
-                                        className="w-full bg-black border border-white/20 rounded-lg px-3 py-2 text-white focus:border-blue-500 outline-none text-xs"
-                                        value={startTime}
-                                        onChange={e => setStartTime(e.target.value)}
-                                    />
+                            <div className="grid grid-cols-1 gap-4">
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label className="block text-xs font-semibold text-gray-400 uppercase mb-1">Start Time</label>
+                                        <input
+                                            type="datetime-local"
+                                            required
+                                            className="w-full bg-black border border-white/20 rounded-lg px-3 py-2 text-white focus:border-blue-500 outline-none text-xs"
+                                            value={startTime}
+                                            onChange={e => setStartTime(e.target.value)}
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block text-xs font-semibold text-gray-400 uppercase mb-1">End Time</label>
+                                        <input
+                                            type="datetime-local"
+                                            required
+                                            className="w-full bg-black border border-white/20 rounded-lg px-3 py-2 text-white focus:border-blue-500 outline-none text-xs"
+                                            value={endTime}
+                                            onChange={e => setEndTime(e.target.value)}
+                                        />
+                                    </div>
                                 </div>
-                                <div>
-                                    <label className="block text-xs font-semibold text-gray-400 uppercase mb-1">Duration (min)</label>
-                                    <input
-                                        type="number"
-                                        min="30"
-                                        step="30"
-                                        required
-                                        className="w-full bg-black border border-white/20 rounded-lg px-3 py-2 text-white focus:border-blue-500 outline-none"
-                                        value={duration}
-                                        onChange={e => setDuration(e.target.value)}
-                                    />
+                                {/* Duration Display */}
+                                <div className="text-right">
+                                    <span className="text-xs text-gray-400 uppercase mr-2">Calculated Duration:</span>
+                                    <span className="text-sm font-bold text-blue-400">{getDurationDisplay()}</span>
                                 </div>
                             </div>
 
