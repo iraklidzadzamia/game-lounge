@@ -40,12 +40,25 @@ export default function BookingActionModal({
     // Form State
     const [customerName, setCustomerName] = useState('');
     const [customerPhone, setCustomerPhone] = useState('');
-    const [startTime, setStartTime] = useState('');
-    // const [duration, setDuration] = useState('60'); // Removed
-    const [endTime, setEndTime] = useState('');
+
+    // Split Date/Time State
+    const [startDate, setStartDate] = useState('');
+    const [startClock, setStartClock] = useState('');
+    const [endDate, setEndDate] = useState('');
+    const [endClock, setEndClock] = useState('');
+
+    // Legacy removed: startTime, endTime
+
     const [paymentStatus, setPaymentStatus] = useState<'paid' | 'unpaid'>('unpaid');
     const [paymentMethod, setPaymentMethod] = useState<'cash' | 'card_bog' | 'card_tbc' | null>(null);
     const [notes, setNotes] = useState('');
+
+    // Generate Time Slots (00:00 - 23:30)
+    const TIME_SLOTS = Array.from({ length: 48 }, (_, i) => {
+        const h = Math.floor(i / 2).toString().padStart(2, '0');
+        const m = (i % 2 === 0 ? '00' : '30');
+        return `${h}:${m}`;
+    });
 
     // New Open/Stop Logic
     const [isOpenSession, setIsOpenSession] = useState(false);
@@ -58,11 +71,20 @@ export default function BookingActionModal({
     const [elapsedMinutes, setElapsedMinutes] = useState(0);
     const [reservedMinutes, setReservedMinutes] = useState(0);
 
+    // Helper to combine date+time to string
+    const getISO = (dateStr: string, timeStr: string) => {
+        if (!dateStr || !timeStr) return null;
+        return `${dateStr}T${timeStr}:00`;
+    };
+
     // Derived Duration for Display
     const getDurationDisplay = () => {
-        if (!startTime || !endTime) return '0 min';
-        const start = new Date(startTime);
-        const end = new Date(endTime);
+        const startISO = getISO(startDate, startClock);
+        const endISO = getISO(endDate, endClock);
+        if (!startISO || !endISO) return '0 min';
+
+        const start = new Date(startISO);
+        const end = new Date(endISO);
         const diffMs = end.getTime() - start.getTime();
         const minutes = Math.round(diffMs / 60000);
         if (minutes < 0) return 'Invalid dates';
@@ -70,6 +92,16 @@ export default function BookingActionModal({
         const h = Math.floor(minutes / 60);
         const m = minutes % 60;
         return h > 0 ? `${h}h ${m}m (${minutes} min)` : `${minutes} min`;
+    };
+
+    const parseDateToParts = (isoString: string) => {
+        const date = new Date(isoString);
+        date.setMinutes(date.getMinutes() - date.getTimezoneOffset());
+        const iso = date.toISOString();
+        return {
+            date: iso.slice(0, 10),
+            time: iso.slice(11, 16)
+        };
     };
 
     useEffect(() => {
@@ -80,13 +112,13 @@ export default function BookingActionModal({
                 setCustomerName(existingBooking.customer_name);
                 setCustomerPhone(existingBooking.customer_phone);
 
-                const start = new Date(existingBooking.start_time);
-                start.setMinutes(start.getMinutes() - start.getTimezoneOffset());
-                setStartTime(start.toISOString().slice(0, 16));
+                const startParts = parseDateToParts(existingBooking.start_time);
+                setStartDate(startParts.date);
+                setStartClock(startParts.time);
 
-                const end = new Date(existingBooking.end_time);
-                end.setMinutes(end.getMinutes() - end.getTimezoneOffset());
-                setEndTime(end.toISOString().slice(0, 16));
+                const endParts = parseDateToParts(existingBooking.end_time);
+                setEndDate(endParts.date);
+                setEndClock(endParts.time);
 
                 setPaymentStatus(existingBooking.payment_status || 'unpaid');
                 setPaymentMethod(existingBooking.payment_method || null);
@@ -98,13 +130,17 @@ export default function BookingActionModal({
                 setCustomerPhone('');
                 const now = new Date();
                 now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
-                now.setSeconds(0);
-                now.setMilliseconds(0);
-                setStartTime(now.toISOString().slice(0, 16));
 
-                // Default 1 hour
+                // Current time rounded to ISO parts
+                const iso = now.toISOString();
+                setStartDate(iso.slice(0, 10));
+                setStartClock(iso.slice(11, 16));
+
+                // Default 1 hour later
                 const end = new Date(now.getTime() + 60 * 60000);
-                setEndTime(end.toISOString().slice(0, 16));
+                const endIso = end.toISOString();
+                setEndDate(endIso.slice(0, 10));
+                setEndClock(endIso.slice(11, 16));
 
                 setPaymentStatus('unpaid');
                 setPaymentMethod(null);
@@ -116,12 +152,17 @@ export default function BookingActionModal({
 
     // Force 3h if Mimdinare is checked for new booking
     useEffect(() => {
-        if (isOpenSession && !existingBooking && startTime) {
-            const start = new Date(startTime);
-            const end = new Date(start.getTime() + 180 * 60000); // 3 hours
-            setEndTime(end.toISOString().slice(0, 16));
+        if (isOpenSession && !existingBooking && startDate && startClock) {
+            const startISO = getISO(startDate, startClock);
+            if (startISO) {
+                const start = new Date(startISO);
+                const end = new Date(start.getTime() + 180 * 60000); // 3 hours
+                const endIso = end.toISOString();
+                setEndDate(endIso.slice(0, 10));
+                setEndClock(endIso.slice(11, 16));
+            }
         }
-    }, [isOpenSession, existingBooking, startTime]);
+    }, [isOpenSession, existingBooking, startDate, startClock]);
 
     // Calculate Prices when entering Stop Mode
     useEffect(() => {
@@ -181,11 +222,14 @@ export default function BookingActionModal({
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (targetStationIds.length === 0 || !startTime || !endTime) return;
+        const startISO = getISO(startDate, startClock);
+        const endISO = getISO(endDate, endClock);
+
+        if (targetStationIds.length === 0 || !startISO || !endISO) return;
         setLoading(true);
 
-        const start = new Date(startTime);
-        const end = new Date(endTime);
+        const start = new Date(startISO);
+        const end = new Date(endISO);
 
         let finalNotes = notes;
         if (isOpenSession && !existingBooking) {
@@ -226,10 +270,6 @@ export default function BookingActionModal({
                     const conflictedStations = (conflicts as any[]).map(c => c.station_id);
                     throw new Error(`Conflict detected! Stations ${conflictedStations.join(', ')} are already booked.`);
                 }
-
-                // Calculate initial price for new bookings if needed, but usually handled by triggers or null.
-                // We'll leave total_price null or calculate it. 
-                // For now, let's leave it null/default as before.
 
                 const newBookings = targetStationIds.map(sid => ({
                     station_id: sid,
@@ -282,6 +322,12 @@ export default function BookingActionModal({
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+            <datalist id="time-slots">
+                {TIME_SLOTS.map(time => (
+                    <option key={time} value={time} />
+                ))}
+            </datalist>
+
             <div className="w-full max-w-md bg-[#111] border border-white/10 rounded-xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
                 <div className="p-4 border-b border-white/10 flex justify-between items-center bg-white/5">
                     <h2 className="text-lg font-bold text-white">
@@ -468,29 +514,51 @@ export default function BookingActionModal({
                                 </div>
                             </div>
 
-                            <div className="grid grid-cols-1 gap-4">
-                                <div className="grid grid-cols-2 gap-4">
-                                    <div>
-                                        <label className="block text-xs font-semibold text-gray-400 uppercase mb-1">Start Time</label>
+                            <div className="space-y-4">
+                                {/* Start Date & Time */}
+                                <div>
+                                    <label className="block text-xs font-semibold text-gray-400 uppercase mb-1">Start</label>
+                                    <div className="flex gap-2">
                                         <input
-                                            type="datetime-local"
+                                            type="date"
                                             required
-                                            className="w-full bg-black border border-white/20 rounded-lg px-3 py-2 text-white focus:border-blue-500 outline-none text-xs [color-scheme:dark]"
-                                            value={startTime}
-                                            onChange={e => setStartTime(e.target.value)}
+                                            className="flex-1 bg-black border border-white/20 rounded-lg px-3 py-2 text-white focus:border-blue-500 outline-none text-xs [color-scheme:dark]"
+                                            value={startDate}
+                                            onChange={e => setStartDate(e.target.value)}
                                         />
-                                    </div>
-                                    <div>
-                                        <label className="block text-xs font-semibold text-gray-400 uppercase mb-1">End Time</label>
                                         <input
-                                            type="datetime-local"
+                                            type="time"
                                             required
-                                            className="w-full bg-black border border-white/20 rounded-lg px-3 py-2 text-white focus:border-blue-500 outline-none text-xs [color-scheme:dark]"
-                                            value={endTime}
-                                            onChange={e => setEndTime(e.target.value)}
+                                            list="time-slots"
+                                            className="w-32 bg-black border border-white/20 rounded-lg px-3 py-2 text-white focus:border-blue-500 outline-none text-xs [color-scheme:dark]"
+                                            value={startClock}
+                                            onChange={e => setStartClock(e.target.value)}
                                         />
                                     </div>
                                 </div>
+
+                                {/* End Date & Time */}
+                                <div>
+                                    <label className="block text-xs font-semibold text-gray-400 uppercase mb-1">End</label>
+                                    <div className="flex gap-2">
+                                        <input
+                                            type="date"
+                                            required
+                                            className="flex-1 bg-black border border-white/20 rounded-lg px-3 py-2 text-white focus:border-blue-500 outline-none text-xs [color-scheme:dark]"
+                                            value={endDate}
+                                            onChange={e => setEndDate(e.target.value)}
+                                        />
+                                        <input
+                                            type="time"
+                                            required
+                                            list="time-slots"
+                                            className="w-32 bg-black border border-white/20 rounded-lg px-3 py-2 text-white focus:border-blue-500 outline-none text-xs [color-scheme:dark]"
+                                            value={endClock}
+                                            onChange={e => setEndClock(e.target.value)}
+                                        />
+                                    </div>
+                                </div>
+
                                 {/* Duration Display */}
                                 <div className="text-right">
                                     <span className="text-xs text-gray-400 uppercase mr-2">Calculated Duration:</span>
