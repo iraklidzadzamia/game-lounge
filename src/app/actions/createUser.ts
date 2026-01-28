@@ -36,15 +36,16 @@ export async function createAdminUser({ email, password, role, branch_access }: 
     }
 
     // Check if requester is Owner in profiles table
-    // Use supabaseAdmin here to ensure we can read profiles even if RLS is strict (though RLS usually allows reading own profile, admin is safer/faster for check)
-    // Actually, stick to proper permissions: requester should be able to read their own profile.
-    const { data: requesterProfile } = await supabaseAdmin
+    // Use supabaseAdmin here to ensure we can read profiles even if RLS is strict
+    // Rename variable to avoid collision
+    const { data: requesterProfile, error: fetchError } = await supabaseAdmin
         .from('profiles')
         .select('role')
         .eq('id', requester.id)
         .single();
 
-    if (!requesterProfile || requesterProfile.role !== 'owner') {
+    // Explicit casting to avoid 'never' inference issue in build
+    if (fetchError || !requesterProfile || (requesterProfile as any).role !== 'owner') {
         return { error: 'Unauthorized: Only Owners can create users.' };
     }
 
@@ -65,7 +66,7 @@ export async function createAdminUser({ email, password, role, branch_access }: 
             id: newUser.user.id,
             role,
             branch_access,
-        });
+        } as any);
 
     if (profileError) {
         return { error: 'Failed to create profile: ' + profileError.message };
