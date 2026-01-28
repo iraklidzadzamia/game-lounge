@@ -231,9 +231,9 @@ export default function BookingActionModal({
         const start = new Date(startISO);
         const end = new Date(endISO);
 
-        let finalNotes = notes;
-        if (isOpenSession && !existingBooking) {
-            finalNotes = (notes ? notes + " " : "") + "OPEN_SESSION";
+        let finalNotes = notes.replace(/OPEN_SESSION/g, '').trim();
+        if (isOpenSession) {
+            finalNotes = (finalNotes ? finalNotes + " " : "") + "OPEN_SESSION";
         }
 
         try {
@@ -449,12 +449,21 @@ export default function BookingActionModal({
                                     </div>
                                 </label>
                             ) : isOpenSession && (
-                                <div className="p-3 bg-purple-500/10 border border-purple-500/30 rounded-lg flex items-center gap-2 mb-4">
-                                    <span className="w-2 h-2 bg-purple-500 rounded-full animate-pulse"></span>
-                                    <div>
-                                        <span className="text-purple-400 font-bold text-sm block">Mimdinare Session Active</span>
-                                        <span className="text-[10px] text-gray-500">This booking is open-ended. Click STOP when done.</span>
+                                <div className="p-3 bg-purple-500/10 border border-purple-500/30 rounded-lg mb-4 flex justify-between items-center">
+                                    <div className="flex items-center gap-2">
+                                        <span className="w-2 h-2 bg-purple-500 rounded-full animate-pulse"></span>
+                                        <div>
+                                            <span className="text-purple-400 font-bold text-sm block">Mimdinare Session Active</span>
+                                            <span className="text-[10px] text-gray-500">Open-Ended</span>
+                                        </div>
                                     </div>
+                                    <button
+                                        type="button"
+                                        onClick={() => setIsOpenSession(false)}
+                                        className="px-2 py-1 bg-purple-500/20 hover:bg-purple-500/30 text-purple-300 text-[10px] rounded border border-purple-500/30 transition-all"
+                                    >
+                                        Set End Time
+                                    </button>
                                 </div>
                             )}
 
