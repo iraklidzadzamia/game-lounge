@@ -14,7 +14,7 @@ const getStationType = async (id: string) => {
 export async function POST(request: Request) {
     try {
         const body = await request.json();
-        const { startTime, endTime, stationIds, customerName, customerPhone, customerEmail, duration } = body;
+        const { startTime, endTime, stationIds, customerName, customerPhone, customerEmail, duration, branchId } = body;
 
         // 1. Basic Validation
         if (!startTime || !endTime || !stationIds || !stationIds.length || !customerName || !customerPhone) {
@@ -25,13 +25,21 @@ export async function POST(request: Request) {
         const end = new Date(endTime).toISOString();
 
         // 2. Race Condition Check (Double Check Availability)
-        const { data: conflicts } = await supabase
+        let query = supabase
             .from('bookings')
             .select('station_id')
             .in('station_id', stationIds)
             .eq('status', 'CONFIRMED')
             .lt('start_time', end)
             .gt('end_time', start);
+
+        if (branchId) {
+            query = query.eq('branch_id', branchId);
+        } else {
+            query = query.eq('branch_id', 'chikovani');
+        }
+
+        const { data: conflicts } = await query;
 
         if (conflicts && conflicts.length > 0) {
             return NextResponse.json({
@@ -47,6 +55,7 @@ export async function POST(request: Request) {
 
             return {
                 station_id: id,
+                branch_id: branchId || 'chikovani', // Save branch_id
                 start_time: start,
                 end_time: end,
                 customer_name: customerName,

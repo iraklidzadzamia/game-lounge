@@ -79,12 +79,107 @@ interface FloorMapProps {
     selectedSeats: string[];
     onToggle: (id: string, type: string) => void;
     unavailableIds?: string[];
+    branchId: string;
 }
 
-export default function FloorMap({ selectedSeats, onToggle, unavailableIds = [] }: FloorMapProps) {
+export default function FloorMap({ selectedSeats, onToggle, unavailableIds = [], branchId }: FloorMapProps) {
     const [activeFloor, setActiveFloor] = useState(2);
 
     const currentFloor = FLOORS.find(f => f.id === activeFloor);
+
+    // Helper: Prefix logic
+    // If branch is dinamo, IDs are prefixed 'dinamo-'.
+    // Logic: 
+    // - Visual ID (from FLOORS) is simple (e.g. 'vip-1').
+    // - Real ID (in selectedSeats/unavailableIds) is prefixed (e.g. 'dinamo-vip-1').
+
+    // We need to convert Visual ID -> Real ID when Toggling.
+    // We need to match Real ID -> Visual ID when checking selection/unavailability.
+
+    const getRealId = (visualId: string) => {
+        return branchId === 'dinamo' ? `dinamo-${visualId}` : visualId;
+    };
+
+    // When rendering, we have 'station.id' (visual).
+    // We need to check if 'getRealId(station.id)' is in the lists.
+
+    // --- CHIKOVANI LAYOUT ---
+    const renderChikovaniLayout = () => (
+        <div className="w-full flex flex-col gap-8 p-4">
+            {/* Row 1: VIP & PS5 (Grid) */}
+            <div className="flex flex-col md:flex-row gap-8">
+                {/* VIP */}
+                <div className="flex-1 glass-panel p-4 rounded-xl border border-white/10">
+                    <h3 className="text-neon-cyan font-orbitron mb-4 text-center">VIP ROOMS</h3>
+                    <div className="flex justify-center gap-4">
+                        {renderStation({ id: 'chikovani-vip-1', name: 'VIP 1', type: 'VIP', branch_id: 'chikovani' }, true)}
+                        {renderStation({ id: 'chikovani-vip-2', name: 'VIP 2', type: 'VIP', branch_id: 'chikovani' }, true)}
+                    </div>
+                </div>
+                {/* PS5 */}
+                <div className="flex-1 glass-panel p-4 rounded-xl border border-white/10">
+                    <h3 className="text-neon-cyan font-orbitron mb-4 text-center">PLAYSTATION 5</h3>
+                    <div className="grid grid-cols-3 gap-4 justify-items-center">
+                        {Array.from({ length: 6 }).map((_, i) =>
+                            renderStation({ id: `chikovani-ps5-${i + 1}`, name: `PS5 ${i + 1}`, type: 'PS5', branch_id: 'chikovani' })
+                        )}
+                    </div>
+                </div>
+            </div>
+
+            {/* Row 2: PCs */}
+            <div className="flex flex-col xl:flex-row gap-8">
+
+                {/* Standard (2 Cols of 5) */}
+                <div className="flex-1 glass-panel p-4 rounded-xl border border-white/10 flex flex-col items-center">
+                    <h3 className="text-white/70 font-orbitron mb-4 text-sm">STANDARD (10)</h3>
+                    <div className="flex gap-4">
+                        <div className="flex flex-col gap-2">
+                            {Array.from({ length: 5 }).map((_, i) =>
+                                renderStation({ id: `chikovani-std-${i + 1}`, name: `STD ${i + 1}`, type: 'STANDARD', branch_id: 'chikovani' })
+                            )}
+                        </div>
+                        <div className="flex flex-col gap-2">
+                            {Array.from({ length: 5 }).map((_, i) =>
+                                renderStation({ id: `chikovani-std-${i + 6}`, name: `STD ${i + 6}`, type: 'STANDARD', branch_id: 'chikovani' })
+                            )}
+                        </div>
+                    </div>
+                </div>
+
+                {/* Pro (Vertical 7) */}
+                <div className="flex-1 glass-panel p-4 rounded-xl border border-white/10 flex flex-col items-center">
+                    <h3 className="text-white/70 font-orbitron mb-4 text-sm">PRO (7)</h3>
+                    <div className="flex flex-col gap-2">
+                        {Array.from({ length: 7 }).map((_, i) =>
+                            renderStation({ id: `chikovani-pro-${i + 1}`, name: `PRO ${i + 1}`, type: 'PRO', branch_id: 'chikovani' })
+                        )}
+                    </div>
+                </div>
+
+                {/* Premium (Vertical 5) */}
+                <div className="flex-1 glass-panel p-4 rounded-xl border border-white/10 flex flex-col items-center">
+                    <h3 className="text-neon-cyan font-orbitron mb-4 text-sm">PREMIUM (5)</h3>
+                    <div className="flex flex-col gap-2">
+                        {Array.from({ length: 5 }).map((_, i) =>
+                            renderStation({ id: `chikovani-prem-${i + 1}`, name: `PREM ${i + 1}`, type: 'PREMIUM', branch_id: 'chikovani' })
+                        )}
+                    </div>
+                </div>
+
+                {/* Premium X (2x2) */}
+                <div className="flex-1 glass-panel p-4 rounded-xl border border-white/10 flex flex-col items-center justify-center">
+                    <h3 className="text-neon-cyan font-orbitron mb-4 text-sm">PREMIUM X (4)</h3>
+                    <div className="grid grid-cols-2 gap-2">
+                        {Array.from({ length: 4 }).map((_, i) =>
+                            renderStation({ id: `chikovani-premx-${i + 1}`, name: `X ${i + 1}`, type: 'PREMIUM_X', branch_id: 'chikovani' })
+                        )}
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    );
 
     // Render logic for PC Floors (2 & 3)
     const renderPcFloor = (groups: any[]) => (
@@ -168,8 +263,9 @@ export default function FloorMap({ selectedSeats, onToggle, unavailableIds = [] 
     );
 
     const renderStation = (station: any, isBig = false) => {
-        const isSelected = selectedSeats.includes(station.id);
-        const isUnavailable = unavailableIds.includes(station.id);
+        const realId = getRealId(station.id);
+        const isSelected = selectedSeats.includes(realId);
+        const isUnavailable = unavailableIds.includes(realId);
 
         const isPremium = station.type === "PREMIUM";
         const isVip = station.type === "VIP";
@@ -204,7 +300,7 @@ export default function FloorMap({ selectedSeats, onToggle, unavailableIds = [] 
                 key={station.id}
                 whileHover={!isUnavailable ? { scale: 1.05 } : {}}
                 whileTap={!isUnavailable ? { scale: 0.95 } : {}}
-                onClick={() => !isUnavailable && onToggle(station.id, station.type)}
+                onClick={() => !isUnavailable && onToggle(realId, station.type)}
                 disabled={isUnavailable}
                 className={`
                     group relative rounded-md border transition-all duration-300 flex flex-col items-center justify-center
@@ -234,6 +330,10 @@ export default function FloorMap({ selectedSeats, onToggle, unavailableIds = [] 
             </motion.button>
         );
     };
+
+    if (branchId === 'chikovani') {
+        return renderChikovaniLayout();
+    }
 
     return (
         <div className="w-full h-full flex flex-col">

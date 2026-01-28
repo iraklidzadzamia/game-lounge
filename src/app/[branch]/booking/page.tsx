@@ -12,7 +12,7 @@ const isSameDate = (d1: Date, d2: Date) => {
         d1.getDate() === d2.getDate();
 };
 
-export default function BookingPage() {
+export default function BookingPage({ params }: { params: { branch: string } }) {
     const [isMounted, setIsMounted] = useState(false);
     const [selectedDate, setSelectedDate] = useState<Date>(new Date());
 
@@ -52,6 +52,7 @@ export default function BookingPage() {
                     body: JSON.stringify({
                         // Fetch conflicts for all stations to map them out
                         stationIds: getAllStationIds(),
+                        branchId: params.branch,
                         startTime: selectedDate.toISOString(),
                         endTime: endTime.toISOString()
                     })
@@ -84,13 +85,32 @@ export default function BookingPage() {
         }
     };
 
-    // Helper to get all IDs (hardcoded for now to match Seed)
+    // Helper to get all IDs
     const getAllStationIds = () => {
-        const ids = [];
-        ids.push('vip-1', 'vip-2');
-        for (let i = 1; i <= 5; i++) ids.push(`pc-2-l-${i}`, `pc-3-l-${i}`); // Zone A
-        for (let i = 1; i <= 5; i++) ids.push(`pc-2-c-${i}`, `pc-3-c-${i}`); // Zone B
-        for (let i = 1; i <= 6; i++) ids.push(`pc-2-r-${i}`, `pc-3-r-${i}`); // Zone C
+        const ids: string[] = [];
+
+        if (params.branch === 'dinamo') {
+            // Dinamo (Old layout)
+            const prefix = 'dinamo-';
+            ids.push(`${prefix}vip-1`, `${prefix}vip-2`);
+            for (let i = 1; i <= 5; i++) ids.push(`${prefix}pc-2-l-${i}`, `${prefix}pc-3-l-${i}`);
+            for (let i = 1; i <= 5; i++) ids.push(`${prefix}pc-2-c-${i}`, `${prefix}pc-3-c-${i}`);
+            for (let i = 1; i <= 6; i++) ids.push(`${prefix}pc-2-r-${i}`, `${prefix}pc-3-r-${i}`);
+        } else {
+            // Chikovani (New layout)
+            const branch = 'chikovani';
+            // VIP & PS5
+            ids.push(`${branch}-vip-1`, `${branch}-vip-2`);
+            for (let i = 1; i <= 6; i++) ids.push(`${branch}-ps5-${i}`);
+            // Standard
+            for (let i = 1; i <= 10; i++) ids.push(`${branch}-std-${i}`);
+            // Pro
+            for (let i = 1; i <= 7; i++) ids.push(`${branch}-pro-${i}`);
+            // Premium
+            for (let i = 1; i <= 5; i++) ids.push(`${branch}-prem-${i}`);
+            // Premium X
+            for (let i = 1; i <= 4; i++) ids.push(`${branch}-premx-${i}`);
+        }
         return ids;
     };
 
@@ -115,7 +135,7 @@ export default function BookingPage() {
             <div className="max-w-7xl mx-auto relative z-10">
                 {/* Header */}
                 <header className="flex justify-between items-center mb-12">
-                    <Link href="/" className="text-neon-cyan hover:text-white transition-colors duration-300 flex items-center gap-2">
+                    <Link href={`/${params.branch}`} className="text-neon-cyan hover:text-white transition-colors duration-300 flex items-center gap-2">
                         ← BACK TO HOME
                     </Link>
                     <h1 className="font-orbitron text-3xl md:text-4xl text-white font-bold tracking-wider">
@@ -363,6 +383,7 @@ export default function BookingPage() {
                                 selectedSeats={selectedSeats}
                                 onToggle={handleSeatToggle}
                                 unavailableIds={unavailableIds}
+                                branchId={params.branch}
                             />
                         </section>
                     </div>
@@ -374,6 +395,7 @@ export default function BookingPage() {
                             duration={duration}
                             seats={selectedSeats}
                             seatTypes={selectedSeatTypes}
+                            branchId={params.branch}
                         />
                     </div>
                 </div>

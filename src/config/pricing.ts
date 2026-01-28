@@ -1,4 +1,4 @@
-export type StationType = "PREMIUM" | "PRO" | "VIP";
+export type StationType = 'PREMIUM' | 'PRO' | 'VIP' | 'STANDARD' | 'PREMIUM_X' | 'PS5';
 
 interface PriceConfig {
     hourlyRate: number;
@@ -8,25 +8,46 @@ interface PriceConfig {
 }
 
 export const PRICING: Record<StationType, PriceConfig> = {
-    PREMIUM: {
-        hourlyRate: 10,
+    STANDARD: {
+        hourlyRate: 7,
         bundles: {
-            3: 27, // Regular would be 30
-            5: 40, // Regular would be 50
+            3: 18,
+            5: 30,
         }
     },
     PRO: {
         hourlyRate: 8,
         bundles: {
-            3: 22, // Regular would be 24
-            5: 35, // Regular would be 40
+            3: 22,
+            5: 35,
+        }
+    },
+    PREMIUM: {
+        hourlyRate: 10,
+        bundles: {
+            3: 27,
+            5: 40,
+        }
+    },
+    PREMIUM_X: {
+        hourlyRate: 11,
+        bundles: {
+            3: 30,
+            5: 45,
         }
     },
     VIP: {
         hourlyRate: 25,
         bundles: {
-            2: 45, // Regular would be 50
-            3: 60, // Regular would be 75
+            2: 45,
+            3: 60,
+        }
+    },
+    PS5: {
+        hourlyRate: 8,
+        bundles: {
+            3: 22,
+            5: 35,
         }
     }
 };

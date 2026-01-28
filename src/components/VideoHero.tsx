@@ -4,7 +4,13 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import GlitchText from "./GlitchText";
 
-export default function VideoHero() {
+interface VideoHeroProps {
+    branchSlug?: string;
+}
+
+export default function VideoHero({ branchSlug }: VideoHeroProps) {
+    const bookingLink = branchSlug ? `/${branchSlug}/booking` : '/booking';
+
     return (
         <section className="relative h-screen w-full overflow-hidden">
             {/* Video Background */}
@@ -66,7 +72,7 @@ export default function VideoHero() {
                     transition={{ duration: 0.8, delay: 0.6 }}
                 >
                     <Link
-                        href="/booking"
+                        href={bookingLink}
                         className="px-10 py-5 bg-neon-cyan text-black font-orbitron font-bold tracking-wider text-xl rounded-2xl hover:bg-white transition-all duration-300 shadow-[0_0_20px_rgba(0,243,255,0.4)] hover:shadow-[0_0_40px_rgba(0,243,255,0.6)] hover:-translate-y-1 transform active:scale-95"
                     >
                         BOOK YOUR STATION

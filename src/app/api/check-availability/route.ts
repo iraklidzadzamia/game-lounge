@@ -5,7 +5,7 @@ export const dynamic = 'force-dynamic';
 
 export async function POST(request: Request) {
     try {
-        const { startTime, endTime, stationIds } = await request.json();
+        const { startTime, endTime, stationIds, branchId } = await request.json();
 
         if (!startTime || !endTime || !stationIds || !Array.isArray(stationIds)) {
             return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
@@ -18,13 +18,22 @@ export async function POST(request: Request) {
 
         // Query for ANY booking that overlaps with this time window for these stations
         // Overlap logic: (BookStart < ReqEnd) AND (BookEnd > ReqStart)
-        const { data: conflicts, error } = await supabase
+        let query = supabase
             .from('bookings')
             .select('station_id')
             .in('station_id', stationIds)
             .eq('status', 'CONFIRMED') // Only check confirmed bookings
             .lt('start_time', end)
             .gt('end_time', start);
+
+        if (branchId) {
+            query = query.eq('branch_id', branchId);
+        } else {
+            // Default to chikovani for backward compatibility or safety
+            query = query.eq('branch_id', 'chikovani');
+        }
+
+        const { data: conflicts, error } = await query;
 
         if (error) {
             console.error('Availability check error:', error);

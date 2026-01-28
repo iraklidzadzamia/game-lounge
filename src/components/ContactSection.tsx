@@ -2,7 +2,15 @@
 
 import { motion } from "framer-motion";
 
-export default function ContactSection() {
+import { BRANCHES, getBranchBySlug } from "@/config/branches";
+
+interface ContactSectionProps {
+    branchSlug?: string;
+}
+
+export default function ContactSection({ branchSlug }: ContactSectionProps) {
+    const branch = branchSlug ? getBranchBySlug(branchSlug) : BRANCHES[0];
+
     return (
         <section className="relative py-20 md:py-32 px-4 md:px-8 bg-void">
             {/* Gradient overlay */}
@@ -55,13 +63,13 @@ export default function ContactSection() {
                                 <h3 className="font-orbitron text-xl text-white">Location</h3>
                             </div>
                             <p className="text-white/70 text-lg ml-13 pl-[52px] mb-4">
-                                Simon Chikovani str 4a
+                                {branch?.address || "Tbilisi, Georgia"}
                                 <br />
-                                <span className="text-white/50">Tbilisi, Georgia</span>
+                                <span className="text-white/50">{branch?.name} Branch</span>
                             </p>
                             <div className="pl-[52px]">
                                 <a
-                                    href="https://share.google/TYNY1WyToYO47aZuY"
+                                    href={branch?.googleMapsUrl || "https://maps.google.com"}
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     className="inline-flex items-center gap-2 text-neon-cyan hover:text-white transition-colors text-sm font-orbitron tracking-wider border-b border-neon-cyan/50 hover:border-white pb-1"
@@ -121,12 +129,10 @@ export default function ContactSection() {
                                 </h3>
                             </div>
                             <a
-                                href="https://api.whatsapp.com/send?phone=995555201414"
-                                target="_blank"
-                                rel="noopener noreferrer"
+                                href={`tel:${branch?.phone || ''}`}
                                 className="ml-[52px] inline-flex items-center gap-2 px-6 py-3 bg-green-500/20 border border-green-500/50 rounded-lg text-green-400 font-inter font-medium hover:bg-green-500/30 transition-colors"
                             >
-                                <span>Message on WhatsApp</span>
+                                <span>{branch?.phone || "Call Us"}</span>
                                 <svg
                                     className="w-4 h-4"
                                     fill="none"

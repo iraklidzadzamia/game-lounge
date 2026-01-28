@@ -9,9 +9,10 @@ interface BookingSummaryProps {
     duration: number;
     seats: string[];
     seatTypes: Record<string, string>;
+    branchId: string;
 }
 
-export default function BookingSummary({ date, duration, seats, seatTypes }: BookingSummaryProps) {
+export default function BookingSummary({ date, duration, seats, seatTypes, branchId }: BookingSummaryProps) {
     const router = useRouter();
     const [customerName, setCustomerName] = useState("");
     const [customerPhone, setCustomerPhone] = useState("");
@@ -40,6 +41,7 @@ export default function BookingSummary({ date, duration, seats, seatTypes }: Boo
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     stationIds: seats,
+                    branchId,
                     startTime: date.toISOString(),
                     endTime: endTime.toISOString(),
                     customerName,
@@ -60,7 +62,7 @@ export default function BookingSummary({ date, duration, seats, seatTypes }: Boo
             // Success!
             alert("Booking Confirmed! See you at the lounge.");
             // Reset or Redirect
-            router.push('/');
+            router.push(`/${branchId}`);
 
         } catch (error) {
             console.error(error);
