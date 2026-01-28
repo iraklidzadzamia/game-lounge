@@ -1,9 +1,13 @@
 'use server';
 
 import { createClient } from '@supabase/supabase-js';
+import { createServerActionClient } from '@supabase/auth-helpers-nextjs';
 import { cookies } from 'next/headers';
+import { Database } from '@/types/database.types';
 
-const supabaseAdmin = createClient(
+// Admin client for privileged operations (Creating users)
+// Does NOT use cookies, uses Service Key directly.
+const supabaseAdmin = createClient<Database>(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.SUPABASE_SERVICE_ROLE_KEY!,
     {
@@ -22,23 +26,18 @@ interface CreateUserParams {
 }
 
 export async function createAdminUser({ email, password, role, branch_access }: CreateUserParams) {
-    // Check if requester is Owner (Basic check based on cookie session isn't enough for SR key usage)
-    // We should verify the session using normal client first?
-    // Ideally: 1. Get current user from cookies. 2. Check if they are 'owner' in profiles.
-
-    // Verify requester permissions
-    const cookieStore = cookies();
-    const supabase = createClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-        { cookies: { get: (name) => cookieStore.get(name)?.value } }
-    );
+    // 1. Verify Requesting User (Must be Owner)
+    // Use createServerActionClient to automatically handle cookies in Server Actions
+    const supabase = createServerActionClient<Database>({ cookies });
 
     const { data: { user: requester } } = await supabase.auth.getUser();
     if (!requester) {
         return { error: 'Not authenticated' };
     }
 
+    // Check if requester is Owner in profiles table
+    // Use supabaseAdmin here to ensure we can read profiles even if RLS is strict (though RLS usually allows reading own profile, admin is safer/faster for check)
+    // Actually, stick to proper permissions: requester should be able to read their own profile.
     const { data: requesterProfile } = await supabaseAdmin
         .from('profiles')
         .select('role')
@@ -49,7 +48,7 @@ export async function createAdminUser({ email, password, role, branch_access }: 
         return { error: 'Unauthorized: Only Owners can create users.' };
     }
 
-    // Proceed with creation
+    // 2. Create New User (Using Admin Client)
     const { data: newUser, error: authError } = await supabaseAdmin.auth.admin.createUser({
         email,
         password,
@@ -59,7 +58,7 @@ export async function createAdminUser({ email, password, role, branch_access }: 
     if (authError) return { error: authError.message };
     if (!newUser.user) return { error: 'Failed to create user object' };
 
-    // Create Profile
+    // 3. Create Profile for New User
     const { error: profileError } = await supabaseAdmin
         .from('profiles')
         .insert({
@@ -69,8 +68,6 @@ export async function createAdminUser({ email, password, role, branch_access }: 
         });
 
     if (profileError) {
-        // Rollback auth user if profile fails? 
-        // Manual cleanup: await supabaseAdmin.auth.admin.deleteUser(newUser.user.id);
         return { error: 'Failed to create profile: ' + profileError.message };
     }
 
