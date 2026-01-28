@@ -41,6 +41,7 @@ export default function BookingsTable({ bookings, isLoading, onRefresh }: Bookin
         const newStatus = booking.payment_status === 'paid' ? 'unpaid' : 'paid';
         const { error } = await supabase
             .from('bookings')
+            // @ts-ignore
             .update({ payment_status: newStatus })
             .eq('id', booking.id);
 
@@ -94,8 +95,8 @@ export default function BookingsTable({ bookings, isLoading, onRefresh }: Bookin
                                     onClick={() => togglePaymentStatus(booking)}
                                     disabled={!!processingId}
                                     className={`inline-flex items-center gap-2 px-2.5 py-1 rounded-full text-xs font-medium cursor-pointer transition-all ${booking.payment_status === 'paid'
-                                            ? 'bg-green-500/20 text-green-400 border border-green-500/30 hover:bg-green-500/30'
-                                            : 'bg-yellow-500/10 text-yellow-500 border border-yellow-500/20 hover:bg-yellow-500/20'
+                                        ? 'bg-green-500/20 text-green-400 border border-green-500/30 hover:bg-green-500/30'
+                                        : 'bg-yellow-500/10 text-yellow-500 border border-yellow-500/20 hover:bg-yellow-500/20'
                                         }`}
                                 >
                                     <span className={`w-1.5 h-1.5 rounded-full ${booking.payment_status === 'paid' ? 'bg-green-500' : 'bg-yellow-500'}`} />
