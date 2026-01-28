@@ -119,34 +119,33 @@ export default function FloorMap({ selectedSeats, onToggle, unavailableIds = [],
                     {/* Premium Area Container */}
                     <div className="flex-1 glass-panel p-4 rounded-xl border border-white/10 flex flex-col items-center">
                         <h3 className="text-neon-cyan font-orbitron mb-4 text-sm text-center">PREMIUM AREA</h3>
-                        <div className="flex gap-6 items-stretch h-full">
-                            {/* Left Column: VIP 2 (Top) -> PS5s (Bottom) */}
-                            <div className="flex flex-col gap-4 justify-between pt-2">
-                                {/* VIP 2 (Dominant Space) */}
-                                <div className="flex-1 border border-electric-purple/30 bg-electric-purple/10 p-4 rounded flex flex-col items-center justify-center relative min-h-[200px]">
-                                    <span className="text-xs text-electric-purple mb-2 font-orbitron font-bold">VIP 2</span>
-                                    {renderStation({ id: 'chikovani-vip-2', name: 'VIP 2', type: 'VIP', branch_id: 'chikovani' })}
-                                </div>
 
-                                {/* PS5 1 & 2 (Bottom) */}
-                                <div className="flex flex-col gap-2 py-2">
-                                    <span className="text-[10px] text-white/30 font-orbitron text-center mb-1">PS5</span>
-                                    <div className="flex gap-2">
-                                        {renderStation({ id: 'chikovani-ps5-1', name: 'PS5 1', type: 'PS5', branch_id: 'chikovani' })}
-                                        {renderStation({ id: 'chikovani-ps5-2', name: 'PS5 2', type: 'PS5', branch_id: 'chikovani' })}
-                                    </div>
+                        {/* CSS Grid for Precise Alignment */}
+                        <div className="grid grid-cols-2 gap-x-6 gap-y-2 w-full">
+
+                            {/* LEFT COLUMN */}
+
+                            {/* VIP 2: Spans rows 1-4 (Matches Prem 1-4) */}
+                            <div className="row-span-4 border border-electric-purple/30 bg-electric-purple/10 p-4 rounded flex flex-col items-center justify-center relative">
+                                <span className="text-xs text-electric-purple mb-2 font-orbitron font-bold">VIP 2</span>
+                                {renderStation({ id: 'chikovani-vip-2', name: 'VIP 2', type: 'VIP', branch_id: 'chikovani' })}
+                            </div>
+
+                            {/* PS5 1 & 2: Row 5 (Matches Prem 5) */}
+                            <div className="row-start-5 flex flex-col gap-1 items-center justify-center py-2">
+                                <span className="text-[10px] text-white/30 font-orbitron text-center">PS5</span>
+                                <div className="flex gap-2">
+                                    {renderStation({ id: 'chikovani-ps5-1', name: 'PS5 1', type: 'PS5', branch_id: 'chikovani' })}
+                                    {renderStation({ id: 'chikovani-ps5-2', name: 'PS5 2', type: 'PS5', branch_id: 'chikovani' })}
                                 </div>
                             </div>
 
-                            {/* Premium (Vertical - Right) */}
-                            <div className="flex flex-col items-center h-full justify-center">
-                                <span className="text-[10px] text-white/30 font-orbitron text-center mb-1">PREM</span>
-                                <div className="flex flex-col gap-2">
-                                    {Array.from({ length: 5 }).map((_, i) =>
-                                        renderStation({ id: `chikovani-prem-${i + 1}`, name: `PREM ${i + 1}`, type: 'PREMIUM', branch_id: 'chikovani' })
-                                    )}
+                            {/* RIGHT COLUMN - Premium 1-5 */}
+                            {Array.from({ length: 5 }).map((_, i) => (
+                                <div key={i} className="flex justify-center items-center">
+                                    {renderStation({ id: `chikovani-prem-${i + 1}`, name: `PREM ${i + 1}`, type: 'PREMIUM', branch_id: 'chikovani' })}
                                 </div>
-                            </div>
+                            ))}
                         </div>
                     </div>
 
