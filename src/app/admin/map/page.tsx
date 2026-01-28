@@ -117,22 +117,22 @@ export default function AdminMapPage() {
                 </div>
             </div>
 
-            <div className="flex-1 bg-[#111] border border-white/10 rounded-xl overflow-hidden relative p-4 overflow-y-auto">
-                {/* Legend */}
-                <div className="absolute top-4 left-4 z-10 flex gap-4 bg-black/50 backdrop-blur rounded-lg p-2 text-xs text-white border border-white/10">
-                    <div className="flex items-center gap-2">
-                        <div className="w-2 h-2 rounded-full bg-green-500 shadow-[0_0_5px_#22c55e]" />
-                        <span>Available</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                        <div className="w-2 h-2 rounded-full bg-red-500 shadow-[0_0_5px_#ef4444]" />
-                        <span>Occupied Now</span>
-                    </div>
-                    <div className="flex items-center gap-2 ml-2 text-gray-400 italic">
-                        <span>(Click any station to Manage)</span>
-                    </div>
+            {/* Legend Row */}
+            <div className="flex flex-wrap gap-4 items-center px-2 py-1 bg-black/50 rounded-lg border border-white/5 w-fit">
+                <div className="flex items-center gap-2 text-xs text-white">
+                    <div className="w-2 h-2 rounded-full bg-green-500 shadow-[0_0_5px_#22c55e]" />
+                    <span>Available</span>
                 </div>
+                <div className="flex items-center gap-2 text-xs text-white">
+                    <div className="w-2 h-2 rounded-full bg-red-500 shadow-[0_0_5px_#ef4444]" />
+                    <span>Occupied Now</span>
+                </div>
+                <div className="flex items-center gap-2 ml-2 text-xs text-gray-400 italic">
+                    <span>(Click any station to Manage)</span>
+                </div>
+            </div>
 
+            <div className="flex-1 bg-[#111] border border-white/10 rounded-xl overflow-hidden relative p-4 overflow-y-auto">
                 <FloorMap
                     branchId={activeBranch}
                     selectedSeats={[]} // No multi-select for visual
