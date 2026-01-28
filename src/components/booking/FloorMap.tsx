@@ -252,7 +252,7 @@ export default function FloorMap({ selectedSeats, onToggle, unavailableIds = [],
 
     // Render logic for PC Floors (2 & 3)
     const renderPcFloor = (groups: any[]) => (
-        <div className="relative w-full h-[550px] md:h-[700px] bg-black/20 p-2 md:p-4 rounded-xl overflow-hidden flex flex-row">
+        <div className="relative w-full h-[550px] md:h-[540px] bg-black/20 p-2 md:p-4 rounded-xl overflow-hidden flex flex-row">
 
             {/* Street View Indicator (Left Side - Vertical) */}
             <div className="h-full flex flex-col items-center justify-center mr-1 md:mr-8 z-10 w-6 md:w-8 flex-shrink-0 border-r border-white/5">
