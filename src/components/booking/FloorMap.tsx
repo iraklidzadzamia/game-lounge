@@ -105,7 +105,7 @@ export default function FloorMap({ selectedSeats, onToggle, unavailableIds = [],
 
     // --- CHIKOVANI LAYOUT ---
     const renderChikovaniLayout = () => (
-        <div className="w-full flex flex-col gap-8 p-4 items-center xl:items-start">
+        <div className="w-full flex flex-col gap-8 p-0 md:p-4 items-center xl:items-start">
             {/* Row 1: Empty Space (Clean) */}
             <div className="flex flex-col lg:flex-row gap-8 min-h-[50px] w-full">
                 {/* Empty */}
@@ -157,14 +157,14 @@ export default function FloorMap({ selectedSeats, onToggle, unavailableIds = [],
                 </div>
 
                 {/* Center Room: PRO + STANDARD + PREM X (Merged) */}
-                <div className="flex-[2] glass-panel p-6 rounded-xl border border-white/10 flex flex-col items-center">
+                <div className="flex-[2] glass-panel p-4 md:p-6 rounded-xl border border-white/10 flex flex-col items-center">
                     <h3 className="text-white/70 font-orbitron mb-6 text-sm flex gap-4 w-full justify-center relative">
                         <span>PRO (7)</span>
                         <span className="text-white/20">|</span>
                         <span>STANDARD (10)</span>
                     </h3>
 
-                    <div className="flex gap-8 md:gap-12 w-full justify-center">
+                    <div className="flex gap-4 md:gap-12 w-full justify-center">
                         {/* LEFT: Pro Column */}
                         <div className="flex flex-col gap-2">
                             {Array.from({ length: 7 }).map((_, i) =>
@@ -173,9 +173,9 @@ export default function FloorMap({ selectedSeats, onToggle, unavailableIds = [],
                         </div>
 
                         {/* RIGHT: Standard + Passage + Premium X */}
-                        <div className="flex flex-col border-l border-white/5 pl-8 md:pl-12">
+                        <div className="flex flex-col border-l border-white/5 pl-4 md:pl-12">
                             {/* Standard Stations */}
-                            <div className="flex gap-4 mb-6">
+                            <div className="flex gap-2 md:gap-4 mb-6">
                                 <div className="flex flex-col gap-2">
                                     {Array.from({ length: 5 }).map((_, i) =>
                                         renderStation({ id: `chikovani-std-${i + 1}`, name: `STD ${i + 1}`, type: 'STANDARD', branch_id: 'chikovani' })
