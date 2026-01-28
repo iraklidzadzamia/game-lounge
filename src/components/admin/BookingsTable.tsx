@@ -76,7 +76,27 @@ export default function BookingsTable({ bookings, isLoading, onRefresh }: Bookin
                             <td className="px-6 py-4 font-medium text-white">
                                 {formatDate(booking.start_time)}
                                 <div className="text-xs text-gray-500">
-                                    {Math.round((new Date(booking.end_time).getTime() - new Date(booking.start_time).getTime()) / 60000)} min
+                                    {(() => {
+                                        const now = new Date();
+                                        const start = new Date(booking.start_time);
+                                        const end = new Date(booking.end_time);
+                                        const isActive = now >= start && now <= end;
+                                        const duration = Math.round((end.getTime() - start.getTime()) / 60000);
+                                        const timeLeft = Math.round((end.getTime() - now.getTime()) / 60000);
+
+                                        return (
+                                            <div className="flex flex-col gap-1">
+                                                <div className="text-xs text-gray-500">
+                                                    {duration} min total
+                                                </div>
+                                                {isActive && (
+                                                    <div className="text-xs font-bold text-green-400 animate-pulse">
+                                                        {timeLeft} min left
+                                                    </div>
+                                                )}
+                                            </div>
+                                        );
+                                    })()}
                                 </div>
                             </td>
                             <td className="px-6 py-4">
@@ -91,22 +111,31 @@ export default function BookingsTable({ bookings, isLoading, onRefresh }: Bookin
                                 <div className="text-xs text-gray-500">{booking.customer_phone}</div>
                             </td>
                             <td className="px-6 py-4">
-                                <button
-                                    onClick={() => togglePaymentStatus(booking)}
-                                    disabled={!!processingId}
-                                    className={`inline-flex items-center gap-2 px-2.5 py-1 rounded-full text-xs font-medium cursor-pointer transition-all ${booking.payment_status === 'paid'
-                                        ? 'bg-green-500/20 text-green-400 border border-green-500/30 hover:bg-green-500/30'
-                                        : 'bg-yellow-500/10 text-yellow-500 border border-yellow-500/20 hover:bg-yellow-500/20'
-                                        }`}
-                                >
-                                    <span className={`w-1.5 h-1.5 rounded-full ${booking.payment_status === 'paid' ? 'bg-green-500' : 'bg-yellow-500'}`} />
-                                    {booking.payment_status === 'paid' ? 'PAID' : 'UNPAID'}
-                                </button>
-                                {booking.payment_method && (
-                                    <div className="mt-1 text-xs text-gray-500 uppercase tracking-wide">
-                                        {booking.payment_method.replace('card_', '')}
-                                    </div>
-                                )}
+                                <div className="flex flex-col items-start gap-2">
+                                    <button
+                                        onClick={() => togglePaymentStatus(booking)}
+                                        disabled={!!processingId}
+                                        className={`inline-flex items-center gap-2 px-2.5 py-1 rounded-full text-xs font-medium cursor-pointer transition-all ${booking.payment_status === 'paid'
+                                            ? 'bg-green-500/20 text-green-400 border border-green-500/30 hover:bg-green-500/30'
+                                            : 'bg-yellow-500/10 text-yellow-500 border border-yellow-500/20 hover:bg-yellow-500/20'
+                                            }`}
+                                    >
+                                        <span className={`w-1.5 h-1.5 rounded-full ${booking.payment_status === 'paid' ? 'bg-green-500' : 'bg-yellow-500'}`} />
+                                        {booking.payment_status === 'paid' ? 'PAID' : 'UNPAID'}
+                                    </button>
+
+                                    {(booking.total_price !== null && booking.total_price !== undefined) && (
+                                        <div className="text-sm font-bold text-white">
+                                            {booking.total_price} ₾
+                                        </div>
+                                    )}
+
+                                    {booking.payment_method && (
+                                        <div className="text-xs text-gray-500 uppercase tracking-wide">
+                                            {booking.payment_method.replace('card_', '')}
+                                        </div>
+                                    )}
+                                </div>
                             </td>
                             <td className="px-6 py-4 text-right space-x-2">
                                 <button

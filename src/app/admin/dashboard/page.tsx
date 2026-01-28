@@ -33,6 +33,9 @@ export default function AdminDashboard() {
         if (filter === 'upcoming') {
             const now = new Date().toISOString();
             query = query.gte('start_time', now);
+        } else if (filter === 'live') {
+            const now = new Date().toISOString();
+            query = query.lte('start_time', now).gte('end_time', now).neq('status', 'CANCELLED');
         }
 
         const { data, error } = await query;
@@ -56,10 +59,21 @@ export default function AdminDashboard() {
 
                 <div className="flex bg-[#111] p-1 rounded-lg border border-white/10">
                     <button
+                        onClick={() => setFilter('live')}
+                        className={`px-4 py-2 text-sm font-medium rounded-md transition-all flex items-center gap-2 ${filter === 'live'
+                            ? 'bg-red-500 text-white shadow-lg shadow-red-500/20'
+                            : 'text-red-500 hover:bg-red-500/10'
+                            }`}
+                    >
+                        <span className={`w-2 h-2 rounded-full bg-current ${filter === 'live' ? 'animate-pulse' : ''}`} />
+                        Live
+                    </button>
+                    <div className="w-px bg-white/10 mx-1" />
+                    <button
                         onClick={() => setFilter('upcoming')}
                         className={`px-4 py-2 text-sm font-medium rounded-md transition-all ${filter === 'upcoming'
-                                ? 'bg-blue-600 text-white shadow-lg'
-                                : 'text-gray-400 hover:text-white hover:bg-white/5'
+                            ? 'bg-blue-600 text-white shadow-lg'
+                            : 'text-gray-400 hover:text-white hover:bg-white/5'
                             }`}
                     >
                         Upcoming
@@ -67,8 +81,8 @@ export default function AdminDashboard() {
                     <button
                         onClick={() => setFilter('past')}
                         className={`px-4 py-2 text-sm font-medium rounded-md transition-all ${filter === 'past'
-                                ? 'bg-blue-600 text-white shadow-lg'
-                                : 'text-gray-400 hover:text-white hover:bg-white/5'
+                            ? 'bg-blue-600 text-white shadow-lg'
+                            : 'text-gray-400 hover:text-white hover:bg-white/5'
                             }`}
                     >
                         History
@@ -76,8 +90,8 @@ export default function AdminDashboard() {
                     <button
                         onClick={() => setFilter('all')}
                         className={`px-4 py-2 text-sm font-medium rounded-md transition-all ${filter === 'all'
-                                ? 'bg-blue-600 text-white shadow-lg'
-                                : 'text-gray-400 hover:text-white hover:bg-white/5'
+                            ? 'bg-blue-600 text-white shadow-lg'
+                            : 'text-gray-400 hover:text-white hover:bg-white/5'
                             }`}
                     >
                         All Time
