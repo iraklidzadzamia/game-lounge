@@ -129,7 +129,18 @@ export default function BookingPage({ params }: { params: { branch: string } }) 
 
     return (
         <main className="min-h-screen bg-void pt-24 pb-12 px-4 md:px-8 relative overflow-hidden">
-            {/* ... (Background & Header) ... */}
+            {/* Header & Back Navigation */}
+            <div className="mb-8 relative z-10 flex justify-between items-center">
+                <Link
+                    href={`/${params.branch}`}
+                    className="inline-flex items-center gap-2 text-white/50 hover:text-white transition-colors group"
+                >
+                    <svg className="w-5 h-5 transform group-hover:-translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                    </svg>
+                    <span className="font-orbitron tracking-widest text-sm">BACK to MENU</span>
+                </Link>
+            </div>
 
             <div className="grid lg:grid-cols-3 gap-8">
                 {/* Left Column: Interactive Map & Selection */}

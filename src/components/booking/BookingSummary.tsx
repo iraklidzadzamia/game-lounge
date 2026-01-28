@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { calculatePrice, StationType } from "@/config/pricing";
+import { BRANCHES } from "@/config/branches";
 
 interface BookingSummaryProps {
     date: Date;
@@ -148,7 +149,27 @@ export default function BookingSummary({ date, duration, seats, seatTypes, branc
         <div className="sticky top-24 space-y-6">
             <div className="glass-card p-4 md:p-8 border-t-4 border-neon-cyan">
                 {/* Header */}
-                <h2 className="font-orbitron text-2xl text-white mb-6">SUMMARY</h2>
+                <div className="bg-white/5 p-3 rounded-lg border border-white/10 mb-6 flex justify-between items-center">
+                    <span className="text-white/50 text-xs font-inter uppercase tracking-widest">Branch</span>
+                    <div className="flex gap-2">
+                        {BRANCHES.map(b => (
+                            <button
+                                key={b.id}
+                                onClick={() => {
+                                    if (b.id !== branchId) router.push(`/${b.slug}/booking`);
+                                }}
+                                className={`px-3 py-1.5 rounded text-[10px] font-orbitron font-bold transition-all border ${b.id === branchId
+                                        ? "bg-neon-cyan text-black border-neon-cyan shadow-[0_0_10px_rgba(0,243,255,0.3)]"
+                                        : "bg-black/50 text-white/50 border-white/10 hover:text-white hover:border-white/30"
+                                    }`}
+                            >
+                                {b.name.replace('Simon ', '')}
+                            </button>
+                        ))}
+                    </div>
+                </div>
+
+                <h2 className="font-orbitron text-xl text-white mb-6 flex items-center gap-3">SUMMARY</h2>
 
                 <div className="space-y-4 mb-8">
                     {/* Date */}
