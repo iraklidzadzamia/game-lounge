@@ -475,7 +475,7 @@ export default function BookingActionModal({
                                         <input
                                             type="datetime-local"
                                             required
-                                            className="w-full bg-black border border-white/20 rounded-lg px-3 py-2 text-white focus:border-blue-500 outline-none text-xs"
+                                            className="w-full bg-black border border-white/20 rounded-lg px-3 py-2 text-white focus:border-blue-500 outline-none text-xs [color-scheme:dark]"
                                             value={startTime}
                                             onChange={e => setStartTime(e.target.value)}
                                         />
@@ -485,7 +485,7 @@ export default function BookingActionModal({
                                         <input
                                             type="datetime-local"
                                             required
-                                            className="w-full bg-black border border-white/20 rounded-lg px-3 py-2 text-white focus:border-blue-500 outline-none text-xs"
+                                            className="w-full bg-black border border-white/20 rounded-lg px-3 py-2 text-white focus:border-blue-500 outline-none text-xs [color-scheme:dark]"
                                             value={endTime}
                                             onChange={e => setEndTime(e.target.value)}
                                         />
