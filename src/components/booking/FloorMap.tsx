@@ -106,17 +106,9 @@ export default function FloorMap({ selectedSeats, onToggle, unavailableIds = [],
     // --- CHIKOVANI LAYOUT ---
     const renderChikovaniLayout = () => (
         <div className="w-full flex flex-col gap-8 p-4">
-            {/* Row 1: VIP & PS5 (Grid) */}
-            <div className="flex flex-col lg:flex-row gap-8">
-                {/* VIP section moved to Premium Area */}
-                {/* <div className="flex-1 min-w-[300px] glass-panel p-4 rounded-xl border border-white/10">
-                    <h3 className="text-neon-cyan font-orbitron mb-4 text-center">VIP ROOMS</h3>
-                    <div className="flex justify-center gap-4">
-                        {renderStation({ id: 'chikovani-vip-1', name: 'VIP 1', type: 'VIP', branch_id: 'chikovani' }, true)}
-                        {renderStation({ id: 'chikovani-vip-2', name: 'VIP 2', type: 'VIP', branch_id: 'chikovani' }, true)}
-                    </div>
-                </div> */}
-                {/* PS5 (Removed from here) */}
+            {/* Row 1: VIP & PS5 (Empty Space) */}
+            <div className="flex flex-col lg:flex-row gap-8 min-h-[100px]">
+                {/* Empty space as requested */}
             </div>
 
             {/* Row 2: PCs */}
@@ -217,29 +209,29 @@ export default function FloorMap({ selectedSeats, onToggle, unavailableIds = [],
             </div>
 
             {/* Row 3: Bottom Lounge (Square Room with Reception) */}
-            <div className="w-full glass-panel p-8 rounded-xl border border-white/10 relative">
+            <div className="w-full max-w-3xl mx-auto glass-panel p-8 rounded-xl border border-white/10 relative min-h-[400px]">
                 {/* Reception - Top Center */}
-                <div className="absolute top-4 left-1/2 -translate-x-1/2 flex flex-col items-center z-10 hidden md:flex">
+                <div className="absolute top-4 left-1/2 -translate-x-1/2 flex flex-col items-center z-10">
                     <div className="px-6 py-2 border border-neon-cyan/30 rounded bg-neon-cyan/10 text-neon-cyan text-xs font-orbitron tracking-widest uppercase mb-1 backdrop-blur-md">
                         RECEPTION
                     </div>
                     <div className="w-px h-8 bg-gradient-to-b from-neon-cyan/30 to-transparent"></div>
                 </div>
 
-                <div className="flex flex-col md:flex-row justify-between items-center gap-8 md:gap-0 pt-4 md:pt-12 md:px-12">
+                <div className="flex justify-between items-center h-full pt-16 pb-4 px-4 md:px-12">
                     {/* Left Side: 2 PS5s */}
-                    <div className="flex gap-4">
+                    <div className="flex flex-col gap-8">
                         {renderStation({ id: `chikovani-ps5-3`, name: `PS5 3`, type: 'PS5', branch_id: 'chikovani' })}
                         {renderStation({ id: `chikovani-ps5-4`, name: `PS5 4`, type: 'PS5', branch_id: 'chikovani' })}
                     </div>
 
                     {/* Center Void / Lounge Area Text */}
-                    <div className="text-white/10 font-orbitron text-4xl tracking-[1em] opacity-20 select-none hidden md:block">
+                    <div className="text-white/10 font-orbitron text-4xl tracking-[1em] opacity-20 select-none hidden md:block rotate-90 md:rotate-0">
                         LOUNGE
                     </div>
 
                     {/* Right Side: 2 PS5s */}
-                    <div className="flex gap-4">
+                    <div className="flex flex-col gap-8">
                         {renderStation({ id: `chikovani-ps5-5`, name: `PS5 5`, type: 'PS5', branch_id: 'chikovani' })}
                         {renderStation({ id: `chikovani-ps5-6`, name: `PS5 6`, type: 'PS5', branch_id: 'chikovani' })}
                     </div>
