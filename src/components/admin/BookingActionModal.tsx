@@ -367,8 +367,8 @@ export default function BookingActionModal({
                         </div>
                     ) : (
                         <form onSubmit={handleSubmit} className="space-y-4">
-                            {/* Open Session Toggle */}
-                            {!existingBooking && (
+                            {/* Mimdinare / Open Session Toggle */}
+                            {!existingBooking ? (
                                 <label className="flex items-center gap-2 p-3 bg-blue-500/10 border border-blue-500/30 rounded-lg cursor-pointer">
                                     <input
                                         type="checkbox"
@@ -377,10 +377,18 @@ export default function BookingActionModal({
                                         className="w-5 h-5 accent-blue-500"
                                     />
                                     <div>
-                                        <span className="text-white font-bold text-sm block">Open Session (Unknown Duration)</span>
+                                        <span className="text-white font-bold text-sm block">Mimdinare (Open Session)</span>
                                         <span className="text-xs text-gray-400">Books for 3 hours. Stop anytime.</span>
                                     </div>
                                 </label>
+                            ) : isOpenSession && (
+                                <div className="p-3 bg-purple-500/10 border border-purple-500/30 rounded-lg flex items-center gap-2 mb-4">
+                                    <span className="w-2 h-2 bg-purple-500 rounded-full animate-pulse"></span>
+                                    <div>
+                                        <span className="text-purple-400 font-bold text-sm block">Mimdinare Session Active</span>
+                                        <span className="text-[10px] text-gray-500">This booking is open-ended. Click STOP when done.</span>
+                                    </div>
+                                </div>
                             )}
 
                             {/* STOP BUTTON */}
