@@ -145,7 +145,7 @@ export default function BookingPage({ params }: { params: { branch: string } }) 
 
                 <div className="grid lg:grid-cols-3 gap-8">
                     {/* Left Column: Interactive Map & Selection */}
-                    <div className="lg:col-span-2 space-y-8">
+                    <div className="lg:col-span-2 space-y-8 min-w-0">
 
                         {/* Step 1: Time & Date */}
                         <section className="glass-card p-6 md:p-8 space-y-8">
