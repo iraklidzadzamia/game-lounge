@@ -132,7 +132,7 @@ export default function FloorMap({ selectedSeats, onToggle, unavailableIds = [],
                             </div>
 
                             {/* PS5 1 & 2: Row 6 (Below Prem 5) */}
-                            <div className="col-start-1 row-start-6 flex flex-col gap-1 items-center justify-center py-2 translate-x-8">
+                            <div className="col-start-1 row-start-6 flex flex-col gap-1 items-center justify-center py-2 xl:translate-x-8">
                                 <span className="text-[10px] text-white/30 font-orbitron text-center">PS5</span>
                                 <div className="flex gap-2">
                                     {renderStation({ id: 'chikovani-ps5-1', name: 'PS5 1', type: 'PS5', branch_id: 'chikovani' })}
