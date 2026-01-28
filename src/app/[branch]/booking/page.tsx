@@ -145,8 +145,11 @@ export default function BookingPage({ params }: { params: { branch: string } }) 
                             <div className="flex flex-wrap gap-2">
                                 <button
                                     onClick={() => {
-                                        // Always round to next 30-min slot for clean scheduling
-                                        setSelectedDate(getNextSlot());
+                                        // Set to "Now" (rounded up) if Today is selected
+                                        // If "Next Slot" is tomorrow, we still try to set "Today" but maybe clamp it?
+                                        // Actually, the user wants to "View Today's Slots".
+                                        // If we set it to Now, the slots list will filter out past.
+                                        setSelectedDate(new Date());
                                         setIsCustomTime(false);
                                     }}
                                     className={`flex-1 py-3 rounded font-orbitron text-sm tracking-wider transition-all border ${isSameDate(selectedDate, today)
@@ -247,6 +250,22 @@ export default function BookingPage({ params }: { params: { branch: string } }) 
                                     >
                                         MANUAL
                                     </button>
+
+                                    {/* NOW Button for Today */}
+                                    {isSameDate(selectedDate, new Date()) && (
+                                        <button
+                                            onClick={() => {
+                                                setSelectedDate(new Date());
+                                                setIsCustomTime(false);
+                                            }}
+                                            className={`flex-shrink-0 px-4 py-2 rounded font-orbitron text-sm border transition-all ${Math.abs(selectedDate.getTime() - new Date().getTime()) < 60000
+                                                ? "bg-neon-cyan text-black border-neon-cyan shadow-[0_0_10px_rgba(0,243,255,0.3)] scale-110 z-10"
+                                                : "bg-black/40 text-white/70 border-white/10 hover:border-neon-cyan/50 hover:text-white"
+                                                }`}
+                                        >
+                                            NOW
+                                        </button>
+                                    )}
                                     {Array.from({ length: 48 }).map((_, i) => {
                                         const hour = Math.floor(i / 2);
                                         const min = (i % 2) * 30;
