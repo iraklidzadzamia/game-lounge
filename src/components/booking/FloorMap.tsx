@@ -107,9 +107,9 @@ export default function FloorMap({ selectedSeats, onToggle, unavailableIds = [],
     const renderChikovaniLayout = () => (
         <div className="w-full flex flex-col gap-8 p-4">
             {/* Row 1: VIP & PS5 (Grid) */}
-            <div className="flex flex-col md:flex-row gap-8">
+            <div className="flex flex-col lg:flex-row gap-8">
                 {/* VIP */}
-                <div className="flex-1 glass-panel p-4 rounded-xl border border-white/10">
+                <div className="flex-1 min-w-[300px] glass-panel p-4 rounded-xl border border-white/10">
                     <h3 className="text-neon-cyan font-orbitron mb-4 text-center">VIP ROOMS</h3>
                     <div className="flex justify-center gap-4">
                         {renderStation({ id: 'chikovani-vip-1', name: 'VIP 1', type: 'VIP', branch_id: 'chikovani' }, true)}
@@ -117,7 +117,7 @@ export default function FloorMap({ selectedSeats, onToggle, unavailableIds = [],
                     </div>
                 </div>
                 {/* PS5 */}
-                <div className="flex-1 glass-panel p-4 rounded-xl border border-white/10">
+                <div className="flex-1 min-w-[300px] glass-panel p-4 rounded-xl border border-white/10">
                     <h3 className="text-neon-cyan font-orbitron mb-4 text-center">PLAYSTATION 5</h3>
                     <div className="grid grid-cols-3 gap-4 justify-items-center">
                         {Array.from({ length: 6 }).map((_, i) =>
@@ -130,20 +130,13 @@ export default function FloorMap({ selectedSeats, onToggle, unavailableIds = [],
             {/* Row 2: PCs */}
             <div className="flex flex-col xl:flex-row gap-8">
 
-                {/* Standard (2 Cols of 5) */}
+                {/* Premium (Vertical 5) - MOVED HERE (Left position) */}
                 <div className="flex-1 glass-panel p-4 rounded-xl border border-white/10 flex flex-col items-center">
-                    <h3 className="text-white/70 font-orbitron mb-4 text-sm">STANDARD (10)</h3>
-                    <div className="flex gap-4">
-                        <div className="flex flex-col gap-2">
-                            {Array.from({ length: 5 }).map((_, i) =>
-                                renderStation({ id: `chikovani-std-${i + 1}`, name: `STD ${i + 1}`, type: 'STANDARD', branch_id: 'chikovani' })
-                            )}
-                        </div>
-                        <div className="flex flex-col gap-2">
-                            {Array.from({ length: 5 }).map((_, i) =>
-                                renderStation({ id: `chikovani-std-${i + 6}`, name: `STD ${i + 6}`, type: 'STANDARD', branch_id: 'chikovani' })
-                            )}
-                        </div>
+                    <h3 className="text-neon-cyan font-orbitron mb-4 text-sm">PREMIUM (5)</h3>
+                    <div className="flex flex-col gap-2">
+                        {Array.from({ length: 5 }).map((_, i) =>
+                            renderStation({ id: `chikovani-prem-${i + 1}`, name: `PREM ${i + 1}`, type: 'PREMIUM', branch_id: 'chikovani' })
+                        )}
                     </div>
                 </div>
 
@@ -157,13 +150,20 @@ export default function FloorMap({ selectedSeats, onToggle, unavailableIds = [],
                     </div>
                 </div>
 
-                {/* Premium (Vertical 5) */}
+                {/* Standard (2 Cols of 5) - MOVED HERE (3rd position) */}
                 <div className="flex-1 glass-panel p-4 rounded-xl border border-white/10 flex flex-col items-center">
-                    <h3 className="text-neon-cyan font-orbitron mb-4 text-sm">PREMIUM (5)</h3>
-                    <div className="flex flex-col gap-2">
-                        {Array.from({ length: 5 }).map((_, i) =>
-                            renderStation({ id: `chikovani-prem-${i + 1}`, name: `PREM ${i + 1}`, type: 'PREMIUM', branch_id: 'chikovani' })
-                        )}
+                    <h3 className="text-white/70 font-orbitron mb-4 text-sm">STANDARD (10)</h3>
+                    <div className="flex gap-4">
+                        <div className="flex flex-col gap-2">
+                            {Array.from({ length: 5 }).map((_, i) =>
+                                renderStation({ id: `chikovani-std-${i + 1}`, name: `STD ${i + 1}`, type: 'STANDARD', branch_id: 'chikovani' })
+                            )}
+                        </div>
+                        <div className="flex flex-col gap-2">
+                            {Array.from({ length: 5 }).map((_, i) =>
+                                renderStation({ id: `chikovani-std-${i + 6}`, name: `STD ${i + 6}`, type: 'STANDARD', branch_id: 'chikovani' })
+                            )}
+                        </div>
                     </div>
                 </div>
 
