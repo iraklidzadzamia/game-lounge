@@ -42,8 +42,9 @@ export default function AdminMapPage() {
             .gte('end_time', now); // Actually active right now
 
         if (data) {
-            setUnavailableIds(data.map(b => b.station_id));
-            setBookings(data);
+            const activeBookings = data as Database['public']['Tables']['bookings']['Row'][];
+            setUnavailableIds(activeBookings.map(b => b.station_id));
+            setBookings(activeBookings);
         }
     };
 
@@ -98,8 +99,8 @@ export default function AdminMapPage() {
                     <button
                         onClick={() => setActiveBranch('dinamo')}
                         className={`px-4 py-2 text-sm font-medium rounded-md transition-all ${activeBranch === 'dinamo'
-                                ? 'bg-blue-600 text-white'
-                                : 'text-gray-400 hover:text-white'
+                            ? 'bg-blue-600 text-white'
+                            : 'text-gray-400 hover:text-white'
                             }`}
                     >
                         Dinamo
@@ -107,8 +108,8 @@ export default function AdminMapPage() {
                     <button
                         onClick={() => setActiveBranch('chikovani')}
                         className={`px-4 py-2 text-sm font-medium rounded-md transition-all ${activeBranch === 'chikovani'
-                                ? 'bg-purple-600 text-white'
-                                : 'text-gray-400 hover:text-white'
+                            ? 'bg-purple-600 text-white'
+                            : 'text-gray-400 hover:text-white'
                             }`}
                     >
                         Chikovani
