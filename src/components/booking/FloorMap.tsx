@@ -149,50 +149,52 @@ export default function FloorMap({ selectedSeats, onToggle, unavailableIds = [],
 
                 {/* Center Room: PRO + STANDARD + PREM X (Merged) */}
                 <div className="flex-[2] glass-panel p-6 rounded-xl border border-white/10 flex flex-col items-center">
-                    <h3 className="text-white/70 font-orbitron mb-6 text-sm flex gap-4">
+                    <h3 className="text-white/70 font-orbitron mb-6 text-sm flex gap-4 w-full justify-center relative">
                         <span>PRO (7)</span>
                         <span className="text-white/20">|</span>
                         <span>STANDARD (10)</span>
                     </h3>
 
-                    {/* Upper Section: Pro & Standard */}
-                    <div className="flex gap-8 md:gap-12 mb-8">
-                        {/* Pro Column */}
+                    <div className="flex gap-8 md:gap-12 w-full justify-center">
+                        {/* LEFT: Pro Column */}
                         <div className="flex flex-col gap-2">
                             {Array.from({ length: 7 }).map((_, i) =>
                                 renderStation({ id: `chikovani-pro-${i + 1}`, name: `PRO ${i + 1}`, type: 'PRO', branch_id: 'chikovani' })
                             )}
                         </div>
 
-                        {/* Standard Columns */}
-                        <div className="flex gap-4 border-l border-white/5 pl-8 md:pl-12">
-                            <div className="flex flex-col gap-2">
-                                {Array.from({ length: 5 }).map((_, i) =>
-                                    renderStation({ id: `chikovani-std-${i + 1}`, name: `STD ${i + 1}`, type: 'STANDARD', branch_id: 'chikovani' })
-                                )}
+                        {/* RIGHT: Standard + Passage + Premium X */}
+                        <div className="flex flex-col border-l border-white/5 pl-8 md:pl-12">
+                            {/* Standard Stations */}
+                            <div className="flex gap-4 mb-6">
+                                <div className="flex flex-col gap-2">
+                                    {Array.from({ length: 5 }).map((_, i) =>
+                                        renderStation({ id: `chikovani-std-${i + 1}`, name: `STD ${i + 1}`, type: 'STANDARD', branch_id: 'chikovani' })
+                                    )}
+                                </div>
+                                <div className="flex flex-col gap-2">
+                                    {Array.from({ length: 5 }).map((_, i) =>
+                                        renderStation({ id: `chikovani-std-${i + 6}`, name: `STD ${i + 6}`, type: 'STANDARD', branch_id: 'chikovani' })
+                                    )}
+                                </div>
                             </div>
-                            <div className="flex flex-col gap-2">
-                                {Array.from({ length: 5 }).map((_, i) =>
-                                    renderStation({ id: `chikovani-std-${i + 6}`, name: `STD ${i + 6}`, type: 'STANDARD', branch_id: 'chikovani' })
-                                )}
+
+                            {/* Divider / Passage */}
+                            <div className="w-full flex items-center gap-4 mb-6 opacity-30">
+                                <div className="h-px bg-white flex-1" />
+                                <span className="text-[10px] font-orbitron tracking-widest uppercase">PASSAGE</span>
+                                <div className="h-px bg-white flex-1" />
                             </div>
-                        </div>
-                    </div>
 
-                    {/* Divider / Passage */}
-                    <div className="w-full flex items-center gap-4 mb-6 opacity-30">
-                        <div className="h-px bg-white flex-1" />
-                        <span className="text-[10px] font-orbitron tracking-widest uppercase">PASSAGE</span>
-                        <div className="h-px bg-white flex-1" />
-                    </div>
-
-                    {/* Lower Section: Premium X */}
-                    <div className="flex flex-col items-center">
-                        <h3 className="text-neon-cyan font-orbitron mb-4 text-sm">PREMIUM X (4)</h3>
-                        <div className="grid grid-cols-2 gap-2">
-                            {Array.from({ length: 4 }).map((_, i) =>
-                                renderStation({ id: `chikovani-premx-${i + 1}`, name: `X ${i + 1}`, type: 'PREMIUM_X', branch_id: 'chikovani' })
-                            )}
+                            {/* Premium X (Aligned under Standard) */}
+                            <div className="flex flex-col items-center">
+                                <h3 className="text-neon-cyan font-orbitron mb-4 text-sm">PREMIUM X (4)</h3>
+                                <div className="grid grid-cols-2 gap-2">
+                                    {Array.from({ length: 4 }).map((_, i) =>
+                                        renderStation({ id: `chikovani-premx-${i + 1}`, name: `X ${i + 1}`, type: 'PREMIUM_X', branch_id: 'chikovani' })
+                                    )}
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
