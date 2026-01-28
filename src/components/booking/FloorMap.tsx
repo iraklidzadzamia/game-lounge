@@ -115,7 +115,7 @@ export default function FloorMap({ selectedSeats, onToggle, unavailableIds = [],
             <div className="flex flex-col xl:flex-row gap-8 w-full">
 
                 {/* Left Bank: Premium Area + VIP 1 Below */}
-                <div className="flex-1 flex flex-col gap-8">
+                <div className="flex-1 flex flex-col gap-8 w-full max-w-md mx-auto xl:max-w-none xl:mx-0 xl:w-auto">
                     {/* Premium Area Container */}
                     <div className="flex-1 glass-panel p-4 rounded-xl border border-white/10 flex flex-col items-center">
                         <h3 className="text-neon-cyan font-orbitron mb-4 text-sm text-center">PREMIUM AREA</h3>
@@ -157,7 +157,7 @@ export default function FloorMap({ selectedSeats, onToggle, unavailableIds = [],
                 </div>
 
                 {/* Center Room: PRO + STANDARD + PREM X (Merged) */}
-                <div className="flex-[2] glass-panel p-4 md:p-6 rounded-xl border border-white/10 flex flex-col items-center">
+                <div className="flex-[2] glass-panel p-4 md:p-6 rounded-xl border border-white/10 flex flex-col items-center w-full max-w-md mx-auto xl:max-w-none xl:mx-0">
                     <h3 className="text-white/70 font-orbitron mb-6 text-sm flex gap-4 w-full justify-center relative">
                         <span>PRO (7)</span>
                         <span className="text-white/20">|</span>
@@ -211,7 +211,7 @@ export default function FloorMap({ selectedSeats, onToggle, unavailableIds = [],
             </div>
 
             {/* Row 3: Bottom Lounge (Small Square Room) */}
-            <div className="w-full max-w-[380px] glass-panel p-6 rounded-xl border border-white/10 relative aspect-square flex flex-col justify-between">
+            <div className="w-full max-w-[380px] glass-panel p-6 rounded-xl border border-white/10 relative aspect-square flex flex-col justify-between mx-auto xl:ml-0">
                 {/* Reception - Top Center */}
                 <div className="absolute top-4 left-1/2 -translate-x-1/2 flex flex-col items-center z-10 w-full">
                     <div className="px-4 py-1.5 border border-neon-cyan/30 rounded bg-neon-cyan/10 text-neon-cyan text-[10px] font-orbitron tracking-widest uppercase mb-1 backdrop-blur-md whitespace-nowrap">
