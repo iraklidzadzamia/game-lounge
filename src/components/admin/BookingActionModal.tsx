@@ -95,7 +95,8 @@ export default function BookingActionModal({
                 // Edit
                 const { error } = await supabase
                     .from('bookings')
-                    .update(bookingData as any)
+                    // @ts-ignore
+                    .update(bookingData)
                     .eq('id', existingBooking.id);
                 if (error) throw error;
             } else {
@@ -117,7 +118,8 @@ export default function BookingActionModal({
 
                 const { error } = await supabase
                     .from('bookings')
-                    .insert(bookingData as any);
+                    // @ts-ignore
+                    .insert(bookingData);
                 if (error) throw error;
             }
 
