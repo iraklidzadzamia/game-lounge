@@ -83,7 +83,7 @@ export default function BookingsTable({ bookings, isLoading, onRefresh, onEdit }
                 </thead>
                 <tbody className="divide-y divide-white/5">
                     {bookings.map((booking) => (
-                        <tr key={booking.isGroup ? `group-${booking.id}` : booking.id} className="hover:bg-white/5 transition-colors">
+                        <tr key={booking.isGroup ? `group-${booking.id}` : booking.id} onClick={() => onEdit(booking)} className="hover:bg-white/5 transition-colors cursor-pointer text-left">
                             <td className="px-6 py-4 font-medium text-white">
                                 {formatDate(booking.start_time)}
                                 <div className="text-xs text-gray-500">
@@ -142,7 +142,7 @@ export default function BookingsTable({ bookings, isLoading, onRefresh, onEdit }
                             <td className="px-6 py-4">
                                 <div className="flex flex-col items-start gap-2">
                                     <button
-                                        onClick={() => togglePaymentStatus(booking)}
+                                        onClick={(e) => { e.stopPropagation(); togglePaymentStatus(booking); }}
                                         disabled={!!processingId}
                                         className={`inline-flex items-center gap-2 px-2.5 py-1 rounded-full text-xs font-medium cursor-pointer transition-all ${booking.payment_status === 'paid'
                                             ? 'bg-green-500/20 text-green-400 border border-green-500/30 hover:bg-green-500/30'
@@ -168,14 +168,14 @@ export default function BookingsTable({ bookings, isLoading, onRefresh, onEdit }
                             </td>
                             <td className="px-6 py-4 text-right space-x-2">
                                 <button
-                                    onClick={() => onEdit(booking)}
+                                    onClick={(e) => { e.stopPropagation(); onEdit(booking); }}
                                     disabled={!!processingId}
                                     className="text-blue-400 hover:text-blue-300 hover:bg-blue-500/10 px-3 py-1.5 rounded-md transition-colors text-xs font-medium"
                                 >
                                     Edit
                                 </button>
                                 <button
-                                    onClick={() => handleDelete(booking)}
+                                    onClick={(e) => { e.stopPropagation(); handleDelete(booking); }}
                                     disabled={!!processingId}
                                     className="text-red-400 hover:text-red-300 hover:bg-red-500/10 px-3 py-1.5 rounded-md transition-colors text-xs font-medium"
                                 >

@@ -327,14 +327,14 @@ export default function BookingActionModal({
     const isLive = existingBooking && new Date(existingBooking.start_time) < new Date() && new Date(existingBooking.end_time) > new Date();
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm" onClick={onClose}>
             <datalist id="time-slots">
                 {TIME_SLOTS.map(time => (
                     <option key={time} value={time} />
                 ))}
             </datalist>
 
-            <div className="w-full max-w-md bg-[#111] border border-white/10 rounded-xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+            <div className="w-full max-w-md bg-[#111] border border-white/10 rounded-xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]" onClick={e => e.stopPropagation()}>
                 <div className="p-4 border-b border-white/10 flex justify-between items-center bg-white/5">
                     <h2 className="text-lg font-bold text-white">
                         {existingBooking
