@@ -14,20 +14,20 @@ interface BookingSummaryProps {
 
 export default function BookingSummary({ date, duration, seats, seatTypes, branchId }: BookingSummaryProps) {
     const router = useRouter();
+    // ... imports
     const [customerName, setCustomerName] = useState("");
     const [customerPhone, setCustomerPhone] = useState("");
     const [customerEmail, setCustomerEmail] = useState("");
-
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [isSuccess, setIsSuccess] = useState(false);
 
-    // Calculate Total Price based on all selected seats
+    // Calculate Total Price...
     const totalPrice = seats.reduce((total, seatId) => {
         const type = seatTypes[seatId];
         return total + (type ? calculatePrice(type as StationType, duration) : 0);
     }, 0);
 
-    // Validation: Needs seats, and non-empty name/phone/email
-    // Also check if time is valid (not in past, with 5 min buffer)
+    // Validation...
     const isTimeValid = date.getTime() > Date.now() - 5 * 60 * 1000;
     const isFormValid = seats.length > 0 && customerName.trim().length > 0 && customerPhone.trim().length > 0 && isTimeValid;
 
@@ -62,9 +62,8 @@ export default function BookingSummary({ date, duration, seats, seatTypes, branc
             }
 
             // Success!
-            alert("Booking Confirmed! See you at the lounge.");
-            // Reset or Redirect
-            router.push(`/${branchId}`);
+            setIsSuccess(true);
+            setIsSubmitting(false);
 
         } catch (error) {
             console.error(error);
@@ -72,6 +71,67 @@ export default function BookingSummary({ date, duration, seats, seatTypes, branc
             setIsSubmitting(false);
         }
     };
+
+    if (isSuccess) {
+        return (
+            <div className="sticky top-24 space-y-6">
+                <div className="glass-card p-8 border-t-4 border-green-500 relative overflow-hidden group">
+                    <div className="absolute top-0 right-0 p-8 opacity-10">
+                        <svg className="w-32 h-32 text-green-500" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" /></svg>
+                    </div>
+
+                    <h2 className="font-orbitron text-2xl text-green-500 mb-2">BOOKING CONFIRMED</h2>
+                    <p className="text-white/50 text-sm font-inter mb-8">Your spot is secured. Please arrive 10 mins early.</p>
+
+                    <div className="space-y-4 border-l-2 border-white/10 pl-4 mb-8">
+                        <div>
+                            <p className="text-white/30 text-xs uppercase tracking-widest">When</p>
+                            <p className="text-white font-orbitron text-lg">
+                                {date.toLocaleDateString()} <span className="text-white/50">at</span> {date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                            </p>
+                        </div>
+                        <div>
+                            <p className="text-white/30 text-xs uppercase tracking-widest">Where</p>
+                            <div className="flex flex-wrap gap-2 mt-1">
+                                {seats.map(seatId => (
+                                    <span key={seatId} className="px-2 py-1 bg-white/10 rounded text-xs font-bold text-neon-cyan border border-white/20">
+                                        {seatId.includes("vip") ? "VIP" : "PC"} {seatId.split('-').pop()}
+                                    </span>
+                                ))}
+                            </div>
+                        </div>
+                        <div>
+                            <p className="text-white/30 text-xs uppercase tracking-widest">Client</p>
+                            <p className="text-white font-inter">{customerName}</p>
+                            <p className="text-white/50 text-sm font-inter">{customerPhone}</p>
+                        </div>
+                        <div>
+                            <p className="text-white/30 text-xs uppercase tracking-widest">Total to Pay</p>
+                            <p className="text-2xl font-orbitron text-white">{totalPrice} ₾</p>
+                        </div>
+                    </div>
+
+                    <p className="text-xs text-center text-white/30 mb-6 bg-white/5 p-2 rounded">
+                        * Please take a screenshot of this ticket just in case.
+                    </p>
+
+                    <button
+                        onClick={() => router.push(`/${branchId}`)}
+                        className="w-full py-4 text-center font-orbitron font-bold tracking-widest text-lg bg-green-500 text-black rounded-md hover:bg-green-400 transition-all shadow-[0_0_20px_rgba(34,197,94,0.3)]"
+                    >
+                        DONE
+                    </button>
+
+                    <button
+                        onClick={() => setIsSuccess(false)} // Just in case they want to book another? Or better logic? Maybe just force Home.
+                        className="w-full mt-2 py-2 text-center font-inter text-xs text-white/30 hover:text-white transition-colors"
+                    >
+                        Book Another Session
+                    </button>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="sticky top-24 space-y-6">

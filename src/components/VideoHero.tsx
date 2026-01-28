@@ -31,7 +31,23 @@ export default function VideoHero({ branchSlug }: VideoHeroProps) {
                 <div className="absolute inset-0 bg-gradient-to-b from-void/80 via-void/40 to-void/90" />
 
                 {/* Bottom gradient to blend into next section */}
+                {/* Bottom gradient to blend into next section */}
                 <div className="absolute bottom-0 left-0 right-0 h-48 bg-gradient-to-t from-void to-transparent" />
+            </div>
+
+            {/* Header / Nav Actions */}
+            <div className="absolute top-0 right-0 p-6 z-50 flex items-center gap-4">
+                <Link
+                    href="/my-bookings"
+                    className="flex items-center gap-2 px-4 py-2 bg-black/40 backdrop-blur-md border border-white/10 rounded-full hover:bg-white/10 hover:border-neon-cyan/50 transition-all duration-300 group"
+                >
+                    <svg className="w-4 h-4 text-white/70 group-hover:text-neon-cyan transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z" />
+                    </svg>
+                    <span className="text-white/70 text-xs font-orbitron font-bold tracking-widest group-hover:text-white transition-colors uppercase hidden md:inline">
+                        My Bookings
+                    </span>
+                </Link>
             </div>
 
             {/* Content */}
