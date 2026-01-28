@@ -145,11 +145,8 @@ export default function BookingPage({ params }: { params: { branch: string } }) 
                             <div className="flex flex-wrap gap-2">
                                 <button
                                     onClick={() => {
-                                        // Set to "Now" (rounded up) if Today is selected
-                                        // If "Next Slot" is tomorrow, we still try to set "Today" but maybe clamp it?
-                                        // Actually, the user wants to "View Today's Slots".
-                                        // If we set it to Now, the slots list will filter out past.
-                                        setSelectedDate(new Date());
+                                        // Always round to next 30-min slot for clean scheduling
+                                        setSelectedDate(getNextSlot());
                                         setIsCustomTime(false);
                                     }}
                                     className={`flex-1 py-3 rounded font-orbitron text-sm tracking-wider transition-all border ${isSameDate(selectedDate, today)
