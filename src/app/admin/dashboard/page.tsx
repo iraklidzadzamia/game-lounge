@@ -48,14 +48,69 @@ export default function AdminDashboard() {
         setLoading(false);
     };
 
+    const [stats, setStats] = useState({
+        revenue: 0,
+        clients: 0,
+        popularStation: 'N/A'
+    });
+
+    const fetchStats = async () => {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const todayStr = today.toISOString();
+
+        // Fetch ALL bookings for today to calculate stats (ignore current view filter)
+        const { data: todayBookings } = await supabase
+            .from('bookings')
+            .select('total_price, customer_phone, station_id, stations (name)')
+            .gte('start_time', todayStr)
+            .neq('status', 'CANCELLED');
+
+        if (todayBookings) {
+            const bookings = todayBookings as any[];
+            // 1. Revenue (Sum of total_price)
+            const revenue = bookings.reduce((sum, b) => sum + (b.total_price || 0), 0);
+
+            // 2. Total Clients (Unique Phones)
+            const uniqueClients = new Set(bookings.map(b => b.customer_phone)).size;
+
+            // 3. Popular Station
+            const stationCounts: Record<string, number> = {};
+            bookings.forEach(b => {
+                const name = b.stations?.name || b.station_id;
+                stationCounts[name] = (stationCounts[name] || 0) + 1;
+            });
+            const popularStation = Object.entries(stationCounts).sort((a, b) => b[1] - a[1])[0]?.[0] || 'N/A';
+
+            setStats({ revenue, clients: uniqueClients, popularStation });
+        }
+    };
+
     useEffect(() => {
         fetchBookings();
+        fetchStats();
     }, [filter]);
 
     return (
         <div className="space-y-6">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <h1 className="text-2xl font-bold text-white">Dashboard</h1>
+
+                {/* Stats Cards */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 w-full md:w-auto mb-4 md:mb-0">
+                    <div className="bg-[#111] border border-white/10 rounded-xl p-4 flex flex-col min-w-[150px]">
+                        <span className="text-xs text-gray-500 uppercase tracking-wider font-semibold">Today's Revenue</span>
+                        <span className="text-2xl font-bold text-green-400 mt-1">{stats.revenue} ₾</span>
+                    </div>
+                    <div className="bg-[#111] border border-white/10 rounded-xl p-4 flex flex-col min-w-[150px]">
+                        <span className="text-xs text-gray-500 uppercase tracking-wider font-semibold">Active Clients</span>
+                        <span className="text-2xl font-bold text-blue-400 mt-1">{stats.clients}</span>
+                    </div>
+                    <div className="bg-[#111] border border-white/10 rounded-xl p-4 flex flex-col min-w-[150px]">
+                        <span className="text-xs text-gray-500 uppercase tracking-wider font-semibold">Popular Station</span>
+                        <span className="text-xl font-bold text-purple-400 mt-1 truncate">{stats.popularStation}</span>
+                    </div>
+                </div>
 
                 <div className="flex bg-[#111] p-1 rounded-lg border border-white/10">
                     <button
