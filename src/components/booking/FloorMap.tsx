@@ -151,7 +151,7 @@ export default function FloorMap({ selectedSeats, onToggle, unavailableIds = [],
                     </div>
 
                     {/* VIP 1 (Standalone Below Premium Area - Filling the Space) */}
-                    <div className="glass-panel p-4 rounded-xl border border-white/10 flex flex-col items-center justify-center border-electric-purple/30">
+                    <div className="p-4 rounded-xl border border-electric-purple/30 bg-electric-purple/10 flex flex-col items-center justify-center">
                         <span className="text-xs text-electric-purple mb-2 font-orbitron font-bold">VIP 1</span>
                         {renderStation({ id: 'chikovani-vip-1', name: 'VIP 1', type: 'VIP', branch_id: 'chikovani' })}
                     </div>
