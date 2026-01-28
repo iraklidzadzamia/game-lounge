@@ -27,7 +27,7 @@ export default function SettingsPage() {
         const { data: { user } } = await supabase.auth.getUser();
         if (user) {
             const { data: myProfile } = await supabase.from('profiles').select('role').eq('id', user.id).single();
-            if (myProfile?.role === 'owner') setIsOwner(true);
+            if ((myProfile as any)?.role === 'owner') setIsOwner(true);
         }
 
         // 2. Fetch all profiles (Wait, RLS might block if not owner? Owner policy allows all)
@@ -95,8 +95,8 @@ export default function SettingsPage() {
 
                 {message && (
                     <div className={`p-3 mb-4 rounded-lg text-sm border ${message.type === 'success'
-                            ? 'bg-green-500/10 text-green-400 border-green-500/20'
-                            : 'bg-red-500/10 text-red-500 border-red-500/20'
+                        ? 'bg-green-500/10 text-green-400 border-green-500/20'
+                        : 'bg-red-500/10 text-red-500 border-red-500/20'
                         }`}>
                         {message.text}
                     </div>
