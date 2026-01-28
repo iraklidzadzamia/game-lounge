@@ -116,27 +116,34 @@ export default function FloorMap({ selectedSeats, onToggle, unavailableIds = [],
                         {renderStation({ id: 'chikovani-vip-2', name: 'VIP 2', type: 'VIP', branch_id: 'chikovani' }, true)}
                     </div>
                 </div>
-                {/* PS5 */}
-                <div className="flex-1 min-w-[300px] glass-panel p-4 rounded-xl border border-white/10">
-                    <h3 className="text-neon-cyan font-orbitron mb-4 text-center">PLAYSTATION 5</h3>
-                    <div className="grid grid-cols-3 gap-4 justify-items-center">
-                        {Array.from({ length: 6 }).map((_, i) =>
-                            renderStation({ id: `chikovani-ps5-${i + 1}`, name: `PS5 ${i + 1}`, type: 'PS5', branch_id: 'chikovani' })
-                        )}
-                    </div>
-                </div>
+                {/* PS5 (Removed from here) */}
             </div>
 
             {/* Row 2: PCs */}
             <div className="flex flex-col xl:flex-row gap-8">
 
-                {/* Premium (Vertical 5) - MOVED HERE (Left position) */}
+                {/* Left Bank: 2 PS5s (Horizontal) + Premium (Vertical) */}
                 <div className="flex-1 glass-panel p-4 rounded-xl border border-white/10 flex flex-col items-center">
-                    <h3 className="text-neon-cyan font-orbitron mb-4 text-sm">PREMIUM (5)</h3>
-                    <div className="flex flex-col gap-2">
-                        {Array.from({ length: 5 }).map((_, i) =>
-                            renderStation({ id: `chikovani-prem-${i + 1}`, name: `PREM ${i + 1}`, type: 'PREMIUM', branch_id: 'chikovani' })
-                        )}
+                    <h3 className="text-neon-cyan font-orbitron mb-4 text-sm text-center">PREMIUM AREA</h3>
+                    <div className="flex gap-6 items-start">
+                        {/* 2 PS5s (Left of Premium) */}
+                        <div className="flex flex-col gap-2 pt-2">
+                            <span className="text-[10px] text-white/30 font-orbitron text-center mb-1">PS5</span>
+                            <div className="flex gap-2">
+                                {renderStation({ id: 'chikovani-ps5-1', name: 'PS5 1', type: 'PS5', branch_id: 'chikovani' })}
+                                {renderStation({ id: 'chikovani-ps5-2', name: 'PS5 2', type: 'PS5', branch_id: 'chikovani' })}
+                            </div>
+                        </div>
+
+                        {/* Premium (Vertical) */}
+                        <div className="flex flex-col items-center">
+                            <span className="text-[10px] text-white/30 font-orbitron text-center mb-1">PREM</span>
+                            <div className="flex flex-col gap-2">
+                                {Array.from({ length: 5 }).map((_, i) =>
+                                    renderStation({ id: `chikovani-prem-${i + 1}`, name: `PREM ${i + 1}`, type: 'PREMIUM', branch_id: 'chikovani' })
+                                )}
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -177,6 +184,24 @@ export default function FloorMap({ selectedSeats, onToggle, unavailableIds = [],
                     </div>
                 </div>
 
+            </div>
+
+            {/* Row 3: 4 Remaining PS5s (Bottom) */}
+            <div className="w-full glass-panel p-4 rounded-xl border border-white/10 flex flex-col items-center">
+                <h3 className="text-neon-cyan font-orbitron mb-4 text-sm">PLAYSTATION 5 (LOUNGE)</h3>
+                <div className="flex flex-wrap justify-center gap-4">
+                    {Array.from({ length: 4 }).map((_, i) =>
+                        renderStation({ id: `chikovani-ps5-${i + 3}`, name: `PS5 ${i + 3}`, type: 'PS5', branch_id: 'chikovani' })
+                    )}
+                </div>
+            </div>
+
+            {/* Street View Indicator (Bottom) */}
+            <div className="w-full flex flex-col items-center mt-4">
+                <div className="w-64 h-1 bg-gradient-to-r from-transparent via-neon-cyan/40 to-transparent rounded-full box-shadow-[0_0_10px_#00f3ff]" />
+                <span className="text-xs text-neon-cyan/50 font-orbitron tracking-widest mt-2">
+                    STREET VIEW
+                </span>
             </div>
         </div>
     );
