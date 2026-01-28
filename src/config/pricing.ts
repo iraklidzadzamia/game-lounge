@@ -59,22 +59,35 @@ export const PRICING: Record<StationType, PriceConfig> = {
  * 2. If no direct bundle, it falls back to hourlyRate * duration.
  *    (Future improvement: could intelligently combine bundles, e.g. 4h = 3h bundle + 1h)
  */
-export const calculatePrice = (type: StationType, durationHours: number): number => {
+export const calculatePrice = (type: StationType, durationHours: number, options?: { guests?: number; controllers?: number }): number => {
     const config = PRICING[type];
     if (!config) return 0;
 
+    let basePrice = 0;
+
     // Check for exact bundle match
     if (config.bundles[durationHours]) {
-        return config.bundles[durationHours];
+        basePrice = config.bundles[durationHours];
+    } else {
+        basePrice = config.hourlyRate * durationHours;
     }
 
-    // Fallback logic: 
-    // If user selects 4 hours, and we have a 3h bundle. 
-    // Should we do Bundle(3) + 1h? Or just 4 * 1h?
-    // For now, based on typical requests, let's keep it simple: 
-    // If explicit bundle exists, use it. Otherwise standard rate * duration.
-    // However, if 4 hours costs 40 (4*10) and 5 hours costs 40 (bundle), it's weird.
-    // Let's stick to standard rate fallback for now unless specific instructions are given for split bundles.
+    // --- Dynamic Pricing Logic (Placeholders) ---
 
-    return config.hourlyRate * durationHours;
+    // PS5: 4 Controllers (2 vs 2 scenario)
+    if (type === 'PS5' && options?.controllers && options.controllers > 2) {
+        // Example: +50% price for 4 joysticks
+        // TODO: Update with real pricing rule
+        basePrice = basePrice * 1.5;
+    }
+
+    // VIP: More than 6 guests
+    if (type === 'VIP' && options?.guests && options.guests > 6) {
+        // Example: +10 GEL per extra guest per hour? Or flat fee?
+        // Let's do a simple markup for now: +10 GEL flat for extra large group
+        // TODO: Update with real pricing rule
+        basePrice = basePrice + 20;
+    }
+
+    return Math.ceil(basePrice);
 };

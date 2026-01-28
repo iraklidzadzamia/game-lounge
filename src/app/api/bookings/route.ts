@@ -14,7 +14,7 @@ const getStationType = async (id: string) => {
 export async function POST(request: Request) {
     try {
         const body = await request.json();
-        const { startTime, endTime, stationIds, customerName, customerPhone, customerEmail, duration, branchId } = body;
+        const { startTime, endTime, stationIds, customerName, customerPhone, customerEmail, duration, branchId, guestCount, controllersCount } = body;
 
         // 1. Basic Validation
         if (!startTime || !endTime || !stationIds || !stationIds.length || !customerName || !customerPhone) {
@@ -51,7 +51,7 @@ export async function POST(request: Request) {
         // 3. Prepare Inserts
         const bookingsToInsert = await Promise.all(stationIds.map(async (id: string) => {
             const type = await getStationType(id);
-            const price = calculatePrice(type as StationType, duration);
+            const price = calculatePrice(type as StationType, duration, { guests: guestCount, controllers: controllersCount });
 
             return {
                 station_id: id,
@@ -62,7 +62,9 @@ export async function POST(request: Request) {
                 customer_phone: customerPhone,
                 customer_email: customerEmail,
                 total_price: price,
-                status: 'CONFIRMED'
+                status: 'CONFIRMED',
+                guest_count: guestCount || 1,
+                controllers_count: controllersCount || 2
             };
         }));
 

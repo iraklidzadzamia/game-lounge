@@ -7,6 +7,8 @@ import { calculatePrice, StationType } from '@/config/pricing';
 
 type Booking = Database['public']['Tables']['bookings']['Row'] & {
     stations?: { type: string } | null;
+    guest_count?: number;
+    controllers_count?: number;
 };
 
 interface BookingActionModalProps {
@@ -40,6 +42,10 @@ export default function BookingActionModal({
     // Form State
     const [customerName, setCustomerName] = useState('');
     const [customerPhone, setCustomerPhone] = useState('');
+
+    // Extras State
+    const [guestCount, setGuestCount] = useState(1);
+    const [controllersCount, setControllersCount] = useState(2);
 
     // Split Date/Time State
     const [startDate, setStartDate] = useState('');
@@ -118,6 +124,10 @@ export default function BookingActionModal({
                 setCustomerName(existingBooking.customer_name);
                 setCustomerPhone(existingBooking.customer_phone);
 
+                // Extras
+                setGuestCount(existingBooking.guest_count || 1);
+                setControllersCount(existingBooking.controllers_count || 2);
+
                 const startParts = parseDateToParts(existingBooking.start_time);
                 setStartDate(startParts.date);
                 setStartClock(startParts.time);
@@ -134,6 +144,11 @@ export default function BookingActionModal({
             } else {
                 setCustomerName('');
                 setCustomerPhone('');
+
+                // Reset Extras
+                setGuestCount(1);
+                setControllersCount(2);
+
                 const now = new Date();
                 now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
 
@@ -192,8 +207,8 @@ export default function BookingActionModal({
                 const type = (booking.stations?.type as StationType) || 'STANDARD';
 
                 // Calculate per station
-                const actualP = calculatePrice(type, eMin / 60);
-                const reservedP = calculatePrice(type, rMin / 60);
+                const actualP = calculatePrice(type, eMin / 60, { guests: guestCount, controllers: controllersCount });
+                const reservedP = calculatePrice(type, rMin / 60, { guests: guestCount, controllers: controllersCount });
 
                 totalActual += actualP;
                 totalReserved += reservedP;
@@ -265,6 +280,8 @@ export default function BookingActionModal({
                     payment_status: paymentStatus,
                     payment_method: paymentMethod || null,
                     notes: finalNotes,
+                    guest_count: guestCount,
+                    controllers_count: controllersCount
                 };
 
                 const { error } = await supabase
@@ -299,7 +316,9 @@ export default function BookingActionModal({
                     payment_status: paymentStatus,
                     payment_method: paymentMethod || null,
                     notes: finalNotes,
-                    status: 'CONFIRMED'
+                    status: 'CONFIRMED',
+                    guest_count: guestCount,
+                    controllers_count: controllersCount
                 }));
 
                 const { error } = await supabase
@@ -592,6 +611,50 @@ export default function BookingActionModal({
                                     </span>
                                 </div>
                             </div>
+
+                            {/* EXTRAS */}
+                            {(targetStationIds.some(id => id.toLowerCase().includes('ps5')) || targetStationIds.some(id => id.toLowerCase().includes('vip'))) && !stopMode && (
+                                <div className="p-4 bg-white/5 rounded-lg border border-white/10 space-y-4">
+                                    <div className="text-xs font-bold text-gray-500 uppercase mb-2">EXTRAS</div>
+
+                                    {targetStationIds.some(id => id.toLowerCase().includes('ps5')) && (
+                                        <div className="flex justify-between items-center">
+                                            <div className="flex items-center gap-2">
+                                                <svg className="w-5 h-5 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z" />
+                                                </svg>
+                                                <div>
+                                                    <span className="text-sm font-bold text-white block">Controllers</span>
+                                                    <span className="text-[10px] text-gray-500">More than 2 controllers cost extra</span>
+                                                </div>
+                                            </div>
+                                            <div className="flex bg-black/50 rounded-lg p-1 border border-white/10">
+                                                <button type="button" onClick={() => setControllersCount(2)} className={`px-4 py-1.5 rounded text-xs font-bold transition-all ${controllersCount <= 2 ? 'bg-purple-600/80 text-white shadow-lg shadow-purple-500/20' : 'text-gray-400 hover:text-white'}`}>2</button>
+                                                <button type="button" onClick={() => setControllersCount(4)} className={`px-4 py-1.5 rounded text-xs font-bold transition-all ${controllersCount > 2 ? 'bg-purple-600/80 text-white shadow-lg shadow-purple-500/20' : 'text-gray-400 hover:text-white'}`}>4</button>
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {targetStationIds.some(id => id.toLowerCase().includes('vip')) && (
+                                        <div className="flex justify-between items-center">
+                                            <div className="flex items-center gap-2">
+                                                <svg className="w-5 h-5 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                                                </svg>
+                                                <div>
+                                                    <span className="text-sm font-bold text-white block">Guests</span>
+                                                    <span className="text-[10px] text-gray-500">Extra charge for groups &gt; 6</span>
+                                                </div>
+                                            </div>
+                                            <div className="flex items-center gap-3 bg-black/50 rounded-lg px-2 py-1 border border-white/10">
+                                                <button type="button" onClick={() => setGuestCount(Math.max(1, guestCount - 1))} className="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-white hover:bg-white/5 rounded transition-colors text-lg">-</button>
+                                                <span className="text-white font-bold w-6 text-center text-sm">{guestCount}</span>
+                                                <button type="button" onClick={() => setGuestCount(guestCount + 1)} className="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-white hover:bg-white/5 rounded transition-colors text-lg">+</button>
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                            )}
 
                             <div className="p-4 bg-white/5 rounded-lg border border-white/10 space-y-3">
                                 <label className="block text-xs font-semibold text-gray-400 uppercase">Payment</label>
