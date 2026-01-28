@@ -505,18 +505,11 @@ export default function BookingActionModal({
 
                             {/* Station Info */}
                             <div className="text-sm text-gray-400 mb-2">
-                                {isGroupBooking ? (
-                                    <div>
-                                        Packing <span className="text-blue-400 font-bold">{targetStationIds.length} Stations</span>
-                                        <div className="text-xs text-gray-500 mt-1 flex flex-wrap gap-1">
-                                            {targetStationIds.map(id => (
-                                                <span key={id} className="bg-white/10 px-1 rounded">{id}</span>
-                                            ))}
-                                        </div>
-                                    </div>
-                                ) : (
-                                    <div>Station: <span className="text-blue-400 font-bold">{targetStationIds[0]}</span></div>
-                                )}
+                                <div>
+                                    Station: <span className="text-blue-400 font-bold">
+                                        {(existingBooking as any)?.stationNames?.join(', ') || targetStationIds.join(', ')}
+                                    </span>
+                                </div>
                             </div>
 
                             <div className="grid grid-cols-1 gap-4">
