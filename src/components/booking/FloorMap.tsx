@@ -122,12 +122,12 @@ export default function FloorMap({ selectedSeats, onToggle, unavailableIds = [],
             {/* Row 2: PCs */}
             <div className="flex flex-col xl:flex-row gap-8">
 
-                {/* Left Bank: 2 PS5s (Horizontal) + Premium (Vertical) */}
+                {/* Left Bank: Premium Area (Corrected Alignment) */}
                 <div className="flex-1 glass-panel p-4 rounded-xl border border-white/10 flex flex-col items-center">
                     <h3 className="text-neon-cyan font-orbitron mb-4 text-sm text-center">PREMIUM AREA</h3>
-                    <div className="flex gap-6 items-start">
-                        {/* 2 PS5s (Left of Premium) */}
-                        <div className="flex flex-col gap-2 pt-2">
+                    <div className="flex gap-6 items-end">
+                        {/* 2 PS5s (Left of Premium - Bottom Aligned) */}
+                        <div className="flex flex-col gap-2 pb-1">
                             <span className="text-[10px] text-white/30 font-orbitron text-center mb-1">PS5</span>
                             <div className="flex gap-2">
                                 {renderStation({ id: 'chikovani-ps5-1', name: 'PS5 1', type: 'PS5', branch_id: 'chikovani' })}
@@ -147,29 +147,33 @@ export default function FloorMap({ selectedSeats, onToggle, unavailableIds = [],
                     </div>
                 </div>
 
-                {/* Pro (Vertical 7) */}
-                <div className="flex-1 glass-panel p-4 rounded-xl border border-white/10 flex flex-col items-center">
-                    <h3 className="text-white/70 font-orbitron mb-4 text-sm">PRO (7)</h3>
-                    <div className="flex flex-col gap-2">
-                        {Array.from({ length: 7 }).map((_, i) =>
-                            renderStation({ id: `chikovani-pro-${i + 1}`, name: `PRO ${i + 1}`, type: 'PRO', branch_id: 'chikovani' })
-                        )}
-                    </div>
-                </div>
-
-                {/* Standard (2 Cols of 5) - MOVED HERE (3rd position) */}
-                <div className="flex-1 glass-panel p-4 rounded-xl border border-white/10 flex flex-col items-center">
-                    <h3 className="text-white/70 font-orbitron mb-4 text-sm">STANDARD (10)</h3>
-                    <div className="flex gap-4">
+                {/* Center Room: PRO + STANDARD (Merged) */}
+                <div className="flex-[2] glass-panel p-6 rounded-xl border border-white/10 flex flex-col items-center">
+                    <h3 className="text-white/70 font-orbitron mb-6 text-sm flex gap-4">
+                        <span>PRO (7)</span>
+                        <span className="text-white/20">|</span>
+                        <span>STANDARD (10)</span>
+                    </h3>
+                    <div className="flex gap-8 md:gap-12">
+                        {/* Pro Column */}
                         <div className="flex flex-col gap-2">
-                            {Array.from({ length: 5 }).map((_, i) =>
-                                renderStation({ id: `chikovani-std-${i + 1}`, name: `STD ${i + 1}`, type: 'STANDARD', branch_id: 'chikovani' })
+                            {Array.from({ length: 7 }).map((_, i) =>
+                                renderStation({ id: `chikovani-pro-${i + 1}`, name: `PRO ${i + 1}`, type: 'PRO', branch_id: 'chikovani' })
                             )}
                         </div>
-                        <div className="flex flex-col gap-2">
-                            {Array.from({ length: 5 }).map((_, i) =>
-                                renderStation({ id: `chikovani-std-${i + 6}`, name: `STD ${i + 6}`, type: 'STANDARD', branch_id: 'chikovani' })
-                            )}
+
+                        {/* Standard Columns */}
+                        <div className="flex gap-4 border-l border-white/5 pl-8 md:pl-12">
+                            <div className="flex flex-col gap-2">
+                                {Array.from({ length: 5 }).map((_, i) =>
+                                    renderStation({ id: `chikovani-std-${i + 1}`, name: `STD ${i + 1}`, type: 'STANDARD', branch_id: 'chikovani' })
+                                )}
+                            </div>
+                            <div className="flex flex-col gap-2">
+                                {Array.from({ length: 5 }).map((_, i) =>
+                                    renderStation({ id: `chikovani-std-${i + 6}`, name: `STD ${i + 6}`, type: 'STANDARD', branch_id: 'chikovani' })
+                                )}
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -186,13 +190,33 @@ export default function FloorMap({ selectedSeats, onToggle, unavailableIds = [],
 
             </div>
 
-            {/* Row 3: 4 Remaining PS5s (Bottom) */}
-            <div className="w-full glass-panel p-4 rounded-xl border border-white/10 flex flex-col items-center">
-                <h3 className="text-neon-cyan font-orbitron mb-4 text-sm">PLAYSTATION 5 (LOUNGE)</h3>
-                <div className="flex flex-wrap justify-center gap-4">
-                    {Array.from({ length: 4 }).map((_, i) =>
-                        renderStation({ id: `chikovani-ps5-${i + 3}`, name: `PS5 ${i + 3}`, type: 'PS5', branch_id: 'chikovani' })
-                    )}
+            {/* Row 3: Bottom Lounge (Square Room with Reception) */}
+            <div className="w-full glass-panel p-8 rounded-xl border border-white/10 relative">
+                {/* Reception - Top Center */}
+                <div className="absolute top-4 left-1/2 -translate-x-1/2 flex flex-col items-center z-10">
+                    <div className="px-6 py-2 border border-neon-cyan/30 rounded bg-neon-cyan/10 text-neon-cyan text-xs font-orbitron tracking-widest uppercase mb-1 backdrop-blur-md">
+                        RECEPTION
+                    </div>
+                    <div className="w-px h-8 bg-gradient-to-b from-neon-cyan/30 to-transparent"></div>
+                </div>
+
+                <div className="flex justify-between items-center pt-12 md:px-12">
+                    {/* Left Side: 2 PS5s */}
+                    <div className="flex flex-col gap-4">
+                        {renderStation({ id: `chikovani-ps5-3`, name: `PS5 3`, type: 'PS5', branch_id: 'chikovani' }, true)}
+                        {renderStation({ id: `chikovani-ps5-4`, name: `PS5 4`, type: 'PS5', branch_id: 'chikovani' }, true)}
+                    </div>
+
+                    {/* Center Void / Lounge Area Text */}
+                    <div className="text-white/10 font-orbitron text-4xl tracking-[1em] opacity-20 select-none hidden md:block">
+                        LOUNGE
+                    </div>
+
+                    {/* Right Side: 2 PS5s */}
+                    <div className="flex flex-col gap-4">
+                        {renderStation({ id: `chikovani-ps5-5`, name: `PS5 5`, type: 'PS5', branch_id: 'chikovani' }, true)}
+                        {renderStation({ id: `chikovani-ps5-6`, name: `PS5 6`, type: 'PS5', branch_id: 'chikovani' }, true)}
+                    </div>
                 </div>
             </div>
 
