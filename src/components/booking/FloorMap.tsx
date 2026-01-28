@@ -105,14 +105,14 @@ export default function FloorMap({ selectedSeats, onToggle, unavailableIds = [],
 
     // --- CHIKOVANI LAYOUT ---
     const renderChikovaniLayout = () => (
-        <div className="w-full flex flex-col gap-8 p-4">
+        <div className="w-full flex flex-col gap-8 p-4 items-center xl:items-start">
             {/* Row 1: Empty Space (Clean) */}
-            <div className="flex flex-col lg:flex-row gap-8 min-h-[50px]">
+            <div className="flex flex-col lg:flex-row gap-8 min-h-[50px] w-full">
                 {/* Empty */}
             </div>
 
             {/* Row 2: PCs */}
-            <div className="flex flex-col xl:flex-row gap-8">
+            <div className="flex flex-col xl:flex-row gap-8 w-full">
 
                 {/* Left Bank: Premium Area + VIP 1 Below */}
                 <div className="flex-1 flex flex-col gap-8">
