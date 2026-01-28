@@ -108,35 +108,50 @@ export default function FloorMap({ selectedSeats, onToggle, unavailableIds = [],
         <div className="w-full flex flex-col gap-8 p-4">
             {/* Row 1: VIP & PS5 (Grid) */}
             <div className="flex flex-col lg:flex-row gap-8">
-                {/* VIP */}
-                <div className="flex-1 min-w-[300px] glass-panel p-4 rounded-xl border border-white/10">
+                {/* VIP section moved to Premium Area */}
+                {/* <div className="flex-1 min-w-[300px] glass-panel p-4 rounded-xl border border-white/10">
                     <h3 className="text-neon-cyan font-orbitron mb-4 text-center">VIP ROOMS</h3>
                     <div className="flex justify-center gap-4">
                         {renderStation({ id: 'chikovani-vip-1', name: 'VIP 1', type: 'VIP', branch_id: 'chikovani' }, true)}
                         {renderStation({ id: 'chikovani-vip-2', name: 'VIP 2', type: 'VIP', branch_id: 'chikovani' }, true)}
                     </div>
-                </div>
+                </div> */}
                 {/* PS5 (Removed from here) */}
             </div>
 
             {/* Row 2: PCs */}
             <div className="flex flex-col xl:flex-row gap-8">
 
-                {/* Left Bank: Premium Area (Corrected Alignment) */}
+                {/* Left Bank: Premium Area (Corrected Alignment with VIPs) */}
                 <div className="flex-1 glass-panel p-4 rounded-xl border border-white/10 flex flex-col items-center">
                     <h3 className="text-neon-cyan font-orbitron mb-4 text-sm text-center">PREMIUM AREA</h3>
-                    <div className="flex gap-6 items-end">
-                        {/* 2 PS5s (Left of Premium - Bottom Aligned) */}
-                        <div className="flex flex-col gap-2 pb-1">
-                            <span className="text-[10px] text-white/30 font-orbitron text-center mb-1">PS5</span>
-                            <div className="flex gap-2">
-                                {renderStation({ id: 'chikovani-ps5-1', name: 'PS5 1', type: 'PS5', branch_id: 'chikovani' })}
-                                {renderStation({ id: 'chikovani-ps5-2', name: 'PS5 2', type: 'PS5', branch_id: 'chikovani' })}
+                    <div className="flex gap-6 items-center">
+                        {/* Left Column: VIP 1 -> PS5s -> VIP 2 */}
+                        <div className="flex flex-col gap-4">
+                            {/* VIP 1 (Top) */}
+                            <div className="border border-electric-purple/30 bg-electric-purple/10 p-2 rounded flex flex-col items-center relative">
+                                <span className="text-[8px] text-electric-purple mb-1 font-orbitron">VIP 1</span>
+                                {renderStation({ id: 'chikovani-vip-1', name: 'VIP 1', type: 'VIP', branch_id: 'chikovani' })}
+                            </div>
+
+                            {/* 2 PS5s (Middle) */}
+                            <div className="flex flex-col gap-2 py-2">
+                                <span className="text-[10px] text-white/30 font-orbitron text-center mb-1">PS5</span>
+                                <div className="flex gap-2">
+                                    {renderStation({ id: 'chikovani-ps5-1', name: 'PS5 1', type: 'PS5', branch_id: 'chikovani' })}
+                                    {renderStation({ id: 'chikovani-ps5-2', name: 'PS5 2', type: 'PS5', branch_id: 'chikovani' })}
+                                </div>
+                            </div>
+
+                            {/* VIP 2 (Bottom) */}
+                            <div className="border border-electric-purple/30 bg-electric-purple/10 p-2 rounded flex flex-col items-center relative">
+                                <span className="text-[8px] text-electric-purple mb-1 font-orbitron">VIP 2</span>
+                                {renderStation({ id: 'chikovani-vip-2', name: 'VIP 2', type: 'VIP', branch_id: 'chikovani' })}
                             </div>
                         </div>
 
-                        {/* Premium (Vertical) */}
-                        <div className="flex flex-col items-center">
+                        {/* Premium (Vertical - Right) */}
+                        <div className="flex flex-col items-center h-full justify-center">
                             <span className="text-[10px] text-white/30 font-orbitron text-center mb-1">PREM</span>
                             <div className="flex flex-col gap-2">
                                 {Array.from({ length: 5 }).map((_, i) =>
