@@ -121,7 +121,7 @@ export default function FloorMap({ selectedSeats, onToggle, unavailableIds = [],
                         <h3 className="text-neon-cyan font-orbitron mb-4 text-sm text-center">PREMIUM AREA</h3>
 
                         {/* CSS Grid for Precise Alignment */}
-                        <div className="grid grid-cols-2 gap-x-6 gap-y-2 w-full">
+                        <div className="grid grid-cols-[1.3fr_0.7fr] gap-x-6 gap-y-2 w-full">
 
                             {/* LEFT COLUMN */}
 
