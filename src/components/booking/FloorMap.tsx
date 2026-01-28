@@ -80,9 +80,10 @@ interface FloorMapProps {
     onToggle: (id: string, type: string) => void;
     unavailableIds?: string[];
     branchId: string;
+    isAdmin?: boolean;
 }
 
-export default function FloorMap({ selectedSeats, onToggle, unavailableIds = [], branchId }: FloorMapProps) {
+export default function FloorMap({ selectedSeats, onToggle, unavailableIds = [], branchId, isAdmin = false }: FloorMapProps) {
     const [activeFloor, setActiveFloor] = useState(2);
 
     const currentFloor = FLOORS.find(f => f.id === activeFloor);
@@ -380,13 +381,13 @@ export default function FloorMap({ selectedSeats, onToggle, unavailableIds = [],
                 key={station.id}
                 whileHover={!isUnavailable ? { scale: 1.05 } : {}}
                 whileTap={!isUnavailable ? { scale: 0.95 } : {}}
-                onClick={() => !isUnavailable && onToggle(realId, station.type)}
-                disabled={isUnavailable}
+                onClick={() => (!isUnavailable || isAdmin) && onToggle(realId, station.type)}
+                disabled={isUnavailable && !isAdmin}
                 className={`
                     group relative rounded-md border transition-all duration-300 flex flex-col items-center justify-center
                     ${borderColor} ${bgColor}
                     ${sizeClass}
-                    ${isUnavailable ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}
+                    ${isUnavailable && !isAdmin ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}
                 `}
                 style={{ boxShadow: shadow }}
             >
