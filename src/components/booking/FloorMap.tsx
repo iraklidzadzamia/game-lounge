@@ -212,7 +212,7 @@ export default function FloorMap({ selectedSeats, onToggle, unavailableIds = [],
             </div>
 
             {/* Row 3: Bottom Lounge (Small Square Room) */}
-            <div className="w-full max-w-[450px] mx-auto glass-panel p-6 rounded-xl border border-white/10 relative aspect-square flex flex-col justify-between">
+            <div className="w-full max-w-[380px] glass-panel p-6 rounded-xl border border-white/10 relative aspect-square flex flex-col justify-between">
                 {/* Reception - Top Center */}
                 <div className="absolute top-4 left-1/2 -translate-x-1/2 flex flex-col items-center z-10 w-full">
                     <div className="px-4 py-1.5 border border-neon-cyan/30 rounded bg-neon-cyan/10 text-neon-cyan text-[10px] font-orbitron tracking-widest uppercase mb-1 backdrop-blur-md whitespace-nowrap">
