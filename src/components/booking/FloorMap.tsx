@@ -106,48 +106,54 @@ export default function FloorMap({ selectedSeats, onToggle, unavailableIds = [],
     // --- CHIKOVANI LAYOUT ---
     const renderChikovaniLayout = () => (
         <div className="w-full flex flex-col gap-8 p-4">
-            {/* Row 1: PS5 1 & 2 (Moved from Premium Area) */}
-            <div className="flex flex-col lg:flex-row gap-8">
-                <div className="flex-1 glass-panel p-4 rounded-xl border border-white/10 flex flex-col items-center justify-center min-h-[120px]">
-                    <h3 className="text-neon-cyan font-orbitron mb-4 text-sm text-center">PLAYSTATION 5</h3>
-                    <div className="flex gap-4">
-                        {renderStation({ id: 'chikovani-ps5-1', name: 'PS5 1', type: 'PS5', branch_id: 'chikovani' })}
-                        {renderStation({ id: 'chikovani-ps5-2', name: 'PS5 2', type: 'PS5', branch_id: 'chikovani' })}
-                    </div>
-                </div>
+            {/* Row 1: Empty Space (Clean) */}
+            <div className="flex flex-col lg:flex-row gap-8 min-h-[50px]">
+                {/* Empty */}
             </div>
 
             {/* Row 2: PCs */}
             <div className="flex flex-col xl:flex-row gap-8">
 
-                {/* Left Bank: Premium Area (Corrected Alignment with VIPs) */}
-                <div className="flex-1 glass-panel p-4 rounded-xl border border-white/10 flex flex-col items-center">
-                    <h3 className="text-neon-cyan font-orbitron mb-4 text-sm text-center">PREMIUM AREA</h3>
-                    <div className="flex gap-6 items-stretch h-full">
-                        {/* Left Column: VIP 2 (Top/Large) -> VIP 1 (Bottom) */}
-                        <div className="flex flex-col gap-4 justify-between pt-8">
-                            {/* VIP 2 (Top - Large Space) */}
-                            <div className="flex-1 border border-electric-purple/30 bg-electric-purple/10 p-4 rounded flex flex-col items-center justify-center relative min-h-[150px]">
-                                <span className="text-xs text-electric-purple mb-2 font-orbitron font-bold">VIP 2</span>
-                                {renderStation({ id: 'chikovani-vip-2', name: 'VIP 2', type: 'VIP', branch_id: 'chikovani' })}
+                {/* Left Bank: Premium Area + VIP 1 Below */}
+                <div className="flex-1 flex flex-col gap-8">
+                    {/* Premium Area Container */}
+                    <div className="flex-1 glass-panel p-4 rounded-xl border border-white/10 flex flex-col items-center">
+                        <h3 className="text-neon-cyan font-orbitron mb-4 text-sm text-center">PREMIUM AREA</h3>
+                        <div className="flex gap-6 items-stretch h-full">
+                            {/* Left Column: VIP 2 (Top) -> PS5s (Bottom) */}
+                            <div className="flex flex-col gap-4 justify-between pt-2">
+                                {/* VIP 2 (Dominant Space) */}
+                                <div className="flex-1 border border-electric-purple/30 bg-electric-purple/10 p-4 rounded flex flex-col items-center justify-center relative min-h-[200px]">
+                                    <span className="text-xs text-electric-purple mb-2 font-orbitron font-bold">VIP 2</span>
+                                    {renderStation({ id: 'chikovani-vip-2', name: 'VIP 2', type: 'VIP', branch_id: 'chikovani' })}
+                                </div>
+
+                                {/* PS5 1 & 2 (Bottom) */}
+                                <div className="flex flex-col gap-2 py-2">
+                                    <span className="text-[10px] text-white/30 font-orbitron text-center mb-1">PS5</span>
+                                    <div className="flex gap-2">
+                                        {renderStation({ id: 'chikovani-ps5-1', name: 'PS5 1', type: 'PS5', branch_id: 'chikovani' })}
+                                        {renderStation({ id: 'chikovani-ps5-2', name: 'PS5 2', type: 'PS5', branch_id: 'chikovani' })}
+                                    </div>
+                                </div>
                             </div>
 
-                            {/* VIP 1 (Bottom) */}
-                            <div className="border border-electric-purple/30 bg-electric-purple/10 p-2 rounded flex flex-col items-center relative">
-                                <span className="text-[8px] text-electric-purple mb-1 font-orbitron">VIP 1</span>
-                                {renderStation({ id: 'chikovani-vip-1', name: 'VIP 1', type: 'VIP', branch_id: 'chikovani' })}
+                            {/* Premium (Vertical - Right) */}
+                            <div className="flex flex-col items-center h-full justify-center">
+                                <span className="text-[10px] text-white/30 font-orbitron text-center mb-1">PREM</span>
+                                <div className="flex flex-col gap-2">
+                                    {Array.from({ length: 5 }).map((_, i) =>
+                                        renderStation({ id: `chikovani-prem-${i + 1}`, name: `PREM ${i + 1}`, type: 'PREMIUM', branch_id: 'chikovani' })
+                                    )}
+                                </div>
                             </div>
                         </div>
+                    </div>
 
-                        {/* Premium (Vertical - Right) */}
-                        <div className="flex flex-col items-center h-full justify-center">
-                            <span className="text-[10px] text-white/30 font-orbitron text-center mb-1">PREM</span>
-                            <div className="flex flex-col gap-2">
-                                {Array.from({ length: 5 }).map((_, i) =>
-                                    renderStation({ id: `chikovani-prem-${i + 1}`, name: `PREM ${i + 1}`, type: 'PREMIUM', branch_id: 'chikovani' })
-                                )}
-                            </div>
-                        </div>
+                    {/* VIP 1 (Standalone Below Premium Area - Filling the Space) */}
+                    <div className="glass-panel p-4 rounded-xl border border-white/10 flex flex-col items-center justify-center border-electric-purple/30">
+                        <span className="text-xs text-electric-purple mb-2 font-orbitron font-bold">VIP 1</span>
+                        {renderStation({ id: 'chikovani-vip-1', name: 'VIP 1', type: 'VIP', branch_id: 'chikovani' })}
                     </div>
                 </div>
 
