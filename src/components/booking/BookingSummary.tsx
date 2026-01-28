@@ -27,7 +27,9 @@ export default function BookingSummary({ date, duration, seats, seatTypes, branc
     }, 0);
 
     // Validation: Needs seats, and non-empty name/phone/email
-    const isFormValid = seats.length > 0 && customerName.trim().length > 0 && customerPhone.trim().length > 0;
+    // Also check if time is valid (not in past, with 5 min buffer)
+    const isTimeValid = date.getTime() > Date.now() - 5 * 60 * 1000;
+    const isFormValid = seats.length > 0 && customerName.trim().length > 0 && customerPhone.trim().length > 0 && isTimeValid;
 
     const handleConfirm = async () => {
         if (!isFormValid) return;
@@ -81,14 +83,18 @@ export default function BookingSummary({ date, duration, seats, seatTypes, branc
                     {/* Date */}
                     <div className="flex justify-between items-center border-b border-white/10 pb-2">
                         <span className="text-white/50 font-inter">Date</span>
-                        <span className="text-white font-orbitron">{date.toLocaleDateString()}</span>
+                        <span className={`font-orbitron ${!isTimeValid ? "text-red-500 animate-pulse" : "text-white"}`}>
+                            {date.toLocaleDateString()}
+                        </span>
                     </div>
 
                     {/* Time */}
                     <div className="flex justify-between items-center border-b border-white/10 pb-2">
                         <span className="text-white/50 font-inter">Start Time</span>
-                        <span className="text-white font-orbitron">
-                            {date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - {new Date(date.getTime() + duration * 3600000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                        <span className={`font-orbitron ${!isTimeValid ? "text-red-500 animate-pulse" : "text-white"}`}>
+                            {date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                            {" - "}
+                            {new Date(date.getTime() + duration * 3600000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                         </span>
                     </div>
 
@@ -173,7 +179,8 @@ export default function BookingSummary({ date, duration, seats, seatTypes, branc
                     {isSubmitting ? (
                         <span className="w-6 h-6 border-2 border-black/20 border-t-black rounded-full animate-spin"></span>
                     ) : (
-                        seats.length === 0 ? "SELECT SEATS" : "CONFIRM BOOKING"
+                        !isTimeValid ? "INVALID TIME" :
+                            seats.length === 0 ? "SELECT SEATS" : "CONFIRM BOOKING"
                     )}
                 </button>
 
