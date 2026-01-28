@@ -173,6 +173,11 @@ export default function BookingActionModal({
     // Calculate Prices when entering Stop Mode
     useEffect(() => {
         if (stopMode && existingBooking) {
+            const bookingsToProcess = (existingBooking as any).subBookings || [existingBooking];
+            let totalActual = 0;
+            let totalReserved = 0;
+
+            // Use first booking for time ref (assuming synchronized group)
             const start = new Date(existingBooking.start_time);
             const end = new Date(existingBooking.end_time);
             const now = new Date();
@@ -183,18 +188,20 @@ export default function BookingActionModal({
             setElapsedMinutes(eMin);
             setReservedMinutes(rMin);
 
-            const type = (existingBooking.stations?.type as StationType) || 'STANDARD';
+            bookingsToProcess.forEach((booking: any) => {
+                const type = (booking.stations?.type as StationType) || 'STANDARD';
 
-            // Calculate Logic
-            const actualP = calculatePrice(type, eMin / 60);
-            const reservedP = calculatePrice(type, rMin / 60);
+                // Calculate per station
+                const actualP = calculatePrice(type, eMin / 60);
+                const reservedP = calculatePrice(type, rMin / 60);
 
-            setCalculatedActualPrice(Number(actualP.toFixed(2)));
-            setCalculatedReservedPrice(Number(reservedP.toFixed(2)));
+                totalActual += actualP;
+                totalReserved += reservedP;
+            });
 
-            // Default select actual if less, otherwise reserved? Or just null to force choice.
-            // Let's default to actual price as that's usually the intent of stopping early.
-            setFinalPrice(Number(actualP.toFixed(2)));
+            setCalculatedActualPrice(Number(totalActual.toFixed(2)));
+            setCalculatedReservedPrice(Number(totalReserved.toFixed(2)));
+            setFinalPrice(Number(totalActual.toFixed(2)));
         }
     }, [stopMode, existingBooking]);
 
@@ -205,16 +212,22 @@ export default function BookingActionModal({
         const now = new Date();
 
         try {
+            const bookingsToProcess = (existingBooking as any).subBookings || [existingBooking];
+            const idsToUpdate = bookingsToProcess.map((b: any) => b.id);
+            // Distribute the final price evenly across all stations in the group
+            // This ensures the TOTAL sum matches what was shown/paid
+            const pricePerStation = finalPrice ? Number((finalPrice / idsToUpdate.length).toFixed(2)) : 0;
+
             const { error } = await supabase
                 .from('bookings')
                 // @ts-ignore
                 .update({
                     end_time: now.toISOString(),
-                    total_price: finalPrice, // Save the selected final price
-                    payment_status: 'paid', // Assume immediate payment upon stop? Or keep as is? User said "Stop & Pay" so 'paid' is safer default.
-                    notes: (notes || '') + ` [Stopped: Used ${elapsedMinutes}m. Charged: ${finalPrice}₾]`
+                    total_price: pricePerStation,
+                    payment_status: 'paid',
+                    notes: (notes || '') + ` [Stopped: Used ${elapsedMinutes}m. Group Total: ${finalPrice}₾]`
                 })
-                .eq('id', existingBooking.id);
+                .in('id', idsToUpdate);
 
             if (error) throw error;
             onSuccess();
