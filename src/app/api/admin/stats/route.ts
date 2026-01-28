@@ -22,11 +22,16 @@ export async function GET(request: Request) {
         const startOfWeek = new Date(now.setDate(now.getDate() - 7)).toISOString();
 
         // 1. Fetch Today's Revenue and Count (Standard Stats)
-        const { data: todayBookings } = await supabase
+        let todayQuery = supabase
             .from('bookings')
             .select('total_price, start_time, end_time')
-            .eq('branch_id', branchId)
             .gte('start_time', startOfDay);
+
+        if (branchId !== 'all') {
+            todayQuery = todayQuery.eq('branch_id', branchId);
+        }
+
+        const { data: todayBookings } = await todayQuery;
 
         const dailyRevenue = todayBookings?.reduce((sum, b) => sum + (b.total_price || 0), 0) || 0;
         const totalBookingsToday = todayBookings?.length || 0;
@@ -39,24 +44,34 @@ export async function GET(request: Request) {
             const specificEnd = new Date(specificStart);
             specificEnd.setDate(specificEnd.getDate() + 1);
 
-            const { data: historical } = await supabase
+            let historicalQuery = supabase
                 .from('bookings')
                 .select('total_price')
-                .eq('branch_id', branchId)
                 .gte('start_time', specificStart.toISOString())
                 .lt('start_time', specificEnd.toISOString());
+
+            if (branchId !== 'all') {
+                historicalQuery = historicalQuery.eq('branch_id', branchId);
+            }
+
+            const { data: historical } = await historicalQuery;
 
             specificDateRevenue = historical?.reduce((sum, b) => sum + (b.total_price || 0), 0) || 0;
         }
 
         // 3. Active Now
         const currentIso = new Date().toISOString();
-        const { count: activeNow } = await supabase
+        let activeQuery = supabase
             .from('bookings')
             .select('*', { count: 'exact', head: true })
-            .eq('branch_id', branchId)
             .lt('start_time', currentIso)
             .gt('end_time', currentIso);
+
+        if (branchId !== 'all') {
+            activeQuery = activeQuery.eq('branch_id', branchId);
+        }
+
+        const { count: activeNow } = await activeQuery;
 
         // 4. Weekly Revenue (Optional, user didn't want graph but maybe summary?)
         // Let's keep it minimal for now based on request.
