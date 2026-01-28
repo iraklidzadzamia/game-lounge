@@ -77,6 +77,12 @@ export default function BookingActionModal({
         return `${dateStr}T${timeStr}:00`;
     };
 
+    const formatMinutes = (totalMinutes: number) => {
+        const h = Math.floor(totalMinutes / 60);
+        const m = totalMinutes % 60;
+        return h > 0 ? `${h}h ${m}m` : `${m}m`;
+    };
+
     // Derived Duration for Display
     const getDurationDisplay = () => {
         const startISO = getISO(startDate, startClock);
@@ -355,7 +361,7 @@ export default function BookingActionModal({
                                     onClick={() => setFinalPrice(calculatedActualPrice)}
                                     className={`p-4 rounded border cursor-pointer transition-all ${finalPrice === calculatedActualPrice ? 'bg-green-500/20 border-green-500 ring-1 ring-green-500' : 'bg-white/5 border-white/10 hover:bg-white/10'}`}
                                 >
-                                    <span className="block text-gray-400 text-xs mb-1">Played Time ({elapsedMinutes}m)</span>
+                                    <span className="block text-gray-400 text-xs mb-1">Played Time ({formatMinutes(elapsedMinutes)})</span>
                                     <span className="text-2xl font-bold text-white mb-1 block">{calculatedActualPrice} ₾</span>
                                     <span className="text-[10px] text-gray-500 block">Based on time played</span>
                                     {finalPrice === calculatedActualPrice && <span className="text-green-400 text-xs font-bold mt-2 block">✓ Selected</span>}
@@ -366,7 +372,7 @@ export default function BookingActionModal({
                                     onClick={() => setFinalPrice(calculatedReservedPrice)}
                                     className={`p-4 rounded border cursor-pointer transition-all ${finalPrice === calculatedReservedPrice ? 'bg-green-500/20 border-green-500 ring-1 ring-green-500' : 'bg-white/5 border-white/10 hover:bg-white/10'}`}
                                 >
-                                    <span className="block text-gray-400 text-xs mb-1">Booked Time ({reservedMinutes}m)</span>
+                                    <span className="block text-gray-400 text-xs mb-1">Booked Time ({formatMinutes(reservedMinutes)})</span>
                                     <span className="text-2xl font-bold text-white mb-1 block">{calculatedReservedPrice} ₾</span>
                                     <span className="text-[10px] text-gray-500 block">Full booking duration</span>
                                     {finalPrice === calculatedReservedPrice && <span className="text-green-400 text-xs font-bold mt-2 block">✓ Selected</span>}
