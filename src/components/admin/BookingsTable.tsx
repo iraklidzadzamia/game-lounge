@@ -13,9 +13,10 @@ interface BookingsTableProps {
     bookings: any[];
     isLoading: boolean;
     onRefresh: () => void;
+    onEdit: (booking: any) => void;
 }
 
-export default function BookingsTable({ bookings, isLoading, onRefresh }: BookingsTableProps) {
+export default function BookingsTable({ bookings, isLoading, onRefresh, onEdit }: BookingsTableProps) {
     const supabase = createClientComponentClient<Database>();
     const [processingId, setProcessingId] = useState<string | null>(null);
 
@@ -166,6 +167,13 @@ export default function BookingsTable({ bookings, isLoading, onRefresh }: Bookin
                                 </div>
                             </td>
                             <td className="px-6 py-4 text-right space-x-2">
+                                <button
+                                    onClick={() => onEdit(booking)}
+                                    disabled={!!processingId}
+                                    className="text-blue-400 hover:text-blue-300 hover:bg-blue-500/10 px-3 py-1.5 rounded-md transition-colors text-xs font-medium"
+                                >
+                                    Edit
+                                </button>
                                 <button
                                     onClick={() => handleDelete(booking)}
                                     disabled={!!processingId}

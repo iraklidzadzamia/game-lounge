@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import AnalyticsDashboard from '@/components/admin/AnalyticsDashboard';
 import BookingsTable from '@/components/admin/BookingsTable';
+import BookingActionModal from '@/components/admin/BookingActionModal';
 import { Database } from '@/types/database.types';
 
 type Booking = Database['public']['Tables']['bookings']['Row'] & {
@@ -17,6 +18,10 @@ export default function AdminDashboard() {
     const supabase = createClientComponentClient<Database>();
     const [searchQuery, setSearchQuery] = useState('');
     const [typeFilter, setTypeFilter] = useState('ALL');
+
+    // Modal State
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null);
 
     const fetchBookings = async () => {
         setLoading(true);
@@ -84,9 +89,31 @@ export default function AdminDashboard() {
             </div>
 
             <div className="bg-[#111] border border-white/10 rounded-xl overflow-hidden">
-                {/* Pass grouped data to table */}
-                <BookingsTable bookings={groupedData as any} isLoading={loading} onRefresh={() => { fetchBookings(); }} />
+                <BookingsTable
+                    bookings={groupedData as any}
+                    isLoading={loading}
+                    onRefresh={() => fetchBookings()}
+                    onEdit={(booking) => {
+                        setSelectedBooking(booking);
+                        setIsModalOpen(true);
+                    }}
+                />
             </div>
+
+            {/* Editing Modal */}
+            <BookingActionModal
+                isOpen={isModalOpen}
+                onClose={() => {
+                    setIsModalOpen(false);
+                    setSelectedBooking(null);
+                }}
+                branchId="chikovani" // defaulting to chikovani, can be adjustable if needed
+                onSuccess={() => {
+                    fetchBookings();
+                }}
+                existingBooking={selectedBooking}
+                stationId={selectedBooking?.station_id}
+            />
         </div>
     );
 }
