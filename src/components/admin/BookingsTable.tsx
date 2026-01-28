@@ -8,8 +8,9 @@ type Booking = Database['public']['Tables']['bookings']['Row'] & {
     stations: { name: string; branch_id: string; type: string } | null;
 };
 
+// Accept any[] because we are passing grouped objects that exceed the Booking type
 interface BookingsTableProps {
-    bookings: Booking[];
+    bookings: any[];
     isLoading: boolean;
     onRefresh: () => void;
 }
@@ -27,23 +28,32 @@ export default function BookingsTable({ bookings, isLoading, onRefresh }: Bookin
         });
     };
 
-    const handleDelete = async (id: string) => {
+    const handleDelete = async (booking: any) => {
         if (!confirm('Are you sure you want to delete this booking?')) return;
-        setProcessingId(id);
-        const { error } = await supabase.from('bookings').delete().eq('id', id);
+        setProcessingId(booking.id);
+
+        const idsToDelete = booking.isGroup ? booking.subBookings.map((b: any) => b.id) : [booking.id];
+
+        const { error } = await supabase
+            .from('bookings')
+            .delete()
+            .in('id', idsToDelete);
+
         if (error) alert('Error deleting: ' + error.message);
         else onRefresh();
         setProcessingId(null);
     };
 
-    const togglePaymentStatus = async (booking: Booking) => {
+    const togglePaymentStatus = async (booking: any) => {
         setProcessingId(booking.id);
+        const idsToUpdate = booking.isGroup ? booking.subBookings.map((b: any) => b.id) : [booking.id];
         const newStatus = booking.payment_status === 'paid' ? 'unpaid' : 'paid';
+
         const { error } = await supabase
             .from('bookings')
             // @ts-ignore
             .update({ payment_status: newStatus })
-            .eq('id', booking.id);
+            .in('id', idsToUpdate);
 
         if (error) alert('Error updating payment: ' + error.message);
         else onRefresh();
@@ -55,7 +65,7 @@ export default function BookingsTable({ bookings, isLoading, onRefresh }: Bookin
     }
 
     if (bookings.length === 0) {
-        return <div className="p-8 text-center text-gray-500">No bookings found.</div>;
+        return <div className="p-8 text-center text-gray-400">No bookings found.</div>;
     }
 
     return (
@@ -72,7 +82,7 @@ export default function BookingsTable({ bookings, isLoading, onRefresh }: Bookin
                 </thead>
                 <tbody className="divide-y divide-white/5">
                     {bookings.map((booking) => (
-                        <tr key={booking.id} className="hover:bg-white/5 transition-colors">
+                        <tr key={booking.isGroup ? `group-${booking.id}` : booking.id} className="hover:bg-white/5 transition-colors">
                             <td className="px-6 py-4 font-medium text-white">
                                 {formatDate(booking.start_time)}
                                 <div className="text-xs text-gray-500">
@@ -100,11 +110,29 @@ export default function BookingsTable({ bookings, isLoading, onRefresh }: Bookin
                                 </div>
                             </td>
                             <td className="px-6 py-4">
-                                <span className={`inline-flex items-center px-2 py-1 rounded text-xs font-medium ${booking.stations?.branch_id === 'dinamo' ? 'bg-blue-500/10 text-blue-400' : 'bg-purple-500/10 text-purple-400'
-                                    }`}>
-                                    {booking.stations?.name || booking.station_id}
-                                </span>
-                                <div className="text-xs text-gray-500 mt-1">{booking.stations?.branch_id}</div>
+                                {booking.isGroup ? (
+                                    <div className="flex flex-col gap-1">
+                                        <div className="text-white font-bold text-xs bg-indigo-500/20 px-2 py-1 rounded w-fit border border-indigo-500/30">
+                                            GROUP ({booking.subBookings.length})
+                                        </div>
+                                        <div className="flex flex-wrap gap-1 max-w-[200px]">
+                                            {booking.stationNames.map((name: string, idx: number) => (
+                                                <span key={idx} className={`inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium ${booking.stations?.branch_id === 'dinamo' ? 'bg-blue-500/10 text-blue-400' : 'bg-purple-500/10 text-purple-400'
+                                                    }`}>
+                                                    {name}
+                                                </span>
+                                            ))}
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <>
+                                        <span className={`inline-flex items-center px-2 py-1 rounded text-xs font-medium ${booking.stations?.branch_id === 'dinamo' ? 'bg-blue-500/10 text-blue-400' : 'bg-purple-500/10 text-purple-400'
+                                            }`}>
+                                            {booking.stations?.name || booking.station_id}
+                                        </span>
+                                        <div className="text-xs text-gray-500 mt-1">{booking.stations?.branch_id}</div>
+                                    </>
+                                )}
                             </td>
                             <td className="px-6 py-4">
                                 <div className="text-white">{booking.customer_name}</div>
@@ -124,9 +152,9 @@ export default function BookingsTable({ bookings, isLoading, onRefresh }: Bookin
                                         {booking.payment_status === 'paid' ? 'PAID' : 'UNPAID'}
                                     </button>
 
-                                    {(booking.total_price !== null && booking.total_price !== undefined) && (
+                                    {(booking.isGroup ? booking.totalGroupPrice : booking.total_price) && (
                                         <div className="text-sm font-bold text-white">
-                                            {booking.total_price} ₾
+                                            {booking.isGroup ? booking.totalGroupPrice : booking.total_price} ₾
                                         </div>
                                     )}
 
@@ -139,7 +167,7 @@ export default function BookingsTable({ bookings, isLoading, onRefresh }: Bookin
                             </td>
                             <td className="px-6 py-4 text-right space-x-2">
                                 <button
-                                    onClick={() => handleDelete(booking.id)}
+                                    onClick={() => handleDelete(booking)}
                                     disabled={!!processingId}
                                     className="text-red-400 hover:text-red-300 hover:bg-red-500/10 px-3 py-1.5 rounded-md transition-colors text-xs font-medium"
                                 >

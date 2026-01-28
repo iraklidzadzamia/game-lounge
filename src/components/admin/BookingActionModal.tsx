@@ -9,7 +9,8 @@ type Booking = Database['public']['Tables']['bookings']['Row'];
 interface BookingActionModalProps {
     isOpen: boolean;
     onClose: () => void;
-    stationId: string | null;
+    stationId?: string | null; // Optional now, used for single edit
+    stationIds?: string[];     // New prop for multi-select
     branchId: string;
     onSuccess: () => void;
     existingBooking?: Booking | null; // If editing
@@ -19,12 +20,20 @@ export default function BookingActionModal({
     isOpen,
     onClose,
     stationId,
+    stationIds = [],
     branchId,
     onSuccess,
     existingBooking
 }: BookingActionModalProps) {
     const supabase = createClientComponentClient<Database>();
     const [loading, setLoading] = useState(false);
+
+    // Determine target stations
+    const targetStationIds = stationIds && stationIds.length > 0
+        ? stationIds
+        : (stationId ? [stationId] : []);
+
+    const isGroupBooking = targetStationIds.length > 1;
 
     // Form State
     const [customerName, setCustomerName] = useState('');
@@ -72,54 +81,71 @@ export default function BookingActionModal({
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!stationId || !startTime) return;
+        if (targetStationIds.length === 0 || !startTime) return;
         setLoading(true);
 
         const start = new Date(startTime);
         const end = new Date(start.getTime() + parseInt(duration) * 60000);
 
-        const bookingData = {
-            station_id: stationId,
-            customer_name: customerName,
-            customer_phone: customerPhone,
-            start_time: start.toISOString(),
-            end_time: end.toISOString(),
-            payment_status: paymentStatus,
-            payment_method: paymentMethod || null, // null if unpaid or not selected? Logic says if paid, method needed.
-            notes: notes,
-            status: 'CONFIRMED'
-        };
-
         try {
             if (existingBooking) {
-                // Edit
+                // Edit Single Booking
+                const bookingData = {
+                    customer_name: customerName,
+                    customer_phone: customerPhone,
+                    start_time: start.toISOString(),
+                    end_time: end.toISOString(),
+                    payment_status: paymentStatus,
+                    payment_method: paymentMethod || null,
+                    notes: notes,
+                };
+
                 const { error } = await supabase
                     .from('bookings')
                     // @ts-ignore
                     .update(bookingData)
                     .eq('id', existingBooking.id);
-                if (error) throw error;
-            } else {
-                // Create - Check Availability First (Basic Check)
-                // Admin CAN override, but let's warn or blocking for now? 
-                // User said "delat overbooking on ne mojet". So we must blocked if overlaps.
 
+                if (error) throw error;
+
+            } else {
+                // Create New Booking(s)
+
+                // 1. Check Conflicts for ALL stations
                 const { data: conflicts, error: checkError } = await supabase
                     .from('bookings')
-                    .select('id')
-                    .eq('station_id', stationId)
+                    .select('id, station_id')
+                    .in('station_id', targetStationIds)
                     .neq('status', 'CANCELLED')
                     .or(`and(start_time.lte.${end.toISOString()},end_time.gte.${start.toISOString()})`);
 
                 if (checkError) throw checkError;
+
                 if (conflicts && conflicts.length > 0) {
-                    throw new Error("This Station is already booked for this time!");
+                    // Filter out conflicts that are just touching boundaries if needed, but the query usually handles strict overlaps
+                    const conflictedStations = (conflicts as any[]).map(c => c.station_id);
+                    // Just basic error for now
+                    throw new Error(`Conflict detected! Stations ${conflictedStations.join(', ')} are already booked.`);
                 }
+
+                // 2. Prepare Insert Data
+                const newBookings = targetStationIds.map(sid => ({
+                    station_id: sid,
+                    customer_name: customerName,
+                    customer_phone: customerPhone,
+                    start_time: start.toISOString(),
+                    end_time: end.toISOString(),
+                    payment_status: paymentStatus,
+                    payment_method: paymentMethod || null,
+                    notes: notes,
+                    status: 'CONFIRMED'
+                }));
 
                 const { error } = await supabase
                     .from('bookings')
                     // @ts-ignore
-                    .insert(bookingData);
+                    .insert(newBookings);
+
                 if (error) throw error;
             }
 
@@ -155,7 +181,11 @@ export default function BookingActionModal({
             <div className="w-full max-w-md bg-[#111] border border-white/10 rounded-xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
                 <div className="p-4 border-b border-white/10 flex justify-between items-center bg-white/5">
                     <h2 className="text-lg font-bold text-white">
-                        {existingBooking ? 'Edit Booking' : 'New Booking'}
+                        {existingBooking
+                            ? 'Edit Booking'
+                            : isGroupBooking
+                                ? `New Group Booking (${targetStationIds.length})`
+                                : 'New Booking'}
                     </h2>
                     <button onClick={onClose} className="text-gray-400 hover:text-white">✕</button>
                 </div>
@@ -163,7 +193,18 @@ export default function BookingActionModal({
                 <form onSubmit={handleSubmit} className="p-6 space-y-4 overflow-y-auto">
                     {/* Station Info */}
                     <div className="text-sm text-gray-400 mb-2">
-                        Station: <span className="text-blue-400 font-bold">{stationId}</span>
+                        {isGroupBooking ? (
+                            <div>
+                                Packing <span className="text-blue-400 font-bold">{targetStationIds.length} Stations</span>
+                                <div className="text-xs text-gray-500 mt-1 flex flex-wrap gap-1">
+                                    {targetStationIds.map(id => (
+                                        <span key={id} className="bg-white/10 px-1 rounded">{id}</span>
+                                    ))}
+                                </div>
+                            </div>
+                        ) : (
+                            <div>Station: <span className="text-blue-400 font-bold">{targetStationIds[0]}</span></div>
+                        )}
                     </div>
 
                     <div className="grid grid-cols-1 gap-4">
