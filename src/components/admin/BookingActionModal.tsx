@@ -149,19 +149,29 @@ export default function BookingActionModal({
                 setGuestCount(1);
                 setControllersCount(2);
 
-                const now = new Date();
-                now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+                // Helper: получаем локальную дату и время без UTC конвертации
+                const formatLocalDateTime = (date: Date) => {
+                    const year = date.getFullYear();
+                    const month = String(date.getMonth() + 1).padStart(2, '0');
+                    const day = String(date.getDate()).padStart(2, '0');
+                    const hours = String(date.getHours()).padStart(2, '0');
+                    const minutes = String(date.getMinutes()).padStart(2, '0');
+                    return {
+                        date: `${year}-${month}-${day}`,
+                        time: `${hours}:${minutes}`
+                    };
+                };
 
-                // Current time rounded to ISO parts
-                const iso = now.toISOString();
-                setStartDate(iso.slice(0, 10));
-                setStartClock(iso.slice(11, 16));
+                const now = new Date();
+                const startLocal = formatLocalDateTime(now);
+                setStartDate(startLocal.date);
+                setStartClock(startLocal.time);
 
                 // Default 1 hour later
-                const end = new Date(now.getTime() + 60 * 60000);
-                const endIso = end.toISOString();
-                setEndDate(endIso.slice(0, 10));
-                setEndClock(endIso.slice(11, 16));
+                const endTime = new Date(now.getTime() + 60 * 60000);
+                const endLocal = formatLocalDateTime(endTime);
+                setEndDate(endLocal.date);
+                setEndClock(endLocal.time);
 
                 setPaymentStatus('unpaid');
                 setPaymentMethod(null);
@@ -256,8 +266,20 @@ export default function BookingActionModal({
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        const startISO = getISO(startDate, startClock);
+        let startISO = getISO(startDate, startClock);
         let endISO = getISO(endDate, endClock);
+
+        // Для Mimdinare: если startISO пустой, используем текущее время
+        if (isOpenSession && !startISO) {
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            startISO = `${year}-${month}-${day}T${hours}:${minutes}:00`;
+            console.log('⚡ Mimdinare: auto-set startISO to', startISO);
+        }
 
         // DEBUG
         console.log('📝 Form Submit Debug:', {
