@@ -481,7 +481,6 @@ export default function BookingActionModal({
     // Stop All Group - stop all stations now
     const handleStopAll = async () => {
         if (relatedBookings.length === 0) return;
-        if (!confirm(`Stop all ${relatedBookings.length} stations now and mark as paid?`)) return;
 
         setLoading(true);
         try {
