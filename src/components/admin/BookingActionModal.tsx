@@ -267,12 +267,13 @@ export default function BookingActionModal({
             targetStationIds
         });
 
-        // Для Mimdinare (Open Session) - если end не задан, ставим start + 3 часа
-        if (isOpenSession && startISO && !endISO) {
+        // Для Mimdinare (Open Session) - ВСЕГДА ставим end = start + 3 часа
+        // Это гарантирует правильное время даже если форма установила неправильное
+        if (isOpenSession && startISO) {
             const startDt = new Date(startISO);
             const endDt = new Date(startDt.getTime() + 180 * 60000); // +3 часа
-            endISO = endDt.toISOString().slice(0, 16).replace('T', 'T') + ':00';
-            console.log('📝 Mimdinare: auto-set endISO to', endISO);
+            endISO = endDt.toISOString().slice(0, 16) + ':00';
+            console.log('📝 Mimdinare: forced endISO to', endISO);
         }
 
         if (targetStationIds.length === 0 || !startISO || !endISO) {
