@@ -268,12 +268,20 @@ export default function BookingActionModal({
         });
 
         // Для Mimdinare (Open Session) - ВСЕГДА ставим end = start + 3 часа
-        // Это гарантирует правильное время даже если форма установила неправильное
+        // Используем локальное время (без UTC конвертации)
         if (isOpenSession && startISO) {
             const startDt = new Date(startISO);
             const endDt = new Date(startDt.getTime() + 180 * 60000); // +3 часа
-            endISO = endDt.toISOString().slice(0, 16) + ':00';
-            console.log('📝 Mimdinare: forced endISO to', endISO);
+
+            // Форматируем локально без UTC конвертации
+            const year = endDt.getFullYear();
+            const month = String(endDt.getMonth() + 1).padStart(2, '0');
+            const day = String(endDt.getDate()).padStart(2, '0');
+            const hours = String(endDt.getHours()).padStart(2, '0');
+            const minutes = String(endDt.getMinutes()).padStart(2, '0');
+
+            endISO = `${year}-${month}-${day}T${hours}:${minutes}:00`;
+            console.log('📝 Mimdinare: forced endISO to', endISO, '(start was', startISO, ')');
         }
 
         if (targetStationIds.length === 0 || !startISO || !endISO) {
