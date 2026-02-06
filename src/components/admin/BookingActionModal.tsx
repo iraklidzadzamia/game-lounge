@@ -9,6 +9,7 @@ type Booking = Database['public']['Tables']['bookings']['Row'] & {
     stations?: { type: string } | null;
     guest_count?: number;
     controllers_count?: number;
+    group_id?: string | null;
 };
 
 interface BookingActionModalProps {
@@ -76,6 +77,10 @@ export default function BookingActionModal({
     const [calculatedReservedPrice, setCalculatedReservedPrice] = useState<number>(0);
     const [elapsedMinutes, setElapsedMinutes] = useState(0);
     const [reservedMinutes, setReservedMinutes] = useState(0);
+
+    // Group bookings - связанные станции
+    const [relatedBookings, setRelatedBookings] = useState<any[]>([]);
+    const [groupTotalPrice, setGroupTotalPrice] = useState<number>(0);
 
     // Helper to combine date+time to string
     const getISO = (dateStr: string, timeStr: string) => {
@@ -194,6 +199,33 @@ export default function BookingActionModal({
             }
         }
     }, [isOpenSession, existingBooking, startDate, startClock]);
+
+    // Load related bookings for group
+    useEffect(() => {
+        const loadRelatedBookings = async () => {
+            if (!existingBooking?.group_id || !isOpen) {
+                setRelatedBookings([]);
+                setGroupTotalPrice(0);
+                return;
+            }
+
+            // @ts-ignore - group_id добавлен в БД но не в types
+            const { data, error } = await supabase
+                .from('bookings')
+                .select('id, station_id, stations(name, type), total_price, start_time, end_time, status')
+                .eq('group_id', existingBooking.group_id)
+                .eq('status', 'CONFIRMED');
+
+            if (!error && data) {
+                setRelatedBookings(data as any[]);
+                // Calculate group total
+                const total = (data as any[]).reduce((sum, b) => sum + (b.total_price || 0), 0);
+                setGroupTotalPrice(total);
+            }
+        };
+
+        loadRelatedBookings();
+    }, [existingBooking, isOpen, supabase]);
 
     // Calculate Prices when entering Stop Mode
     useEffect(() => {
@@ -358,6 +390,9 @@ export default function BookingActionModal({
                     throw new Error(`Conflict detected! Stations ${conflictedStations.join(', ')} are already booked.`);
                 }
 
+                // Генерируем group_id для групповых бронирований
+                const groupId = targetStationIds.length > 1 ? crypto.randomUUID() : null;
+
                 const newBookings = targetStationIds.map(sid => ({
                     station_id: sid,
                     customer_name: customerName,
@@ -369,7 +404,8 @@ export default function BookingActionModal({
                     notes: finalNotes,
                     status: 'CONFIRMED',
                     guest_count: guestCount,
-                    controllers_count: controllersCount
+                    controllers_count: controllersCount,
+                    group_id: groupId  // Связываем все станции группы
                 }));
 
                 const { error } = await supabase
@@ -402,6 +438,75 @@ export default function BookingActionModal({
         try {
             const { error } = await supabase.from('bookings').delete().eq('id', existingBooking.id);
             if (error) throw error;
+            onSuccess();
+            onClose();
+        } catch (err: any) {
+            alert(err.message);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    // Extend All Group +1 hour
+    const handleExtendAll = async () => {
+        if (relatedBookings.length === 0) return;
+        if (!confirm(`Extend all ${relatedBookings.length} stations by 1 hour?`)) return;
+
+        setLoading(true);
+        try {
+            const ids = relatedBookings.map(b => b.id);
+
+            // Get current end times and add 1 hour
+            for (const booking of relatedBookings) {
+                const currentEnd = new Date(booking.end_time);
+                const newEnd = new Date(currentEnd.getTime() + 60 * 60000); // +1 hour
+
+                // @ts-ignore
+                await supabase
+                    .from('bookings')
+                    .update({ end_time: newEnd.toISOString() })
+                    .eq('id', booking.id);
+            }
+
+            alert(`Extended ${relatedBookings.length} stations by 1 hour!`);
+            onSuccess();
+            onClose();
+        } catch (err: any) {
+            alert(err.message);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    // Stop All Group - stop all stations now
+    const handleStopAll = async () => {
+        if (relatedBookings.length === 0) return;
+        if (!confirm(`Stop all ${relatedBookings.length} stations now and mark as paid?`)) return;
+
+        setLoading(true);
+        try {
+            const now = new Date().toISOString();
+
+            for (const booking of relatedBookings) {
+                // Calculate price for each
+                const start = new Date(booking.start_time);
+                const end = new Date();
+                const elapsed = Math.max(0, Math.ceil((end.getTime() - start.getTime()) / 60000));
+                const stationType = (booking.stations as any)?.type || 'STANDARD';
+                const price = calculatePrice(elapsed, stationType as StationType);
+
+                // @ts-ignore
+                await supabase
+                    .from('bookings')
+                    .update({
+                        end_time: now,
+                        payment_status: 'paid',
+                        total_price: price
+                    })
+                    .eq('id', booking.id);
+            }
+
+            alert(`Stopped ${relatedBookings.length} stations!`);
             onSuccess();
             onClose();
         } catch (err: any) {
@@ -559,6 +664,52 @@ export default function BookingActionModal({
                                     >
                                         Set End Time
                                     </button>
+                                </div>
+                            )}
+
+                            {/* GROUP ACTIONS */}
+                            {relatedBookings.length > 1 && existingBooking && (
+                                <div className="p-3 bg-purple-500/10 border border-purple-500/30 rounded-lg">
+                                    <div className="flex items-center gap-2 mb-2">
+                                        <span className="text-purple-400 font-bold text-sm">📦 Group Booking</span>
+                                        <span className="text-purple-300 text-xs">({relatedBookings.length} stations)</span>
+                                    </div>
+                                    <div className="flex flex-wrap gap-1 mb-3">
+                                        {relatedBookings.map((b: any) => (
+                                            <span
+                                                key={b.id}
+                                                className={`px-2 py-0.5 text-[10px] rounded ${b.id === existingBooking.id
+                                                    ? 'bg-purple-500/40 text-purple-200 border border-purple-400'
+                                                    : 'bg-gray-700/50 text-gray-400'
+                                                    }`}
+                                            >
+                                                {b.stations?.name || b.station_id}
+                                            </span>
+                                        ))}
+                                    </div>
+                                    {groupTotalPrice > 0 && (
+                                        <p className="text-green-400 font-bold text-sm mb-3">
+                                            Group Total: {groupTotalPrice.toLocaleString()}₾
+                                        </p>
+                                    )}
+                                    <div className="flex gap-2">
+                                        <button
+                                            type="button"
+                                            onClick={handleExtendAll}
+                                            disabled={loading}
+                                            className="flex-1 px-3 py-2 bg-blue-500/20 hover:bg-blue-500/30 text-blue-300 text-xs font-bold rounded border border-blue-500/30 transition-all disabled:opacity-50"
+                                        >
+                                            ⏱️ Extend All +1h
+                                        </button>
+                                        <button
+                                            type="button"
+                                            onClick={handleStopAll}
+                                            disabled={loading}
+                                            className="flex-1 px-3 py-2 bg-red-500/20 hover:bg-red-500/30 text-red-300 text-xs font-bold rounded border border-red-500/30 transition-all disabled:opacity-50"
+                                        >
+                                            ⏹️ Stop All Group
+                                        </button>
+                                    </div>
                                 </div>
                             )}
 
