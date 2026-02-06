@@ -25,6 +25,7 @@ export interface Database {
                     payment_status: 'paid' | 'unpaid'
                     payment_method: 'cash' | 'card_bog' | 'card_tbc' | null
                     notes: string | null
+                    group_id: string | null
                 }
                 Insert: {
                     id?: string
@@ -41,6 +42,7 @@ export interface Database {
                     payment_status?: 'paid' | 'unpaid'
                     payment_method?: 'cash' | 'card_bog' | 'card_tbc' | null
                     notes?: string | null
+                    group_id?: string | null
                 }
                 Update: {
                     id?: string
@@ -57,6 +59,7 @@ export interface Database {
                     payment_status?: 'paid' | 'unpaid'
                     payment_method?: 'cash' | 'card_bog' | 'card_tbc' | null
                     notes?: string | null
+                    group_id?: string | null
                 }
             }
             stations: {
