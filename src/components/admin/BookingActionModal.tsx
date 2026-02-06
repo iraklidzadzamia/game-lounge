@@ -461,8 +461,8 @@ export default function BookingActionModal({
                 const currentEnd = new Date(booking.end_time);
                 const newEnd = new Date(currentEnd.getTime() + 60 * 60000); // +1 hour
 
-                // @ts-ignore
-                await supabase
+                // @ts-ignore - group_id not in types yet
+                await (supabase as any)
                     .from('bookings')
                     .update({ end_time: newEnd.toISOString() })
                     .eq('id', booking.id);
@@ -493,10 +493,10 @@ export default function BookingActionModal({
                 const end = new Date();
                 const elapsed = Math.max(0, Math.ceil((end.getTime() - start.getTime()) / 60000));
                 const stationType = (booking.stations as any)?.type || 'STANDARD';
-                const price = calculatePrice(elapsed, stationType as StationType);
+                const price = calculatePrice(stationType as StationType, elapsed / 60);
 
-                // @ts-ignore
-                await supabase
+                // @ts-ignore - group_id not in types yet
+                await (supabase as any)
                     .from('bookings')
                     .update({
                         end_time: now,
