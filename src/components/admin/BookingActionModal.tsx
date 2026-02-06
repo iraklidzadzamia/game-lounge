@@ -259,14 +259,24 @@ export default function BookingActionModal({
         const startISO = getISO(startDate, startClock);
         let endISO = getISO(endDate, endClock);
 
+        // DEBUG
+        console.log('📝 Form Submit Debug:', {
+            startDate, startClock, endDate, endClock,
+            startISO, endISO,
+            isOpenSession,
+            targetStationIds
+        });
+
         // Для Mimdinare (Open Session) - если end не задан, ставим start + 3 часа
         if (isOpenSession && startISO && !endISO) {
             const startDt = new Date(startISO);
             const endDt = new Date(startDt.getTime() + 180 * 60000); // +3 часа
             endISO = endDt.toISOString().slice(0, 16).replace('T', 'T') + ':00';
+            console.log('📝 Mimdinare: auto-set endISO to', endISO);
         }
 
         if (targetStationIds.length === 0 || !startISO || !endISO) {
+            console.log('❌ Validation failed:', { targetStationIds: targetStationIds.length, startISO, endISO });
             alert('Please fill in all required fields');
             return;
         }
