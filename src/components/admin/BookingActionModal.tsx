@@ -562,16 +562,31 @@ export default function BookingActionModal({
                                 Finalizing Group Session
                             </h3>
 
-                            {/* Group summary */}
-                            <div className="bg-white/5 rounded-lg p-3 border border-white/10">
-                                <div className="text-gray-400 text-xs mb-2">📦 Stations in group:</div>
-                                <div className="flex flex-wrap gap-1">
-                                    {relatedBookings.map((b: any) => (
-                                        <span key={b.id} className="px-2 py-0.5 bg-purple-500/20 text-purple-300 text-xs rounded">
-                                            {(b.stations as any)?.name || b.station_id}
-                                        </span>
-                                    ))}
-                                </div>
+                            {/* Detailed breakdown per station */}
+                            <div className="bg-white/5 rounded-lg p-3 border border-white/10 space-y-2">
+                                <div className="text-gray-400 text-xs mb-2">📦 Breakdown per station:</div>
+                                {relatedBookings.map((b: any) => {
+                                    const start = new Date(b.start_time);
+                                    const now = new Date();
+                                    const elapsed = Math.max(0, Math.ceil((now.getTime() - start.getTime()) / 60000));
+                                    const stationType = (b.stations as any)?.type || 'STANDARD';
+                                    const price = calculatePrice(stationType as StationType, elapsed / 60);
+                                    const hours = Math.floor(elapsed / 60);
+                                    const mins = elapsed % 60;
+                                    const timeStr = hours > 0 ? `${hours}h ${mins}m` : `${mins}m`;
+
+                                    return (
+                                        <div key={b.id} className="flex justify-between items-center py-1.5 border-b border-white/5 last:border-0">
+                                            <div className="flex items-center gap-2">
+                                                <span className="px-2 py-0.5 bg-purple-500/20 text-purple-300 text-xs rounded">
+                                                    {(b.stations as any)?.name || b.station_id}
+                                                </span>
+                                                <span className="text-gray-500 text-xs">⏱ {timeStr}</span>
+                                            </div>
+                                            <span className="text-green-400 font-bold text-sm">{price}₾</span>
+                                        </div>
+                                    );
+                                })}
                             </div>
 
                             {/* Total price display */}
