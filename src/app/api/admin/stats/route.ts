@@ -17,15 +17,19 @@ export async function GET(request: Request) {
         const branchId = url.searchParams.get('branchId') || 'chikovani';
         const queryDateStr = url.searchParams.get('date'); // YYYY-MM-DD
 
-        const now = new Date();
-        const startOfDay = new Date(now.setHours(0, 0, 0, 0)).toISOString();
-        const startOfWeek = new Date(now.setDate(now.getDate() - 7)).toISOString();
+
 
         // 1. Fetch Today's Revenue and Count (Standard Stats)
+        // Get start of today in UTC
+        const todayStart = new Date();
+        todayStart.setHours(0, 0, 0, 0);
+        const startOfDayISO = todayStart.toISOString();
+
         let todayQuery = supabase
             .from('bookings')
-            .select('total_price, start_time, end_time')
-            .gte('start_time', startOfDay);
+            .select('total_price, start_time, end_time, payment_status')
+            .gte('start_time', startOfDayISO)
+            .eq('payment_status', 'paid'); // Only count paid bookings
 
         if (branchId !== 'all') {
             todayQuery = todayQuery.eq('branch_id', branchId);
