@@ -484,6 +484,7 @@ export default function BookingActionModal({
         setLoading(true);
         try {
             const now = new Date().toISOString();
+            let totalGroupPrice = 0;
 
             for (const booking of relatedBookings) {
                 // Calculate price for each
@@ -492,6 +493,7 @@ export default function BookingActionModal({
                 const elapsed = Math.max(0, Math.ceil((end.getTime() - start.getTime()) / 60000));
                 const stationType = (booking.stations as any)?.type || 'STANDARD';
                 const price = calculatePrice(stationType as StationType, elapsed / 60);
+                totalGroupPrice += price;
 
                 // @ts-ignore - group_id not in types yet
                 await (supabase as any)
@@ -504,7 +506,7 @@ export default function BookingActionModal({
                     .eq('id', booking.id);
             }
 
-            alert(`Stopped ${relatedBookings.length} stations!`);
+            alert(`✅ Stopped ${relatedBookings.length} stations!\n\n💰 Total to pay: ${totalGroupPrice.toLocaleString()}₾`);
             onSuccess();
             onClose();
         } catch (err: any) {
