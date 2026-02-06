@@ -450,7 +450,6 @@ export default function BookingActionModal({
     // Extend All Group +1 hour
     const handleExtendAll = async () => {
         if (relatedBookings.length === 0) return;
-        if (!confirm(`Extend all ${relatedBookings.length} stations by 1 hour?`)) return;
 
         setLoading(true);
         try {
