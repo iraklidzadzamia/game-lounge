@@ -15,12 +15,20 @@ CREATE EXTENSION IF NOT EXISTS btree_gist;
 CREATE OR REPLACE FUNCTION check_booking_overlap()
 RETURNS TRIGGER AS $$
 BEGIN
+    -- Пропускаем проверку если end_time <= start_time (open sessions / mimdinare)
+    -- Такие записи допустимы и не конфликтуют с логикой пересечения
+    IF NEW.end_time <= NEW.start_time THEN
+        RETURN NEW;
+    END IF;
+
     -- Проверяем есть ли пересекающиеся подтверждённые брони
+    -- (только среди тех у кого end_time > start_time)
     IF EXISTS (
         SELECT 1 FROM bookings
         WHERE station_id = NEW.station_id
         AND id != COALESCE(NEW.id, '00000000-0000-0000-0000-000000000000'::uuid)
         AND status = 'CONFIRMED'
+        AND end_time > start_time  -- Исключаем open sessions из проверки
         AND tstzrange(start_time, end_time, '[)') && tstzrange(NEW.start_time, NEW.end_time, '[)')
     ) THEN
         RAISE EXCEPTION 'Booking conflict: Station % is already booked for this time period', NEW.station_id
