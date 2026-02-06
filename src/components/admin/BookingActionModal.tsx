@@ -257,9 +257,19 @@ export default function BookingActionModal({
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         const startISO = getISO(startDate, startClock);
-        const endISO = getISO(endDate, endClock);
+        let endISO = getISO(endDate, endClock);
 
-        if (targetStationIds.length === 0 || !startISO || !endISO) return;
+        // Для Mimdinare (Open Session) - если end не задан, ставим start + 3 часа
+        if (isOpenSession && startISO && !endISO) {
+            const startDt = new Date(startISO);
+            const endDt = new Date(startDt.getTime() + 180 * 60000); // +3 часа
+            endISO = endDt.toISOString().slice(0, 16).replace('T', 'T') + ':00';
+        }
+
+        if (targetStationIds.length === 0 || !startISO || !endISO) {
+            alert('Please fill in all required fields');
+            return;
+        }
         setLoading(true);
 
         const start = new Date(startISO);
