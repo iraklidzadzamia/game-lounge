@@ -6,8 +6,13 @@ import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 export default function AnalyticsDashboard({ branchId }: { branchId: string }) {
     const [stats, setStats] = useState<any>(null);
     const [isLoading, setIsLoading] = useState(true);
-    const [selectedDate, setSelectedDate] = useState<string>(new Date().toISOString().split('T')[0]);
-    const [historicalRevenue, setHistoricalRevenue] = useState<number | null>(null);
+
+    // Default range: today 00:00 to now
+    const today = new Date().toISOString().split('T')[0];
+    const [rangeFrom, setRangeFrom] = useState<string>(`${today}T00:00`);
+    const [rangeTo, setRangeTo] = useState<string>(`${today}T23:59`);
+    const [rangeRevenue, setRangeRevenue] = useState<number | null>(null);
+    const [isRangeLoading, setIsRangeLoading] = useState(false);
 
     // Fetch Live Stats
     useEffect(() => {
@@ -25,25 +30,24 @@ export default function AnalyticsDashboard({ branchId }: { branchId: string }) {
         fetchStats();
     }, [branchId]);
 
-    // Fetch Historical Stats when date changes
+    // Fetch Range Revenue when dates change
     useEffect(() => {
-        const fetchHistory = async () => {
+        const fetchRangeRevenue = async () => {
+            if (!rangeFrom || !rangeTo) return;
+            setIsRangeLoading(true);
             try {
-                // We'll reuse the same endpoint but pass a 'date' param
-                // Note: Need to update API to handle 'date' or create new one. 
-                // For now, let's assume the API returns 'dailyRevenue' for today, 
-                // and we might need a separate call for history.
-                // Let's keep it simple: The API currently returns today.
-                // WE NEED TO UPDATE THE API TO SUPPORT ?date=...
-                const res = await fetch(`/api/admin/stats?branchId=${branchId}&date=${selectedDate}`);
+                const res = await fetch(`/api/admin/stats?branchId=${branchId}&from=${rangeFrom}&to=${rangeTo}`);
                 const data = await res.json();
-                setHistoricalRevenue(data.specificDateRevenue);
+                setRangeRevenue(data.rangeRevenue ?? null);
             } catch (err) {
                 console.error(err);
+            } finally {
+                setIsRangeLoading(false);
             }
         };
-        if (selectedDate) fetchHistory();
-    }, [selectedDate, branchId]);
+        const timeout = setTimeout(fetchRangeRevenue, 300);
+        return () => clearTimeout(timeout);
+    }, [rangeFrom, rangeTo, branchId]);
 
     if (isLoading) return <div className="text-white/50 animate-pulse">Loading Analytics...</div>;
 
@@ -73,18 +77,33 @@ export default function AnalyticsDashboard({ branchId }: { branchId: string }) {
                     </div>
                 </div>
 
-                {/* 3. Historical View */}
+                {/* 3. Revenue Range Calculator */}
                 <div className="glass-card p-6 border-l-4 border-yellow-500">
-                    <h3 className="text-white/50 font-inter text-xs uppercase tracking-widest mb-3">Check Past Revenue</h3>
-                    <div className="flex items-center gap-4">
-                        <input
-                            type="date"
-                            value={selectedDate}
-                            onChange={(e) => setSelectedDate(e.target.value)}
-                            className="bg-black/50 border border-white/20 rounded p-2 text-white font-orbitron text-sm focus:border-yellow-500 outline-none"
-                        />
-                        <div className="text-xl font-orbitron text-white">
-                            {historicalRevenue !== null ? historicalRevenue : '-'} <span className="text-sm text-yellow-500">₾</span>
+                    <h3 className="text-white/50 font-inter text-xs uppercase tracking-widest mb-3">Calculate Revenue (Range)</h3>
+                    <div className="space-y-2">
+                        <div className="flex items-center gap-2">
+                            <span className="text-gray-500 text-xs w-10">From:</span>
+                            <input
+                                type="datetime-local"
+                                value={rangeFrom}
+                                onChange={(e) => setRangeFrom(e.target.value)}
+                                className="bg-black/50 border border-white/20 rounded p-1.5 text-white text-xs focus:border-yellow-500 outline-none flex-1"
+                            />
+                        </div>
+                        <div className="flex items-center gap-2">
+                            <span className="text-gray-500 text-xs w-10">To:</span>
+                            <input
+                                type="datetime-local"
+                                value={rangeTo}
+                                onChange={(e) => setRangeTo(e.target.value)}
+                                className="bg-black/50 border border-white/20 rounded p-1.5 text-white text-xs focus:border-yellow-500 outline-none flex-1"
+                            />
+                        </div>
+                        <div className="pt-2 border-t border-white/10 mt-2 flex justify-between items-center">
+                            <span className="text-gray-400 text-xs">Total Revenue:</span>
+                            <div className="text-xl font-orbitron text-white">
+                                {isRangeLoading ? '...' : (rangeRevenue !== null ? rangeRevenue : '-')} <span className="text-sm text-yellow-500">₾</span>
+                            </div>
                         </div>
                     </div>
                 </div>

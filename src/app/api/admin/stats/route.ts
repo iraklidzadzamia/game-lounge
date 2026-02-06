@@ -15,9 +15,6 @@ export async function GET(request: Request) {
 
         const url = new URL(request.url);
         const branchId = url.searchParams.get('branchId') || 'chikovani';
-        const queryDateStr = url.searchParams.get('date'); // YYYY-MM-DD
-
-
 
         // 1. Fetch Today's Revenue and Count (Standard Stats)
         // Get start of today in UTC
@@ -40,27 +37,28 @@ export async function GET(request: Request) {
         const dailyRevenue = todayBookings?.reduce((sum, b) => sum + (b.total_price || 0), 0) || 0;
         const totalBookingsToday = todayBookings?.length || 0;
 
-        // 2. Fetch Specific Date Revenue (if requested)
-        let specificDateRevenue = null;
-        if (queryDateStr) {
-            const specificStart = new Date(queryDateStr);
-            specificStart.setHours(0, 0, 0, 0);
-            const specificEnd = new Date(specificStart);
-            specificEnd.setDate(specificEnd.getDate() + 1);
+        // 2. Fetch Range Revenue (from-to datetime range)
+        let rangeRevenue = null;
+        const fromStr = url.searchParams.get('from'); // e.g., 2026-02-07T00:00
+        const toStr = url.searchParams.get('to');     // e.g., 2026-02-07T23:59
 
-            let historicalQuery = supabase
+        if (fromStr && toStr) {
+            const fromDate = new Date(fromStr);
+            const toDate = new Date(toStr);
+
+            let rangeQuery = supabase
                 .from('bookings')
                 .select('total_price')
-                .gte('start_time', specificStart.toISOString())
-                .lt('start_time', specificEnd.toISOString());
+                .gte('start_time', fromDate.toISOString())
+                .lte('start_time', toDate.toISOString())
+                .eq('payment_status', 'paid');
 
             if (branchId !== 'all') {
-                historicalQuery = historicalQuery.eq('branch_id', branchId);
+                rangeQuery = rangeQuery.eq('branch_id', branchId);
             }
 
-            const { data: historical } = await historicalQuery;
-
-            specificDateRevenue = historical?.reduce((sum, b) => sum + (b.total_price || 0), 0) || 0;
+            const { data: rangeBookings } = await rangeQuery;
+            rangeRevenue = rangeBookings?.reduce((sum, b) => sum + (b.total_price || 0), 0) || 0;
         }
 
         // 3. Active Now
@@ -84,7 +82,7 @@ export async function GET(request: Request) {
             dailyRevenue,
             totalBookingsToday,
             activeNow: activeNow || 0,
-            specificDateRevenue
+            rangeRevenue
         });
 
     } catch (error) {
