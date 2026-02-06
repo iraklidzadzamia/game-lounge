@@ -2,14 +2,19 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
+import { useState } from "react";
 import GlitchText from "./GlitchText";
+import ContactModal from "./ContactModal";
+import LocationBadge from "./LocationBadge";
+import { getBranchBySlug } from "@/config/branches";
 
 interface VideoHeroProps {
     branchSlug?: string;
 }
 
 export default function VideoHero({ branchSlug }: VideoHeroProps) {
-    const bookingLink = branchSlug ? `/${branchSlug}/booking` : '/booking';
+    const [isContactModalOpen, setIsContactModalOpen] = useState(false);
+    const branch = branchSlug ? getBranchBySlug(branchSlug) : null;
 
     return (
         <section className="relative h-screen w-full overflow-hidden">
@@ -35,20 +40,16 @@ export default function VideoHero({ branchSlug }: VideoHeroProps) {
                 <div className="absolute bottom-0 left-0 right-0 h-48 bg-gradient-to-t from-void to-transparent" />
             </div>
 
-            {/* Header / Nav Actions */}
-            <div className="absolute top-0 right-0 p-6 z-50 flex items-center gap-4">
-                <Link
-                    href="/my-bookings"
-                    className="flex items-center gap-2 px-4 py-2 bg-black/40 backdrop-blur-md border border-white/10 rounded-full hover:bg-white/10 hover:border-neon-cyan/50 transition-all duration-300 group"
-                >
-                    <svg className="w-4 h-4 text-white/70 group-hover:text-neon-cyan transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z" />
-                    </svg>
-                    <span className="text-white/70 text-xs font-orbitron font-bold tracking-widest group-hover:text-white transition-colors uppercase hidden md:inline">
-                        My Bookings
-                    </span>
-                </Link>
-            </div>
+            {/* Header / Location Badge */}
+            {branch && (
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 p-6 z-50">
+                    <LocationBadge
+                        address={branch.address}
+                        googleMapsUrl={branch.googleMapsUrl}
+                        isOpen24_7={true}
+                    />
+                </div>
+            )}
 
             {/* Content */}
             <div className="relative z-10 h-full flex flex-col items-center justify-center px-4 text-center">
@@ -65,10 +66,7 @@ export default function VideoHero({ branchSlug }: VideoHeroProps) {
                         GAME LOUNGE
                     </GlitchText>
                     {/* 24/7 Badge - bottom-right of title */}
-                    <div className="absolute -bottom-2 right-8 md:right-16 flex items-center gap-1 px-1.5 py-0.5 bg-black/60 backdrop-blur-sm border border-green-500/40 rounded">
-                        <div className="w-1 h-1 bg-green-500 rounded-full animate-pulse" />
-                        <span className="text-green-400 text-[8px] md:text-[10px] font-orbitron font-bold">24/7</span>
-                    </div>
+
                 </motion.div>
 
                 <motion.p
@@ -87,12 +85,12 @@ export default function VideoHero({ branchSlug }: VideoHeroProps) {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.8, delay: 0.6 }}
                 >
-                    <Link
-                        href={bookingLink}
+                    <button
+                        onClick={() => setIsContactModalOpen(true)}
                         className="px-10 py-5 bg-neon-cyan text-black font-orbitron font-bold tracking-wider text-xl rounded-2xl hover:bg-white transition-all duration-300 shadow-[0_0_20px_rgba(0,243,255,0.4)] hover:shadow-[0_0_40px_rgba(0,243,255,0.6)] hover:-translate-y-1 transform active:scale-95"
                     >
                         BOOK YOUR STATION
-                    </Link>
+                    </button>
 
                     {/* Quick Action Icons */}
                     <div className="flex items-center gap-6">
@@ -169,6 +167,12 @@ export default function VideoHero({ branchSlug }: VideoHeroProps) {
             <div className="absolute top-8 right-8 w-20 h-20 border-r-2 border-t-2 border-neon-cyan/30" />
             <div className="absolute bottom-8 left-8 w-20 h-20 border-l-2 border-b-2 border-electric-purple/30" />
             <div className="absolute bottom-8 right-8 w-20 h-20 border-r-2 border-b-2 border-electric-purple/30" />
+
+            {/* Contact Modal */}
+            <ContactModal
+                isOpen={isContactModalOpen}
+                onClose={() => setIsContactModalOpen(false)}
+            />
         </section>
     );
 }

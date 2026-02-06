@@ -13,7 +13,7 @@ export const BRANCHES: Branch[] = [
         id: 'chikovani',
         name: 'Simon Chikovani',
         slug: 'chikovani',
-        address: 'Simon Chikovani St, Tbilisi', // Update with real address
+        address: '4 Simon Chikovani St',
         phone: '+995 555 123 456', // Update with real phone
         googleMapsUrl: 'https://maps.app.goo.gl/example', // Update with real URL
     },
@@ -21,7 +21,7 @@ export const BRANCHES: Branch[] = [
         id: 'dinamo',
         name: 'Dinamo',
         slug: 'dinamo',
-        address: 'Dinamo Stadium Area, Tbilisi', // Update with real address
+        address: '2 David Kipiani St',
         phone: '+995 555 123 456', // Update with real phone
         googleMapsUrl: 'https://maps.app.goo.gl/example', // Update with real URL
     }

@@ -12,11 +12,16 @@ export async function GET(request: Request) {
         return NextResponse.json({ error: 'Phone number is required' }, { status: 400 });
     }
 
-    // Clean phone number (basic) - remove spaces, dashes
-    const cleanPhone = phone.replace(/[\s-]/g, '');
+    // Clean phone number - remove everything except digits and +
+    const cleanPhone = phone.replace(/[^\d+]/g, '');
 
-    if (cleanPhone.length < 4) {
-        return NextResponse.json({ error: 'Phone number too short' }, { status: 400 });
+    // Sanitize against SQL wildcards (IDOR protection)
+    const sanitizedPhone = cleanPhone.replace(/[%_]/g, '');
+
+    // Require minimum 9 digits for security
+    const digitsOnly = sanitizedPhone.replace(/\D/g, '');
+    if (digitsOnly.length < 9) {
+        return NextResponse.json({ error: 'Please enter at least 9 digits of your phone number' }, { status: 400 });
     }
 
     try {
@@ -33,7 +38,7 @@ export async function GET(request: Request) {
                     type
                 )
             `)
-            .ilike('customer_phone', `%${cleanPhone}%`)
+            .ilike('customer_phone', `%${sanitizedPhone}`)
             .gte('start_time', now) // Only future bookings
             .neq('status', 'CANCELLED')
             .order('start_time', { ascending: true });

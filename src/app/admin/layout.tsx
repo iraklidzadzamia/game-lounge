@@ -18,9 +18,17 @@ export default async function AdminLayout({
         redirect('/login');
     }
 
-    // Optional: Check database profile for role
-    // const { data: profile } = await supabase.from('profiles').select('*').eq('id', session.user.id).single();
-    // if (!profile || (profile.role !== 'admin' && profile.role !== 'owner')) redirect('/');
+    // Проверка роли пользователя в базе данных
+    const { data: profile } = await supabase
+        .from('profiles')
+        .select('role')
+        .eq('id', session.user.id)
+        .single();
+
+    // Если нет профиля или роль не admin/owner — редирект на главную
+    if (!profile || (profile.role !== 'admin' && profile.role !== 'owner')) {
+        redirect('/');
+    }
 
     return (
         <div className="min-h-screen bg-[#0a0a0a] text-white flex">

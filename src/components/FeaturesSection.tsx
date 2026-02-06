@@ -2,9 +2,13 @@
 
 import { motion } from "framer-motion";
 import Image from "next/image";
+import { useState } from "react";
 import GlitchText from "./GlitchText";
+import ContactModal from "./ContactModal";
 
 export default function FeaturesSection() {
+    const [isContactModalOpen, setIsContactModalOpen] = useState(false);
+
     return (
         <section className="relative py-24 md:py-32 bg-void overflow-hidden">
             {/* Background glow effects - hidden on mobile for performance */}
@@ -118,19 +122,23 @@ export default function FeaturesSection() {
                         </ul>
 
                         {/* CTA Button - always last */}
-                        <motion.a
-                            href="https://api.whatsapp.com/send?phone=995555201414"
-                            target="_blank"
-                            rel="noopener noreferrer"
+                        <motion.button
+                            onClick={() => setIsContactModalOpen(true)}
                             className="neon-button self-start"
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
                         >
                             BOOK VIP ROOM
-                        </motion.a>
+                        </motion.button>
                     </motion.div>
                 </div>
             </div>
+
+            {/* Contact Modal */}
+            <ContactModal
+                isOpen={isContactModalOpen}
+                onClose={() => setIsContactModalOpen(false)}
+            />
         </section>
     );
 }

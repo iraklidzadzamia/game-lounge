@@ -326,7 +326,13 @@ export default function BookingActionModal({
                     // @ts-ignore
                     .insert(newBookings);
 
-                if (error) throw error;
+                if (error) {
+                    // Если DB trigger поймал race condition
+                    if (error.code === '23505') {
+                        throw new Error('This time slot just became unavailable. Please try another time.');
+                    }
+                    throw error;
+                }
             }
 
             onSuccess();

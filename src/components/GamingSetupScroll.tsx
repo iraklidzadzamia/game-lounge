@@ -3,6 +3,7 @@
 import { useRef, useEffect, useState, useCallback } from "react";
 import { motion, useScroll, useSpring, useTransform } from "framer-motion";
 import GlitchText from "./GlitchText";
+import ContactModal from "./ContactModal";
 
 const TOTAL_FRAMES = 84;
 
@@ -53,6 +54,7 @@ export default function GamingSetupScroll() {
     const [images, setImages] = useState<HTMLImageElement[]>([]);
     const [imagesLoaded, setImagesLoaded] = useState(false);
     const [hasRealImages, setHasRealImages] = useState(false);
+    const [isContactModalOpen, setIsContactModalOpen] = useState(false);
 
     const { scrollYProgress } = useScroll({
         target: containerRef,
@@ -336,6 +338,7 @@ export default function GamingSetupScroll() {
                         key={index}
                         beat={beat}
                         scrollProgress={smoothProgress}
+                        onOpenContactModal={() => setIsContactModalOpen(true)}
                     />
                 ))}
 
@@ -360,6 +363,12 @@ export default function GamingSetupScroll() {
                     </motion.div>
                 </motion.div>
             </div>
+
+            {/* Contact Modal */}
+            <ContactModal
+                isOpen={isContactModalOpen}
+                onClose={() => setIsContactModalOpen(false)}
+            />
         </div>
     );
 }
@@ -368,9 +377,11 @@ export default function GamingSetupScroll() {
 function TextOverlay({
     beat,
     scrollProgress,
+    onOpenContactModal,
 }: {
     beat: TextBeat;
     scrollProgress: ReturnType<typeof useSpring>;
+    onOpenContactModal: () => void;
 }) {
     const opacity = useTransform(
         scrollProgress,
@@ -418,16 +429,14 @@ function TextOverlay({
                 )}
 
                 {beat.isCTA && (
-                    <motion.a
-                        href="https://api.whatsapp.com/send?phone=995555201414"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="neon-button mt-6 md:mt-8 inline-block"
+                    <motion.button
+                        onClick={onOpenContactModal}
+                        className="neon-button mt-6 md:mt-8"
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
                     >
                         BOOK YOUR STATION
-                    </motion.a>
+                    </motion.button>
                 )}
             </div>
         </motion.div>
