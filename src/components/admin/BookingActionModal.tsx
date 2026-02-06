@@ -83,6 +83,10 @@ export default function BookingActionModal({
     const [groupTotalPrice, setGroupTotalPrice] = useState<number>(0);
     const [groupStopMode, setGroupStopMode] = useState(false);
     const [groupFinalPrice, setGroupFinalPrice] = useState<number>(0);
+    const [groupPlayedPrice, setGroupPlayedPrice] = useState<number>(0);
+    const [groupBookedPrice, setGroupBookedPrice] = useState<number>(0);
+    const [groupElapsedMinutes, setGroupElapsedMinutes] = useState<number>(0);
+    const [groupBookedMinutes, setGroupBookedMinutes] = useState<number>(0);
 
     // Helper to combine date+time to string
     const getISO = (dateStr: string, timeStr: string) => {
@@ -483,18 +487,33 @@ export default function BookingActionModal({
     const handleStopAll = async () => {
         if (relatedBookings.length === 0) return;
 
-        // Calculate total price for all group stations
-        let totalPrice = 0;
+        // Calculate played price (actual time) and booked price (reserved time)
+        let playedPrice = 0;
+        let bookedPrice = 0;
+        let totalElapsed = 0;
+        let totalBooked = 0;
+
         for (const booking of relatedBookings) {
             const start = new Date(booking.start_time);
-            const end = new Date();
-            const elapsed = Math.max(0, Math.ceil((end.getTime() - start.getTime()) / 60000));
+            const end = new Date(booking.end_time);
+            const now = new Date();
+
+            const elapsed = Math.max(0, Math.ceil((now.getTime() - start.getTime()) / 60000));
+            const booked = Math.max(0, Math.ceil((end.getTime() - start.getTime()) / 60000));
+
             const stationType = (booking.stations as any)?.type || 'STANDARD';
-            const price = calculatePrice(stationType as StationType, elapsed / 60);
-            totalPrice += price;
+
+            playedPrice += calculatePrice(stationType as StationType, elapsed / 60);
+            bookedPrice += calculatePrice(stationType as StationType, booked / 60);
+            totalElapsed += elapsed;
+            totalBooked += booked;
         }
 
-        setGroupFinalPrice(totalPrice);
+        setGroupPlayedPrice(playedPrice);
+        setGroupBookedPrice(bookedPrice);
+        setGroupElapsedMinutes(totalElapsed);
+        setGroupBookedMinutes(totalBooked);
+        setGroupFinalPrice(playedPrice); // Default to played price
         setGroupStopMode(true);
     };
 
@@ -589,21 +608,64 @@ export default function BookingActionModal({
                                 })}
                             </div>
 
-                            {/* Total price display */}
-                            <div className="p-4 bg-green-900/20 border border-green-500/30 rounded-lg text-center">
-                                <p className="text-gray-400 text-xs mb-1">Total for all {relatedBookings.length} stations:</p>
-                                <div className="flex items-center justify-center gap-2">
-                                    <input
-                                        type="number"
-                                        min="0"
-                                        step="1"
-                                        className="bg-transparent text-3xl font-bold text-white w-28 text-center outline-none border-b-2 border-green-500/50 focus:border-green-500 transition-colors"
-                                        value={groupFinalPrice || ''}
-                                        onChange={(e) => setGroupFinalPrice(parseFloat(e.target.value) || 0)}
-                                    />
-                                    <span className="text-2xl text-gray-400">₾</span>
+                            {/* Price options: Played Time / Booked Time / Custom */}
+                            <div className="grid grid-cols-2 gap-3">
+                                {/* Played Time Option */}
+                                <div
+                                    onClick={() => setGroupFinalPrice(groupPlayedPrice)}
+                                    className={`p-3 rounded border cursor-pointer transition-all ${groupFinalPrice === groupPlayedPrice ? 'bg-green-500/20 border-green-500 ring-1 ring-green-500' : 'bg-white/5 border-white/10 hover:bg-white/10'}`}
+                                >
+                                    <span className="block text-gray-400 text-xs mb-1">Played Time ({formatMinutes(groupElapsedMinutes)})</span>
+                                    <span className="text-xl font-bold text-white block">{groupPlayedPrice} ₾</span>
+                                    <span className="text-[10px] text-gray-500 block">Based on time played</span>
+                                    {groupFinalPrice === groupPlayedPrice && <span className="text-green-400 text-xs font-bold mt-1 block">✓ Selected</span>}
                                 </div>
-                                <p className="text-green-400/60 text-xs mt-2">You can adjust the total price if needed</p>
+
+                                {/* Booked Time Option */}
+                                <div
+                                    onClick={() => setGroupFinalPrice(groupBookedPrice)}
+                                    className={`p-3 rounded border cursor-pointer transition-all ${groupFinalPrice === groupBookedPrice ? 'bg-green-500/20 border-green-500 ring-1 ring-green-500' : 'bg-white/5 border-white/10 hover:bg-white/10'}`}
+                                >
+                                    <span className="block text-gray-400 text-xs mb-1">Booked Time ({formatMinutes(groupBookedMinutes)})</span>
+                                    <span className="text-xl font-bold text-white block">{groupBookedPrice} ₾</span>
+                                    <span className="text-[10px] text-gray-500 block">Full booking duration</span>
+                                    {groupFinalPrice === groupBookedPrice && <span className="text-green-400 text-xs font-bold mt-1 block">✓ Selected</span>}
+                                </div>
+
+                                {/* Custom Price Option */}
+                                <div
+                                    onClick={() => {
+                                        if (groupFinalPrice !== groupPlayedPrice && groupFinalPrice !== groupBookedPrice) return;
+                                        setGroupFinalPrice(0);
+                                    }}
+                                    className={`col-span-2 p-3 rounded border cursor-pointer transition-all ${groupFinalPrice !== groupPlayedPrice && groupFinalPrice !== groupBookedPrice
+                                        ? 'bg-blue-500/20 border-blue-500 ring-1 ring-blue-500'
+                                        : 'bg-white/5 border-white/10 hover:bg-white/10'
+                                        }`}
+                                >
+                                    <span className="block text-gray-400 text-xs mb-1">Custom Price</span>
+
+                                    {groupFinalPrice !== groupPlayedPrice && groupFinalPrice !== groupBookedPrice ? (
+                                        <div className="flex items-center gap-2 mt-1">
+                                            <input
+                                                type="number"
+                                                autoFocus
+                                                min="0"
+                                                step="1"
+                                                className="bg-transparent text-xl font-bold text-white w-20 outline-none border-b border-blue-500/50 focus:border-blue-500 transition-colors"
+                                                value={groupFinalPrice || ''}
+                                                onChange={(e) => setGroupFinalPrice(parseFloat(e.target.value) || 0)}
+                                                onClick={(e) => e.stopPropagation()}
+                                            />
+                                            <span className="text-lg text-gray-400">₾</span>
+                                        </div>
+                                    ) : (
+                                        <div className="flex items-center justify-between">
+                                            <span className="text-lg text-gray-500 font-bold block">Enter Amount...</span>
+                                            <span className="text-[10px] text-gray-500">Discounts, extras, etc.</span>
+                                        </div>
+                                    )}
+                                </div>
                             </div>
 
                             <div className="p-3 bg-blue-900/20 border border-blue-500/30 rounded text-center">
@@ -800,8 +862,8 @@ export default function BookingActionModal({
                                 </div>
                             )}
 
-                            {/* STOP BUTTON */}
-                            {isLive && (
+                            {/* STOP BUTTON - only for single bookings, not groups */}
+                            {isLive && relatedBookings.length <= 1 && (
                                 <div className="p-3 bg-red-500/10 border border-red-500/20 rounded-lg flex justify-between items-center">
                                     <div>
                                         <h3 className="text-red-400 font-bold text-sm">Customer Leaving?</h3>
