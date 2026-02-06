@@ -81,6 +81,8 @@ export default function BookingActionModal({
     // Group bookings - связанные станции
     const [relatedBookings, setRelatedBookings] = useState<any[]>([]);
     const [groupTotalPrice, setGroupTotalPrice] = useState<number>(0);
+    const [groupStopMode, setGroupStopMode] = useState(false);
+    const [groupFinalPrice, setGroupFinalPrice] = useState<number>(0);
 
     // Helper to combine date+time to string
     const getISO = (dateStr: string, timeStr: string) => {
@@ -481,32 +483,43 @@ export default function BookingActionModal({
     const handleStopAll = async () => {
         if (relatedBookings.length === 0) return;
 
+        // Calculate total price for all group stations
+        let totalPrice = 0;
+        for (const booking of relatedBookings) {
+            const start = new Date(booking.start_time);
+            const end = new Date();
+            const elapsed = Math.max(0, Math.ceil((end.getTime() - start.getTime()) / 60000));
+            const stationType = (booking.stations as any)?.type || 'STANDARD';
+            const price = calculatePrice(stationType as StationType, elapsed / 60);
+            totalPrice += price;
+        }
+
+        setGroupFinalPrice(totalPrice);
+        setGroupStopMode(true);
+    };
+
+    // Confirm Group Stop - actual save
+    const confirmGroupStop = async () => {
+        if (relatedBookings.length === 0) return;
+
         setLoading(true);
         try {
             const now = new Date().toISOString();
-            let totalGroupPrice = 0;
+            const pricePerStation = groupFinalPrice / relatedBookings.length;
 
             for (const booking of relatedBookings) {
-                // Calculate price for each
-                const start = new Date(booking.start_time);
-                const end = new Date();
-                const elapsed = Math.max(0, Math.ceil((end.getTime() - start.getTime()) / 60000));
-                const stationType = (booking.stations as any)?.type || 'STANDARD';
-                const price = calculatePrice(stationType as StationType, elapsed / 60);
-                totalGroupPrice += price;
-
                 // @ts-ignore - group_id not in types yet
                 await (supabase as any)
                     .from('bookings')
                     .update({
                         end_time: now,
                         payment_status: 'paid',
-                        total_price: price
+                        total_price: pricePerStation
                     })
                     .eq('id', booking.id);
             }
 
-            alert(`✅ Stopped ${relatedBookings.length} stations!\n\n💰 Total to pay: ${totalGroupPrice.toLocaleString()}₾`);
+            setGroupStopMode(false);
             onSuccess();
             onClose();
         } catch (err: any) {
@@ -541,8 +554,67 @@ export default function BookingActionModal({
                 </div>
 
                 <div className="p-6 space-y-4 overflow-y-auto">
-                    {/* STOP MODE UI */}
-                    {stopMode && existingBooking ? (
+                    {/* GROUP STOP MODE UI */}
+                    {groupStopMode && relatedBookings.length > 0 ? (
+                        <div className="space-y-4">
+                            <h3 className="text-white font-bold flex items-center gap-2">
+                                <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
+                                Finalizing Group Session
+                            </h3>
+
+                            {/* Group summary */}
+                            <div className="bg-white/5 rounded-lg p-3 border border-white/10">
+                                <div className="text-gray-400 text-xs mb-2">📦 Stations in group:</div>
+                                <div className="flex flex-wrap gap-1">
+                                    {relatedBookings.map((b: any) => (
+                                        <span key={b.id} className="px-2 py-0.5 bg-purple-500/20 text-purple-300 text-xs rounded">
+                                            {(b.stations as any)?.name || b.station_id}
+                                        </span>
+                                    ))}
+                                </div>
+                            </div>
+
+                            {/* Total price display */}
+                            <div className="p-4 bg-green-900/20 border border-green-500/30 rounded-lg text-center">
+                                <p className="text-gray-400 text-xs mb-1">Total for all {relatedBookings.length} stations:</p>
+                                <div className="flex items-center justify-center gap-2">
+                                    <input
+                                        type="number"
+                                        min="0"
+                                        step="1"
+                                        className="bg-transparent text-3xl font-bold text-white w-28 text-center outline-none border-b-2 border-green-500/50 focus:border-green-500 transition-colors"
+                                        value={groupFinalPrice || ''}
+                                        onChange={(e) => setGroupFinalPrice(parseFloat(e.target.value) || 0)}
+                                    />
+                                    <span className="text-2xl text-gray-400">₾</span>
+                                </div>
+                                <p className="text-green-400/60 text-xs mt-2">You can adjust the total price if needed</p>
+                            </div>
+
+                            <div className="p-3 bg-blue-900/20 border border-blue-500/30 rounded text-center">
+                                <p className="text-blue-200 text-sm">
+                                    💰 Collect: <span className="font-bold text-white text-lg ml-1">{groupFinalPrice || 0} ₾</span>
+                                </p>
+                                <p className="text-blue-400/60 text-xs mt-1">Please collect payment before confirming.</p>
+                            </div>
+
+                            <div className="flex gap-2 pt-2">
+                                <button
+                                    onClick={() => setGroupStopMode(false)}
+                                    className="flex-1 py-3 bg-white/5 text-gray-400 rounded hover:bg-white/10 transition-all text-xs"
+                                >
+                                    Go Back
+                                </button>
+                                <button
+                                    onClick={confirmGroupStop}
+                                    disabled={loading}
+                                    className="flex-[2] py-3 bg-green-500 text-black font-bold rounded hover:bg-green-400 transition-all shadow-[0_0_15px_rgba(34,197,94,0.3)] disabled:opacity-50"
+                                >
+                                    {loading ? 'Stopping...' : `CONFIRM STOP & PAY ${groupFinalPrice}₾`}
+                                </button>
+                            </div>
+                        </div>
+                    ) : stopMode && existingBooking ? (
                         <div className="space-y-4">
                             <h3 className="text-white font-bold flex items-center gap-2">
                                 <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
