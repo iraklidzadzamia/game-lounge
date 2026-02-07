@@ -371,6 +371,7 @@ export default function BookingActionModal({
                     end_time: end.toISOString(),
                     payment_status: paymentStatus,
                     payment_method: paymentMethod || null,
+                    deposit_amount: paymentStatus === 'deposit' ? depositAmount : 0,
                     notes: finalNotes,
                     guest_count: guestCount,
                     controllers_count: controllersCount
