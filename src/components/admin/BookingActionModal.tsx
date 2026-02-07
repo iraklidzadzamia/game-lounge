@@ -379,11 +379,19 @@ export default function BookingActionModal({
 
                 console.log('💰 Saving booking with deposit:', { paymentStatus, depositAmount, actualSaved: bookingData.deposit_amount });
 
+                // If this is a group booking, update ALL bookings in the group
+                // @ts-ignore - subBookings from grouped view
+                const idsToUpdate = (existingBooking as any).subBookings
+                    ? (existingBooking as any).subBookings.map((b: any) => b.id)
+                    : [existingBooking.id];
+
+                console.log('📝 Updating booking IDs:', idsToUpdate);
+
                 const { error } = await supabase
                     .from('bookings')
                     // @ts-ignore
                     .update(bookingData)
-                    .eq('id', existingBooking.id);
+                    .in('id', idsToUpdate);
 
                 if (error) throw error;
             } else {

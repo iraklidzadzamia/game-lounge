@@ -44,22 +44,27 @@ export default function AdminDashboard() {
     const groupBookings = (rawBookings: Booking[]) => {
         const groups: Record<string, any> = {};
         rawBookings.forEach(booking => {
-            const key = `${booking.customer_phone}-${booking.start_time}-${booking.end_time}`;
+            // Use group_id if exists, otherwise use booking id (single booking)
+            // @ts-ignore - group_id added to DB
+            const groupId = (booking as any).group_id;
+            const key = groupId || booking.id; // Each single booking gets its own key
+
             if (!groups[key]) {
                 groups[key] = {
                     ...booking,
-                    isGroup: false,
+                    isGroup: !!groupId && rawBookings.filter((b: any) => b.group_id === groupId).length > 1,
                     subBookings: [booking],
                     stationNames: [booking.stations?.name || booking.station_id],
                     totalGroupPrice: booking.total_price || 0,
-                    deposit_amount: (booking as any).deposit_amount || 0
+                    deposit_amount: (booking as any).deposit_amount || 0,
+                    group_id: groupId
                 };
             } else {
                 groups[key].isGroup = true;
                 groups[key].subBookings.push(booking);
                 groups[key].stationNames.push(booking.stations?.name || booking.station_id);
                 groups[key].totalGroupPrice += (booking.total_price || 0);
-                // Keep deposit_amount from first booking in group
+                // deposit_amount should be same for all in group, keep first
             }
         });
         return Object.values(groups);
