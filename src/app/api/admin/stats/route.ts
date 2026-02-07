@@ -24,9 +24,9 @@ export async function GET(request: Request) {
 
         let todayQuery = supabase
             .from('bookings')
-            .select('total_price, start_time, end_time, payment_status')
+            .select('total_price, start_time, end_time, payment_status, deposit_amount')
             .gte('start_time', startOfDayISO)
-            .eq('payment_status', 'paid'); // Only count paid bookings
+            .in('payment_status', ['paid', 'deposit']); // Count paid AND deposit bookings
 
         if (branchId !== 'all') {
             todayQuery = todayQuery.eq('branch_id', branchId);
@@ -34,7 +34,12 @@ export async function GET(request: Request) {
 
         const { data: todayBookings } = await todayQuery;
 
-        const dailyRevenue = todayBookings?.reduce((sum, b) => sum + (b.total_price || 0), 0) || 0;
+        // Calculate revenue: for 'paid' use total_price, for 'deposit' use deposit_amount
+        const dailyRevenue = todayBookings?.reduce((sum, b) => {
+            if (b.payment_status === 'paid') return sum + (b.total_price || 0);
+            if (b.payment_status === 'deposit') return sum + (b.deposit_amount || 0);
+            return sum;
+        }, 0) || 0;
         const totalBookingsToday = todayBookings?.length || 0;
 
         // 2. Fetch Range Revenue (from-to datetime range)
@@ -48,17 +53,21 @@ export async function GET(request: Request) {
 
             let rangeQuery = supabase
                 .from('bookings')
-                .select('total_price')
+                .select('total_price, payment_status, deposit_amount')
                 .gte('start_time', fromDate.toISOString())
                 .lte('start_time', toDate.toISOString())
-                .eq('payment_status', 'paid');
+                .in('payment_status', ['paid', 'deposit']);
 
             if (branchId !== 'all') {
                 rangeQuery = rangeQuery.eq('branch_id', branchId);
             }
 
             const { data: rangeBookings } = await rangeQuery;
-            rangeRevenue = rangeBookings?.reduce((sum, b) => sum + (b.total_price || 0), 0) || 0;
+            rangeRevenue = rangeBookings?.reduce((sum, b) => {
+                if (b.payment_status === 'paid') return sum + (b.total_price || 0);
+                if (b.payment_status === 'deposit') return sum + (b.deposit_amount || 0);
+                return sum;
+            }, 0) || 0;
         }
 
         // 3. Active Now

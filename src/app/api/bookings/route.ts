@@ -114,6 +114,9 @@ export async function POST(request: Request) {
         // =====================
         // 5. ПОДГОТОВКА ДАННЫХ ДЛЯ ВСТАВКИ
         // =====================
+        // Generate group_id for multi-station bookings (enables Extend All / Stop All)
+        const groupId = stationIds.length > 1 ? crypto.randomUUID() : null;
+
         const bookingsToInsert = stationIds.map((id: string) => {
             const type = stationTypes[id] || 'PRO';
             const price = calculatePrice(type, duration, {
@@ -132,7 +135,8 @@ export async function POST(request: Request) {
                 total_price: price,
                 status: 'CONFIRMED',
                 guest_count: guestCount || 1,
-                controllers_count: controllersCount || 2
+                controllers_count: controllersCount || 2,
+                group_id: groupId  // Link all stations in group
             };
         });
 

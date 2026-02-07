@@ -56,8 +56,9 @@ export default function BookingActionModal({
 
     // Legacy removed: startTime, endTime
 
-    const [paymentStatus, setPaymentStatus] = useState<'paid' | 'unpaid'>('unpaid');
+    const [paymentStatus, setPaymentStatus] = useState<'paid' | 'unpaid' | 'deposit'>('unpaid');
     const [paymentMethod, setPaymentMethod] = useState<'cash' | 'card_bog' | 'card_tbc' | null>(null);
+    const [depositAmount, setDepositAmount] = useState<number>(0);
     const [notes, setNotes] = useState('');
 
     // Generate Time Slots (00:00 - 23:30)
@@ -149,6 +150,8 @@ export default function BookingActionModal({
 
                 setPaymentStatus(existingBooking.payment_status || 'unpaid');
                 setPaymentMethod(existingBooking.payment_method || null);
+                // @ts-ignore - deposit_amount added to DB
+                setDepositAmount(existingBooking.deposit_amount || 0);
                 setNotes(existingBooking.notes || '');
 
                 setIsOpenSession(existingBooking.notes?.includes('OPEN_SESSION') || false);
@@ -407,6 +410,7 @@ export default function BookingActionModal({
                     end_time: end.toISOString(),
                     payment_status: paymentStatus,
                     payment_method: paymentMethod || null,
+                    deposit_amount: paymentStatus === 'deposit' ? depositAmount : 0,
                     notes: finalNotes,
                     status: 'CONFIRMED',
                     guest_count: guestCount,
@@ -1015,7 +1019,7 @@ export default function BookingActionModal({
 
                             <div className="p-4 bg-white/5 rounded-lg border border-white/10 space-y-3">
                                 <label className="block text-xs font-semibold text-gray-400 uppercase">Payment</label>
-                                <div className="flex gap-4">
+                                <div className="flex gap-4 flex-wrap">
                                     <label className="flex items-center gap-2 cursor-pointer">
                                         <input
                                             type="radio"
@@ -1030,6 +1034,21 @@ export default function BookingActionModal({
                                         <input
                                             type="radio"
                                             name="payment_status"
+                                            checked={paymentStatus === 'deposit'}
+                                            onChange={() => {
+                                                setPaymentStatus('deposit');
+                                                // Auto-calculate deposit as 1 hour price (can be changed)
+                                                const autoDeposit = targetStationIds.length * 8; // ~8₾ per hour per station
+                                                if (depositAmount === 0) setDepositAmount(autoDeposit);
+                                            }}
+                                            className="accent-orange-500"
+                                        />
+                                        <span className="text-sm text-orange-500">Deposit</span>
+                                    </label>
+                                    <label className="flex items-center gap-2 cursor-pointer">
+                                        <input
+                                            type="radio"
+                                            name="payment_status"
                                             checked={paymentStatus === 'paid'}
                                             onChange={() => setPaymentStatus('paid')}
                                             className="accent-green-500"
@@ -1037,6 +1056,20 @@ export default function BookingActionModal({
                                         <span className="text-sm text-green-500">Paid</span>
                                     </label>
                                 </div>
+
+                                {paymentStatus === 'deposit' && (
+                                    <div className="pt-2 border-t border-white/10 animation-fade-in">
+                                        <label className="block text-xs font-semibold text-gray-500 mb-2">Deposit Amount (₾)</label>
+                                        <input
+                                            type="number"
+                                            min="0"
+                                            className="w-full bg-black/50 border border-orange-500/50 rounded px-2 py-1.5 text-sm text-white focus:border-orange-500 outline-none"
+                                            value={depositAmount}
+                                            onChange={e => setDepositAmount(Number(e.target.value))}
+                                        />
+                                        <p className="text-xs text-gray-500 mt-1">Customer pays this upfront, rest on checkout</p>
+                                    </div>
+                                )}
 
                                 {paymentStatus === 'paid' && (
                                     <div className="pt-2 border-t border-white/10 animation-fade-in">

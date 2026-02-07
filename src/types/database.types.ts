@@ -22,10 +22,11 @@ export interface Database {
                     status: string | null
                     created_at: string | null
                     created_by: string | null
-                    payment_status: 'paid' | 'unpaid'
+                    payment_status: 'paid' | 'unpaid' | 'deposit'
                     payment_method: 'cash' | 'card_bog' | 'card_tbc' | null
                     notes: string | null
                     group_id: string | null
+                    deposit_amount: number | null
                 }
                 Insert: {
                     id?: string
@@ -39,10 +40,11 @@ export interface Database {
                     status?: string | null
                     created_at?: string | null
                     created_by?: string | null
-                    payment_status?: 'paid' | 'unpaid'
+                    payment_status?: 'paid' | 'unpaid' | 'deposit'
                     payment_method?: 'cash' | 'card_bog' | 'card_tbc' | null
                     notes?: string | null
                     group_id?: string | null
+                    deposit_amount?: number | null
                 }
                 Update: {
                     id?: string
@@ -56,10 +58,11 @@ export interface Database {
                     status?: string | null
                     created_at?: string | null
                     created_by?: string | null
-                    payment_status?: 'paid' | 'unpaid'
+                    payment_status?: 'paid' | 'unpaid' | 'deposit'
                     payment_method?: 'cash' | 'card_bog' | 'card_tbc' | null
                     notes?: string | null
                     group_id?: string | null
+                    deposit_amount?: number | null
                 }
             }
             stations: {

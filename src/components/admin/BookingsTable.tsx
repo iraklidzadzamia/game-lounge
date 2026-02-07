@@ -145,12 +145,19 @@ export default function BookingsTable({ bookings, isLoading, onRefresh, onEdit }
                                         onClick={(e) => { e.stopPropagation(); togglePaymentStatus(booking); }}
                                         disabled={!!processingId}
                                         className={`inline-flex items-center gap-2 px-2.5 py-1 rounded-full text-xs font-medium cursor-pointer transition-all ${booking.payment_status === 'paid'
-                                            ? 'bg-green-500/20 text-green-400 border border-green-500/30 hover:bg-green-500/30'
-                                            : 'bg-yellow-500/10 text-yellow-500 border border-yellow-500/20 hover:bg-yellow-500/20'
+                                                ? 'bg-green-500/20 text-green-400 border border-green-500/30 hover:bg-green-500/30'
+                                                : booking.payment_status === 'deposit'
+                                                    ? 'bg-orange-500/20 text-orange-400 border border-orange-500/30 hover:bg-orange-500/30'
+                                                    : 'bg-yellow-500/10 text-yellow-500 border border-yellow-500/20 hover:bg-yellow-500/20'
                                             }`}
                                     >
-                                        <span className={`w-1.5 h-1.5 rounded-full ${booking.payment_status === 'paid' ? 'bg-green-500' : 'bg-yellow-500'}`} />
-                                        {booking.payment_status === 'paid' ? 'PAID' : 'UNPAID'}
+                                        <span className={`w-1.5 h-1.5 rounded-full ${booking.payment_status === 'paid' ? 'bg-green-500'
+                                                : booking.payment_status === 'deposit' ? 'bg-orange-500'
+                                                    : 'bg-yellow-500'
+                                            }`} />
+                                        {booking.payment_status === 'paid' ? 'PAID'
+                                            : booking.payment_status === 'deposit' ? `DEPOSIT ${booking.deposit_amount || 0}₾`
+                                                : 'UNPAID'}
                                     </button>
 
                                     {(booking.isGroup ? booking.totalGroupPrice : booking.total_price) && (
