@@ -377,6 +377,8 @@ export default function BookingActionModal({
                     controllers_count: controllersCount
                 };
 
+                console.log('💰 Saving booking with deposit:', { paymentStatus, depositAmount, actualSaved: bookingData.deposit_amount });
+
                 const { error } = await supabase
                     .from('bookings')
                     // @ts-ignore

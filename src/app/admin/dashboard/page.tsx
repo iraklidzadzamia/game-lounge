@@ -46,9 +46,20 @@ export default function AdminDashboard() {
         rawBookings.forEach(booking => {
             const key = `${booking.customer_phone}-${booking.start_time}-${booking.end_time}`;
             if (!groups[key]) {
-                groups[key] = { ...booking, isGroup: false, subBookings: [booking], stationNames: [booking.stations?.name || booking.station_id], totalGroupPrice: booking.total_price || 0 };
+                groups[key] = {
+                    ...booking,
+                    isGroup: false,
+                    subBookings: [booking],
+                    stationNames: [booking.stations?.name || booking.station_id],
+                    totalGroupPrice: booking.total_price || 0,
+                    deposit_amount: (booking as any).deposit_amount || 0
+                };
             } else {
-                groups[key].isGroup = true; groups[key].subBookings.push(booking); groups[key].stationNames.push(booking.stations?.name || booking.station_id); groups[key].totalGroupPrice += (booking.total_price || 0);
+                groups[key].isGroup = true;
+                groups[key].subBookings.push(booking);
+                groups[key].stationNames.push(booking.stations?.name || booking.station_id);
+                groups[key].totalGroupPrice += (booking.total_price || 0);
+                // Keep deposit_amount from first booking in group
             }
         });
         return Object.values(groups);
