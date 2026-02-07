@@ -630,7 +630,9 @@ export default function BookingActionModal({
                                     onClick={() => setGroupFinalPrice(groupPlayedPrice)}
                                     className={`p-3 rounded border cursor-pointer transition-all ${groupFinalPrice === groupPlayedPrice ? 'bg-green-500/20 border-green-500 ring-1 ring-green-500' : 'bg-white/5 border-white/10 hover:bg-white/10'}`}
                                 >
-                                    <span className="block text-gray-400 text-xs mb-1">Played Time ({formatMinutes(groupElapsedMinutes)})</span>
+                                    <span className="block text-gray-400 text-xs mb-1">
+                                        Played Time ({relatedBookings.length} PCs × {formatMinutes(Math.round(groupElapsedMinutes / relatedBookings.length))} each = {formatMinutes(groupElapsedMinutes)} total)
+                                    </span>
                                     <span className="text-xl font-bold text-white block">{groupPlayedPrice} ₾</span>
                                     <span className="text-[10px] text-gray-500 block">Based on time played</span>
                                     {groupFinalPrice === groupPlayedPrice && <span className="text-green-400 text-xs font-bold mt-1 block">✓ Selected</span>}
@@ -641,7 +643,9 @@ export default function BookingActionModal({
                                     onClick={() => setGroupFinalPrice(groupBookedPrice)}
                                     className={`p-3 rounded border cursor-pointer transition-all ${groupFinalPrice === groupBookedPrice ? 'bg-green-500/20 border-green-500 ring-1 ring-green-500' : 'bg-white/5 border-white/10 hover:bg-white/10'}`}
                                 >
-                                    <span className="block text-gray-400 text-xs mb-1">Booked Time ({formatMinutes(groupBookedMinutes)})</span>
+                                    <span className="block text-gray-400 text-xs mb-1">
+                                        Booked Time ({relatedBookings.length} PCs × {formatMinutes(Math.round(groupBookedMinutes / relatedBookings.length))} each = {formatMinutes(groupBookedMinutes)} total)
+                                    </span>
                                     <span className="text-xl font-bold text-white block">{groupBookedPrice} ₾</span>
                                     <span className="text-[10px] text-gray-500 block">Full booking duration</span>
                                     {groupFinalPrice === groupBookedPrice && <span className="text-green-400 text-xs font-bold mt-1 block">✓ Selected</span>}
