@@ -154,7 +154,7 @@ export default function BookingPage({ params }: { params: { branch: string } }) 
                         <div className="flex flex-wrap gap-2">
                             <button
                                 onClick={() => {
-                                    setSelectedDate(new Date());
+                                    setSelectedDate(getNextSlot());
                                     setIsCustomTime(false);
                                 }}
                                 className={`flex-1 py-3 rounded font-orbitron text-sm tracking-wider transition-all border ${isSameDate(selectedDate, today)

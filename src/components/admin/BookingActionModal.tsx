@@ -88,6 +88,7 @@ export default function BookingActionModal({
     const [groupBookedPrice, setGroupBookedPrice] = useState<number>(0);
     const [groupElapsedMinutes, setGroupElapsedMinutes] = useState<number>(0);
     const [groupBookedMinutes, setGroupBookedMinutes] = useState<number>(0);
+    const [stationsToStop, setStationsToStop] = useState<Set<string>>(new Set()); // Partial Stop
 
     // Helper to combine date+time to string
     const getISO = (dateStr: string, timeStr: string) => {
@@ -529,27 +530,49 @@ export default function BookingActionModal({
         setGroupElapsedMinutes(totalElapsed);
         setGroupBookedMinutes(totalBooked);
         setGroupFinalPrice(playedPrice); // Default to played price
+        setStationsToStop(new Set(relatedBookings.map((b: any) => b.id))); // Default: stop all
         setGroupStopMode(true);
     };
 
-    // Confirm Group Stop - actual save
+    // Confirm Group Stop - actual save (supports Partial Stop)
     const confirmGroupStop = async () => {
         if (relatedBookings.length === 0) return;
 
         setLoading(true);
         try {
             const now = new Date().toISOString();
-            const pricePerStation = groupFinalPrice / relatedBookings.length;
+            const toStop = relatedBookings.filter((b: any) => stationsToStop.has(b.id));
+            const toRelease = relatedBookings.filter((b: any) => !stationsToStop.has(b.id));
 
-            for (const booking of relatedBookings) {
-                // @ts-ignore - group_id not in types yet
+            if (toStop.length === 0) {
+                alert('Select at least one station to stop.');
+                setLoading(false);
+                return;
+            }
+
+            const pricePerStation = groupFinalPrice / toStop.length;
+            const depositPerStation = ((existingBooking as any)?.deposit_amount || 0) / relatedBookings.length;
+
+            // Stop selected stations — finalize with payment
+            for (const booking of toStop) {
+                // @ts-ignore
                 await (supabase as any)
                     .from('bookings')
                     .update({
                         end_time: now,
                         payment_status: 'paid',
-                        total_price: pricePerStation
+                        total_price: pricePerStation,
+                        deposit_amount: depositPerStation,
                     })
+                    .eq('id', booking.id);
+            }
+
+            // Detach remaining stations — they continue as independent bookings
+            for (const booking of toRelease) {
+                // @ts-ignore
+                await (supabase as any)
+                    .from('bookings')
+                    .update({ group_id: null })
                     .eq('id', booking.id);
             }
 
@@ -596,9 +619,21 @@ export default function BookingActionModal({
                                 Finalizing Group Session
                             </h3>
 
-                            {/* Detailed breakdown per station */}
+                            {/* Detailed breakdown per station + checkboxes for partial stop */}
                             <div className="bg-white/5 rounded-lg p-3 border border-white/10 space-y-2">
-                                <div className="text-gray-400 text-xs mb-2">📦 Breakdown per station:</div>
+                                <div className="text-gray-400 text-xs mb-2 flex justify-between">
+                                    <span>📦 Select stations to stop:</span>
+                                    <button
+                                        type="button"
+                                        onClick={() => {
+                                            const allIds = new Set(relatedBookings.map((b: any) => b.id));
+                                            setStationsToStop(stationsToStop.size === relatedBookings.length ? new Set() : allIds);
+                                        }}
+                                        className="text-blue-400 text-[10px] underline"
+                                    >
+                                        {stationsToStop.size === relatedBookings.length ? 'Deselect All' : 'Select All'}
+                                    </button>
+                                </div>
                                 {relatedBookings.map((b: any) => {
                                     const start = new Date(b.start_time);
                                     const now = new Date();
@@ -608,19 +643,40 @@ export default function BookingActionModal({
                                     const hours = Math.floor(elapsed / 60);
                                     const mins = elapsed % 60;
                                     const timeStr = hours > 0 ? `${hours}h ${mins}m` : `${mins}m`;
+                                    const isChecked = stationsToStop.has(b.id);
 
                                     return (
-                                        <div key={b.id} className="flex justify-between items-center py-1.5 border-b border-white/5 last:border-0">
+                                        <div
+                                            key={b.id}
+                                            onClick={() => {
+                                                const next = new Set(stationsToStop);
+                                                if (next.has(b.id)) next.delete(b.id); else next.add(b.id);
+                                                setStationsToStop(next);
+                                            }}
+                                            className={`flex justify-between items-center py-1.5 px-2 rounded border cursor-pointer transition-all border-b border-white/5 last:border-0 ${isChecked ? 'bg-red-500/10 border-red-500/30' : 'bg-white/0 border-transparent opacity-50'
+                                                }`}
+                                        >
                                             <div className="flex items-center gap-2">
+                                                <input
+                                                    type="checkbox"
+                                                    checked={isChecked}
+                                                    onChange={() => { }}
+                                                    className="accent-red-500 pointer-events-none"
+                                                />
                                                 <span className="px-2 py-0.5 bg-purple-500/20 text-purple-300 text-xs rounded">
                                                     {(b.stations as any)?.name || b.station_id}
                                                 </span>
                                                 <span className="text-gray-500 text-xs">⏱ {timeStr}</span>
                                             </div>
-                                            <span className="text-green-400 font-bold text-sm">{price}₾</span>
+                                            <span className={`font-bold text-sm ${isChecked ? 'text-red-400' : 'text-gray-500'}`}>{price}₾</span>
                                         </div>
                                     );
                                 })}
+                                {stationsToStop.size < relatedBookings.length && stationsToStop.size > 0 && (
+                                    <p className="text-yellow-400/70 text-[10px] pt-1">
+                                        ⚡ {relatedBookings.length - stationsToStop.size} station(s) will continue as independent bookings.
+                                    </p>
+                                )}
                             </div>
 
                             {/* Price options: Played Time / Booked Time / Custom */}

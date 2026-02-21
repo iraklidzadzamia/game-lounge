@@ -39,7 +39,8 @@ export default function BookingSummary({ date, duration, seats, seatTypes, branc
 
     // Validation...
     const isTimeValid = date.getTime() > Date.now() - 5 * 60 * 1000;
-    const isFormValid = seats.length > 0 && customerName.trim().length > 0 && customerPhone.trim().length > 0 && isTimeValid;
+    const isPhoneValid = customerPhone.trim().length > 0 && /\d/.test(customerPhone) && !/[a-zA-Z]/.test(customerPhone);
+    const isFormValid = seats.length > 0 && customerName.trim().length > 0 && isPhoneValid && isTimeValid;
 
     const handleConfirm = async () => {
         if (!isFormValid) return;
