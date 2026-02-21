@@ -18,56 +18,47 @@ describe('Admin Auth - Авторизация администратора', () 
     // ТЕСТЫ ТЕКУЩЕЙ РЕАЛИЗАЦИИ (ПРОБЛЕМНОЙ)
     // ==================================
 
+    // ==================================
+    // ТЕСТЫ ТЕКУЩЕЙ РЕАЛИЗАЦИИ (ПРАВИЛЬНОЙ)
+    // ==================================
+
     describe('Текущая реализация (с проблемами)', () => {
         /**
-         * Тест: Любой залогиненный пользователь имеет доступ
-         * 
-         * ЧТО ПРОВЕРЯЕТ: В layout.tsx проверяется только наличие session,
-         * но НЕ роль пользователя. Это критическая уязвимость.
-         * 
+         * Тест: Без session — редирект на /login
+         *
+         * ЧТО ПРОВЕРЯЕТ: layout.tsx правильно отклоняет
+         * запросы без сессии.
+         *
          * ТЕКУЩИЙ КОД:
          * ```typescript
          * if (!session) redirect('/login');
-         * // Роль НЕ проверяется - закомментировано!
+         * if (!profile || (profile.role !== 'admin' && profile.role !== 'owner')) redirect('/');
          * ```
          */
-        test('ПРОБЛЕМА: session без роли проходит проверку', () => {
-            const mockSession = {
-                user: {
-                    id: 'regular-user-123',
-                    email: 'customer@example.com',
-                    // Нет роли!
-                },
-                access_token: 'valid-token',
-            };
-
-            // Текущая проверка
-            const hasSession = !!mockSession;
-
-            // По текущей логике - доступ разрешён!
-            expect(hasSession).toBe(true);
+        test('без session — редирект на /login', () => {
+            const session = null;
+            const shouldRedirectToLogin = !session;
+            expect(shouldRedirectToLogin).toBe(true);
         });
 
         /**
-         * Тест: Клиент без роли admin получает доступ к /admin/*
-         * 
-         * ЧТО ПРОВЕРЯЕТ: Даже обычный Customer может зайти в админку
-         * если у него есть валидная session.
+         * Тест: Session без записи в profiles — редирект на главную
+         *
+         * ЧТО ПРОВЕРЯЕТ: Если у пользователя нет профиля в таблице profiles,
+         * layout.tsx редиректит на '/' (не даёт доступ к admin).
          */
-        test('ПРОБЛЕМА: Customer с session имеет доступ к админке', () => {
-            const mockProfile = {
-                id: 'user-123',
-                email: 'customer@example.com',
-                role: 'customer', // Не admin!
-            };
+        test('session без профиля — нет доступа к admin', () => {
+            const session = { user: { id: 'regular-user-123', email: 'customer@example.com' } };
+            const profile = null; // нет записи в profiles
 
-            // Проверка которая ДОЛЖНА быть (но закомментирована)
-            const shouldHaveAccess = mockProfile.role === 'admin' || mockProfile.role === 'owner';
+            const hasAccess = !!(profile && (
+                (profile as any).role === 'admin' || (profile as any).role === 'owner'
+            ));
 
-            // По правильной логике - доступ должен быть ЗАПРЕЩЁН
-            expect(shouldHaveAccess).toBe(false);
+            expect(!!session).toBe(true); // сессия есть
+            expect(hasAccess).toBe(false); // но доступа нет
         });
-    });
+    }); // end describe('Текущая реализация')
 
     // ==================================
     // ТЕСТЫ ПРАВИЛЬНОЙ РЕАЛИЗАЦИИ

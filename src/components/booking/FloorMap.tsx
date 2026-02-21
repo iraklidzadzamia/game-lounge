@@ -113,27 +113,27 @@ export default function FloorMap({ selectedSeats, onToggle, unavailableIds = [],
             </div>
 
             {/* Row 2: PCs */}
-            <div className="flex flex-col xl:flex-row gap-8 w-full">
+            <div className="grid grid-cols-1 xl:grid-cols-12 gap-8 w-full">
 
                 {/* Left Bank: Premium Area + VIP 1 Below */}
-                <div className="flex-1 flex flex-col gap-8 w-full mx-auto xl:max-w-none xl:mx-0 xl:w-auto">
+                <div className="xl:col-span-4 flex flex-col gap-8 w-full mx-auto xl:max-w-none xl:mx-0 min-w-0">
                     {/* Premium Area Container */}
-                    <div className="flex-1 glass-panel p-4 rounded-xl border border-white/10 flex flex-col items-center">
+                    <div className="flex-1 glass-panel p-4 rounded-xl border border-white/10 flex flex-col items-center min-w-0">
                         <h3 className="text-neon-cyan font-orbitron mb-4 text-sm text-center">PREMIUM AREA</h3>
 
-                        {/* CSS Grid for Precise Alignment */}
-                        <div className="grid grid-cols-[1.3fr_0.7fr] gap-x-2 md:gap-x-6 gap-y-2 w-full">
+                        {/* CSS Grid for Precise Alignment - Proportional */}
+                        <div className="grid grid-cols-[minmax(0,2fr)_minmax(0,1fr)] gap-x-2 md:gap-x-6 gap-y-2 w-full justify-center">
 
                             {/* LEFT COLUMN */}
 
                             {/* VIP 2: Spans rows 1-4 (Matches Prem 1-4) */}
-                            <div className="col-start-1 row-start-1 row-span-4 border border-electric-purple/30 bg-electric-purple/10 p-4 rounded flex flex-col items-center justify-center relative">
+                            <div className="col-start-1 row-start-1 row-span-4 border border-electric-purple/30 bg-electric-purple/10 p-4 rounded flex flex-col items-center justify-center relative min-w-0">
                                 <span className="text-xs text-electric-purple mb-2 font-orbitron font-bold">VIP 2</span>
                                 {renderStation({ id: 'chikovani-vip-2', name: 'VIP 2', type: 'VIP', branch_id: 'chikovani' })}
                             </div>
 
                             {/* PS5 1 & 2: Row 6 (Below Prem 5) */}
-                            <div className="col-start-1 row-start-6 flex flex-col gap-1 items-center justify-center py-2 xl:translate-x-8">
+                            <div className="col-start-1 row-start-6 flex flex-col gap-1 items-center justify-center py-2 xl:translate-x-8 min-w-0">
                                 <span className="text-[10px] text-white/30 font-orbitron text-center">PS5</span>
                                 <div className="flex gap-2">
                                     {renderStation({ id: 'chikovani-ps5-1', name: 'PS5 1', type: 'PS5', branch_id: 'chikovani' })}
@@ -143,29 +143,29 @@ export default function FloorMap({ selectedSeats, onToggle, unavailableIds = [],
 
                             {/* RIGHT COLUMN - Premium 1-5 */}
                             {Array.from({ length: 5 }).map((_, i) => (
-                                <div key={i} className="col-start-2 flex justify-center items-center">
+                                <div key={i} className="col-start-2 flex justify-center items-center min-w-0">
                                     {renderStation({ id: `chikovani-prem-${i + 1}`, name: `PREM ${i + 1}`, type: 'PREMIUM', branch_id: 'chikovani' })}
                                 </div>
                             ))}
                         </div>
                     </div>
 
-                    {/* VIP 1 (Standalone Below Premium Area - Filling the Space) */}
-                    <div className="p-4 rounded-xl border border-electric-purple/30 bg-electric-purple/10 flex flex-col items-center justify-center">
+                    {/* VIP 1 (Hidden on Mobile, Visible on XL) */}
+                    <div className="p-4 rounded-xl border border-electric-purple/30 bg-electric-purple/10 hidden xl:flex flex-col items-center justify-center mt-auto min-w-0">
                         <span className="text-xs text-electric-purple mb-2 font-orbitron font-bold">VIP 1</span>
                         {renderStation({ id: 'chikovani-vip-1', name: 'VIP 1', type: 'VIP', branch_id: 'chikovani' })}
                     </div>
                 </div>
 
                 {/* Center Room: PRO + STANDARD + PREM X (Merged) */}
-                <div className="flex-[2] glass-panel p-4 md:p-6 rounded-xl border border-white/10 flex flex-col items-center w-full mx-auto xl:max-w-none xl:mx-0 xl:w-auto">
+                <div className="xl:col-span-8 glass-panel p-4 md:p-6 rounded-xl border border-white/10 flex flex-col items-center w-full mx-auto xl:max-w-none xl:mx-0 min-w-0">
                     <h3 className="text-white/70 font-orbitron mb-6 text-sm flex gap-4 w-full justify-center relative flex-wrap">
                         <span>PRO (7)</span>
                         <span className="text-white/20">|</span>
                         <span>STANDARD (10)</span>
                     </h3>
 
-                    <div className="flex gap-4 md:gap-12 w-full justify-center">
+                    <div className="grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)] gap-4 md:gap-12 w-full justify-center max-w-3xl">
                         {/* LEFT: Pro Column */}
                         <div className="flex flex-col gap-2">
                             {Array.from({ length: 7 }).map((_, i) =>
@@ -209,6 +209,12 @@ export default function FloorMap({ selectedSeats, onToggle, unavailableIds = [],
                     </div>
                 </div>
 
+                {/* VIP 1 (Mobile Only - Visible below Center Room) */}
+                <div className="xl:hidden w-full p-4 rounded-xl border border-electric-purple/30 bg-electric-purple/10 flex flex-col items-center justify-center">
+                    <span className="text-xs text-electric-purple mb-2 font-orbitron font-bold">VIP 1</span>
+                    {renderStation({ id: 'chikovani-vip-1', name: 'VIP 1', type: 'VIP', branch_id: 'chikovani' })}
+                </div>
+
             </div>
 
             {/* Row 3: Bottom Lounge (Small Square Room) */}
@@ -220,7 +226,7 @@ export default function FloorMap({ selectedSeats, onToggle, unavailableIds = [],
                     </div>
                 </div>
 
-                <div className="flex justify-between items-center flex-1 pt-12 px-2">
+                <div className="flex justify-center gap-12 items-center flex-1 pt-12 px-2">
                     {/* Left Side: 2 PS5s */}
                     <div className="flex flex-col gap-4">
                         {renderStation({ id: `chikovani-ps5-3`, name: `PS5 3`, type: 'PS5', branch_id: 'chikovani' }, 'medium')}
@@ -228,7 +234,7 @@ export default function FloorMap({ selectedSeats, onToggle, unavailableIds = [],
                     </div>
 
                     {/* Center Void */}
-                    <div className="text-white/5 font-orbitron text-2xl tracking-[0.5em] opacity-20 select-none rotate-90">
+                    <div className="text-white/5 font-orbitron text-2xl tracking-[0.5em] opacity-20 select-none rotate-90 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none">
                         LOUNGE
                     </div>
 
@@ -365,15 +371,15 @@ export default function FloorMap({ selectedSeats, onToggle, unavailableIds = [],
         }
 
         // Size Classes
-        let sizeClass = 'h-9 w-9 md:h-16 md:w-16';
-        let textSizeClass = 'text-[8px] md:text-base';
+        let sizeClass = 'h-9 w-9 md:h-14 md:w-14';
+        let textSizeClass = 'text-[8px] md:text-xs';
 
         if (isBig === true) {
             sizeClass = 'h-40 w-full md:w-80';
             textSizeClass = 'text-xl md:text-2xl';
         } else if (isBig === 'medium') {
-            sizeClass = 'h-14 w-14 md:h-16 md:w-16'; // Bigger on mobile as requested
-            textSizeClass = 'text-[10px] md:text-base';
+            sizeClass = 'h-14 w-14 md:h-14 md:w-14'; // Bigger on mobile as requested
+            textSizeClass = 'text-[10px] md:text-xs';
         }
 
         return (

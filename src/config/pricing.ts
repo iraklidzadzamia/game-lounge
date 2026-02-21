@@ -62,6 +62,7 @@ export const PRICING: Record<StationType, PriceConfig> = {
 export const calculatePrice = (type: StationType, durationHours: number, options?: { guests?: number; controllers?: number }): number => {
     const config = PRICING[type];
     if (!config) return 0;
+    if (durationHours <= 0) return 0;
 
     let basePrice = 0;
 

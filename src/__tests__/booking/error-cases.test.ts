@@ -311,7 +311,7 @@ function validateBookingRequest(data: any): ValidationResult {
         return { isValid: false, error: 'customerName is required' };
     }
     if (!data.customerPhone || data.customerPhone.trim().length === 0) {
-        return { isValid: false, error: 'customerPhone is required' };
+        return { isValid: false, error: 'customer phone is required' };
     }
     return { isValid: true };
 }

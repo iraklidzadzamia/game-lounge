@@ -148,185 +148,168 @@ export default function BookingSummary({ date, duration, seats, seatTypes, branc
     return (
         <div className="sticky top-24 space-y-6">
             <div className="glass-card p-4 md:p-8 border-t-4 border-neon-cyan">
-                {/* Header */}
-                <div className="bg-white/5 p-3 rounded-lg border border-white/10 mb-6 flex justify-between items-center">
-                    <span className="text-white/50 text-xs font-inter uppercase tracking-widest">Branch</span>
-                    <div className="flex gap-2">
-                        {BRANCHES.map(b => (
-                            <button
-                                key={b.id}
-                                onClick={() => {
-                                    if (b.id !== branchId) router.push(`/${b.slug}/booking`);
-                                }}
-                                className={`px-3 py-1.5 rounded text-[10px] font-orbitron font-bold transition-all border ${b.id === branchId
-                                        ? "bg-neon-cyan text-black border-neon-cyan shadow-[0_0_10px_rgba(0,243,255,0.3)]"
-                                        : "bg-black/50 text-white/50 border-white/10 hover:text-white hover:border-white/30"
-                                    }`}
-                            >
-                                {b.name.replace('Simon ', '')}
-                            </button>
-                        ))}
-                    </div>
-                </div>
+                {/* Content Container - Vertical on Mobile, Grid on Desktop */}
+                <div className="flex flex-col lg:grid lg:grid-cols-[1.2fr_1.2fr_0.8fr] gap-6 lg:gap-8 items-end">
 
-                <h2 className="font-orbitron text-xl text-white mb-6 flex items-center gap-3">SUMMARY</h2>
+                    {/* LEFT SECTION: Info & Branch */}
+                    <div className="flex-1 space-y-4 lg:space-y-2 min-w-0 w-full">
+                        {/* Branch Selector (Compact on Desktop) */}
+                        <div className="bg-white/5 p-2 lg:p-0 lg:bg-transparent lg:border-none rounded-lg border border-white/10 flex lg:inline-flex justify-between items-center gap-4 mb-2 lg:mb-0">
+                            <span className="text-white/50 text-xs font-inter uppercase tracking-widest lg:hidden">Branch</span>
+                            <div className="flex gap-2">
+                                {BRANCHES.map(b => (
+                                    <button
+                                        key={b.id}
+                                        onClick={() => {
+                                            if (b.id !== branchId) router.push(`/${b.slug}/booking`);
+                                        }}
+                                        className={`px-3 py-1.5 rounded text-[10px] font-orbitron font-bold transition-all border ${b.id === branchId
+                                            ? "bg-neon-cyan text-black border-neon-cyan shadow-[0_0_10px_rgba(0,243,255,0.3)]"
+                                            : "bg-black/50 text-white/50 border-white/10 hover:text-white hover:border-white/30"
+                                            }`}
+                                    >
+                                        {b.name.replace('Simon ', '')}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
 
-                <div className="space-y-4 mb-8">
-                    {/* Date */}
-                    <div className="flex justify-between items-center border-b border-white/10 pb-2">
-                        <span className="text-white/50 font-inter">Date</span>
-                        <span className={`font-orbitron ${!isTimeValid ? "text-red-500 animate-pulse" : "text-white"}`}>
-                            {date.toLocaleDateString()}
-                        </span>
-                    </div>
+                        {/* Booking Details (Grid on Desktop) */}
+                        <div className="space-y-4 lg:space-y-0 lg:flex lg:gap-6 lg:items-center text-sm">
+                            {/* Date */}
+                            <div className="flex justify-between items-center border-b border-white/10 pb-2 lg:border-none lg:pb-0 lg:block">
+                                <span className="text-white/50 font-inter lg:text-xs lg:block lg:mb-1">Date</span>
+                                <span className={`font-orbitron ${!isTimeValid ? "text-red-500 animate-pulse" : "text-white"}`}>
+                                    {date.toLocaleDateString()}
+                                </span>
+                            </div>
 
-                    {/* Time */}
-                    <div className="flex justify-between items-center border-b border-white/10 pb-2">
-                        <span className="text-white/50 font-inter">Start Time</span>
-                        <span className={`font-orbitron ${!isTimeValid ? "text-red-500 animate-pulse" : "text-white"}`}>
-                            {date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                            {" - "}
-                            {new Date(date.getTime() + duration * 3600000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                        </span>
-                    </div>
+                            {/* Time */}
+                            <div className="flex justify-between items-center border-b border-white/10 pb-2 lg:border-none lg:pb-0 lg:block">
+                                <span className="text-white/50 font-inter lg:text-xs lg:block lg:mb-1">Start Time</span>
+                                <span className={`font-orbitron ${!isTimeValid ? "text-red-500 animate-pulse" : "text-white"}`}>
+                                    {date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                    <span className="text-white/30 mx-1">-</span>
+                                    {new Date(date.getTime() + duration * 3600000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                </span>
+                            </div>
 
-                    {/* Duration */}
-                    <div className="flex justify-between items-center border-b border-white/10 pb-2">
-                        <span className="text-white/50 font-inter">Duration</span>
-                        <span className="text-white font-orbitron text-neon-cyan">{duration} Hours</span>
-                    </div>
+                            {/* Duration */}
+                            <div className="flex justify-between items-center border-b border-white/10 pb-2 lg:border-none lg:pb-0 lg:block">
+                                <span className="text-white/50 font-inter lg:text-xs lg:block lg:mb-1">Duration</span>
+                                <span className="text-white font-orbitron text-neon-cyan">{duration} Hours</span>
+                            </div>
 
-                    {/* Seats List */}
-                    <div className="flex justify-between flex-col gap-2 border-b border-white/10 pb-2">
-                        <span className="text-white/50 font-inter">Stations</span>
-                        <div className="flex flex-wrap gap-2 justify-end">
-                            {seats.length > 0 ? (
-                                seats.map(seatId => {
-                                    const shortId = seatId.split('-').pop();
-                                    const configId = seatId.includes("vip") ? "VIP " + shortId : "PC " + shortId;
-                                    return (
-                                        <span key={seatId} className="px-2 py-1 bg-white/10 rounded text-[10px] font-orbitron text-neon-cyan border border-white/20">
-                                            {configId}
-                                        </span>
-                                    );
-                                })
-                            ) : (
-                                <span className="text-white/20 italic">Select seats on map</span>
-                            )}
+                            {/* Seats List */}
+                            <div className="flex justify-between flex-col gap-2 border-b border-white/10 pb-2 lg:border-none lg:pb-0 lg:block">
+                                <span className="text-white/50 font-inter lg:text-xs lg:block lg:mb-1">Stations</span>
+                                <div className="flex flex-wrap gap-2 justify-end lg:justify-start">
+                                    {seats.length > 0 ? (
+                                        seats.map(seatId => {
+                                            const shortId = seatId.split('-').pop();
+                                            const configId = seatId.includes("vip") ? "VIP " + shortId : "PC " + shortId;
+                                            return (
+                                                <span key={seatId} className="px-2 py-1 bg-white/10 rounded text-[10px] font-orbitron text-neon-cyan border border-white/20 whitespace-nowrap">
+                                                    {configId}
+                                                </span>
+                                            );
+                                        })
+                                    ) : (
+                                        <span className="text-white/20 italic text-xs">None</span>
+                                    )}
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                {/* EXTRAS SELECTOR */}
-                {(hasPS5 || hasVIP) && (
-                    <div className="mb-6 space-y-4 border-b border-white/10 pb-6">
-                        <p className="text-white/50 text-xs font-inter uppercase tracking-widest text-left">Extras</p>
+                    {/* MIDDLE SECTION: Inputs & Extras */}
+                    <div className="flex-1 min-w-0 flex flex-col justify-end gap-4">
+                        {/* EXTRAS SELECTOR (Horizontal on Desktop) */}
+                        {(hasPS5 || hasVIP) && (
+                            <div className="space-y-4 border-b border-white/10 pb-4 lg:border-none lg:pb-0 lg:flex lg:gap-4 lg:space-y-0">
+                                {hasPS5 && (
+                                    <div className="flex justify-between items-center bg-white/5 p-2 rounded-lg border border-white/10 lg:gap-3">
+                                        <div className="text-left">
+                                            <p className="text-white text-xs font-medium">Controllers</p>
+                                        </div>
+                                        <div className="flex bg-black/50 rounded-lg p-1 border border-white/10">
+                                            <button onClick={() => setControllersCount(2)} className={`px-2 py-0.5 rounded text-[10px] font-bold transition-all ${controllersCount === 2 ? 'bg-purple-500 text-white' : 'text-gray-400 hover:text-white'}`}>2</button>
+                                            <button onClick={() => setControllersCount(4)} className={`px-2 py-0.5 rounded text-[10px] font-bold transition-all ${controllersCount === 4 ? 'bg-purple-500 text-white' : 'text-gray-400 hover:text-white'}`}>4</button>
+                                        </div>
+                                    </div>
+                                )}
 
-                        {hasPS5 && (
-                            <div className="flex justify-between items-center bg-white/5 p-3 rounded-lg border border-white/10">
-                                <div className="flex items-center gap-3">
-                                    <div className="w-8 h-8 rounded bg-purple-500/20 flex items-center justify-center">
-                                        <svg className="w-5 h-5 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z" />
-                                        </svg>
+                                {hasVIP && (
+                                    <div className="flex justify-between items-center bg-white/5 p-2 rounded-lg border border-white/10 lg:gap-3">
+                                        <div className="text-left">
+                                            <p className="text-white text-xs font-medium">Guests</p>
+                                        </div>
+                                        <div className="flex items-center gap-2 bg-black/50 rounded-lg px-2 py-1 border border-white/10">
+                                            <button onClick={() => setGuestCount(Math.max(1, guestCount - 1))} className="w-5 h-5 flex items-center justify-center text-gray-400 hover:text-white">-</button>
+                                            <span className="text-white font-bold w-3 text-center text-xs">{guestCount}</span>
+                                            <button onClick={() => setGuestCount(guestCount + 1)} className="w-5 h-5 flex items-center justify-center text-gray-400 hover:text-white">+</button>
+                                        </div>
                                     </div>
-                                    <div className="text-left">
-                                        <p className="text-white text-sm font-medium">Controllers</p>
-                                        <p className="text-white/40 text-xs">More than 2 costs extra</p>
-                                    </div>
-                                </div>
-                                <div className="flex bg-black/50 rounded-lg p-1 border border-white/10">
-                                    <button onClick={() => setControllersCount(2)} className={`px-3 py-1 rounded text-xs font-bold transition-all ${controllersCount === 2 ? 'bg-purple-500 text-white' : 'text-gray-400 hover:text-white'}`}>2</button>
-                                    <button onClick={() => setControllersCount(4)} className={`px-3 py-1 rounded text-xs font-bold transition-all ${controllersCount === 4 ? 'bg-purple-500 text-white' : 'text-gray-400 hover:text-white'}`}>4</button>
-                                </div>
+                                )}
                             </div>
                         )}
 
-                        {hasVIP && (
-                            <div className="flex justify-between items-center bg-white/5 p-3 rounded-lg border border-white/10">
-                                <div className="flex items-center gap-3">
-                                    <div className="w-8 h-8 rounded bg-blue-500/20 flex items-center justify-center">
-                                        <svg className="w-5 h-5 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                                        </svg>
-                                    </div>
-                                    <div className="text-left">
-                                        <p className="text-white text-sm font-medium">Guests</p>
-                                        <p className="text-white/40 text-xs">For groups &gt; 6</p>
-                                    </div>
-                                </div>
-                                <div className="flex items-center gap-3 bg-black/50 rounded-lg px-2 py-1 border border-white/10">
-                                    <button onClick={() => setGuestCount(Math.max(1, guestCount - 1))} className="w-6 h-6 flex items-center justify-center text-gray-400 hover:text-white">-</button>
-                                    <span className="text-white font-bold w-4 text-center text-sm">{guestCount}</span>
-                                    <button onClick={() => setGuestCount(guestCount + 1)} className="w-6 h-6 flex items-center justify-center text-gray-400 hover:text-white">+</button>
-                                </div>
-                            </div>
-                        )}
+                        {/* Contact Inputs (Horizontal Row on Desktop) */}
+                        <div className="space-y-4 lg:space-y-0 lg:flex lg:gap-2 w-full">
+                            <input
+                                type="text"
+                                placeholder="Name"
+                                value={customerName}
+                                onChange={(e) => setCustomerName(e.target.value)}
+                                className="w-full bg-black/50 border border-white/20 rounded-md p-3 lg:p-2 text-white text-sm focus:border-neon-cyan outline-none font-inter"
+                            />
+                            <input
+                                type="tel"
+                                placeholder="Phone"
+                                value={customerPhone}
+                                onChange={(e) => setCustomerPhone(e.target.value)}
+                                className="w-full bg-black/50 border border-white/20 rounded-md p-3 lg:p-2 text-white text-sm focus:border-neon-cyan outline-none font-inter"
+                            />
+                            <input
+                                type="email"
+                                placeholder="Email (Opt)"
+                                value={customerEmail}
+                                onChange={(e) => setCustomerEmail(e.target.value)}
+                                className="w-full bg-black/50 border border-white/20 rounded-md p-3 lg:p-2 text-white text-sm focus:border-neon-cyan outline-none font-inter"
+                            />
+                        </div>
                     </div>
-                )}
 
-                {/* Contact Inputs */}
-                <div className="space-y-4 mb-6">
-                    <p className="text-white/50 text-xs font-inter uppercase tracking-widest">Your Details</p>
-                    <div>
-                        <input
-                            type="text"
-                            placeholder="Full Name"
-                            value={customerName}
-                            onChange={(e) => setCustomerName(e.target.value)}
-                            className="w-full bg-black/50 border border-white/20 rounded-md p-3 text-white text-sm focus:border-neon-cyan outline-none font-inter"
-                        />
-                    </div>
-                    <div>
-                        <input
-                            type="tel"
-                            placeholder="Phone Number"
-                            value={customerPhone}
-                            onChange={(e) => setCustomerPhone(e.target.value)}
-                            className="w-full bg-black/50 border border-white/20 rounded-md p-3 text-white text-sm focus:border-neon-cyan outline-none font-inter"
-                        />
-                    </div>
-                    <div>
-                        <input
-                            type="email"
-                            placeholder="Email Address (Optional)"
-                            value={customerEmail}
-                            onChange={(e) => setCustomerEmail(e.target.value)}
-                            className="w-full bg-black/50 border border-white/20 rounded-md p-3 text-white text-sm focus:border-neon-cyan outline-none font-inter"
-                        />
+                    {/* RIGHT SECTION: Total & Action */}
+                    <div className="flex flex-col gap-4 min-w-[200px]">
+                        {/* Total */}
+                        <div className="flex justify-between items-end pt-4 border-t border-white/10 lg:border-none lg:pt-0">
+                            <span className="text-white/70 font-inter text-sm lg:hidden">Total</span>
+                            <span className="text-4xl font-orbitron text-white font-bold text-right w-full">
+                                {totalPrice}<span className="text-lg text-neon-cyan">₾</span>
+                            </span>
+                        </div>
+
+                        {/* Confirm Button */}
+                        <button
+                            onClick={handleConfirm}
+                            disabled={!isFormValid || isSubmitting}
+                            className={`w-full py-4 lg:py-3 text-center font-orbitron font-bold tracking-widest text-lg lg:text-base transition-all duration-300 rounded-md flex justify-center items-center
+                                ${isFormValid && !isSubmitting
+                                    ? "bg-neon-cyan text-black hover:bg-white hover:shadow-[0_0_20px_rgba(255,255,255,0.4)] cursor-pointer"
+                                    : "bg-white/5 text-white/20 cursor-not-allowed border border-white/5"
+                                }
+                            `}
+                        >
+                            {isSubmitting ? (
+                                <span className="w-6 h-6 border-2 border-black/20 border-t-black rounded-full animate-spin"></span>
+                            ) : (
+                                !isTimeValid ? "INVALID TIME" :
+                                    seats.length === 0 ? "SELECT SEATS" : "BOOK"
+                            )}
+                        </button>
                     </div>
                 </div>
-
-                {/* Total */}
-                <div className="flex justify-between items-end mb-8 pt-4 border-t border-white/10">
-                    <span className="text-white/70 font-inter text-sm">Total Estimate</span>
-                    <span className="text-4xl font-orbitron text-white font-bold">
-                        {totalPrice}<span className="text-lg text-neon-cyan">₾</span>
-                    </span>
-                </div>
-
-                {/* Confirm Button */}
-                <button
-                    onClick={handleConfirm}
-                    disabled={!isFormValid || isSubmitting}
-                    className={`w-full py-4 text-center font-orbitron font-bold tracking-widest text-lg transition-all duration-300 rounded-md flex justify-center items-center
-                        ${isFormValid && !isSubmitting
-                            ? "bg-neon-cyan text-black hover:bg-white hover:shadow-[0_0_20px_rgba(255,255,255,0.4)] cursor-pointer"
-                            : "bg-white/5 text-white/20 cursor-not-allowed border border-white/5"
-                        }
-                    `}
-                >
-                    {isSubmitting ? (
-                        <span className="w-6 h-6 border-2 border-black/20 border-t-black rounded-full animate-spin"></span>
-                    ) : (
-                        !isTimeValid ? "INVALID TIME" :
-                            seats.length === 0 ? "SELECT SEATS" : "CONFIRM BOOKING"
-                    )}
-                </button>
-
-                <p className="text-center text-white/30 text-[10px] mt-4 font-inter">
-                    By clicking book, you agree to our terms. Payment is collected at reception.
-                </p>
             </div>
         </div>
     );
