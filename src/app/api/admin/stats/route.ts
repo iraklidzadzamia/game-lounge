@@ -51,12 +51,14 @@ export async function GET(request: Request) {
         if (fromStr && toStr) {
             const fromDate = new Date(fromStr);
             const toDate = new Date(toStr);
+            // Cap at current time: never include sessions that haven't ended yet
+            const effectiveTo = toDate > new Date() ? new Date() : toDate;
 
             let rangeQuery = supabase
                 .from('bookings')
                 .select('total_price, payment_status, deposit_amount')
-                .gte('end_time', fromDate.toISOString())   // Count by when session ENDED
-                .lte('end_time', toDate.toISOString())
+                .gte('end_time', fromDate.toISOString())
+                .lte('end_time', effectiveTo.toISOString())
                 .in('payment_status', ['paid', 'deposit']);
 
             if (branchId !== 'all') {

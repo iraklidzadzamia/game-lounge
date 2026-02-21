@@ -108,9 +108,7 @@ export default function AnalyticsDashboard({ branchId }: { branchId: string }) {
                         </div>
                         {rangeRevenue !== null && (
                             <p className="text-white/25 text-[10px] font-inter">
-                                {new Date(rangeTo) > new Date()
-                                    ? '⚡ Includes active sessions ending in this range'
-                                    : '✅ All sessions in range were completed'}
+                                ✅ Completed sessions only
                             </p>
                         )}
                     </div>
