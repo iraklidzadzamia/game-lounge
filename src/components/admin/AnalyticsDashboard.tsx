@@ -64,6 +64,7 @@ export default function AnalyticsDashboard({ branchId }: { branchId: string }) {
                     <div className="text-3xl font-orbitron text-white">
                         {stats?.dailyRevenue} <span className="text-sm text-neon-cyan">₾</span>
                     </div>
+                    <p className="text-white/25 text-[10px] mt-1 font-inter">✅ Completed sessions only</p>
                 </div>
 
                 {/* 2. Active Now */}
@@ -105,6 +106,13 @@ export default function AnalyticsDashboard({ branchId }: { branchId: string }) {
                                 {isRangeLoading ? '...' : (rangeRevenue !== null ? rangeRevenue : '-')} <span className="text-sm text-yellow-500">₾</span>
                             </div>
                         </div>
+                        {rangeRevenue !== null && (
+                            <p className="text-white/25 text-[10px] font-inter">
+                                {new Date(rangeTo) > new Date()
+                                    ? '⚡ Includes active sessions ending in this range'
+                                    : '✅ All sessions in range were completed'}
+                            </p>
+                        )}
                     </div>
                 </div>
             </div>
