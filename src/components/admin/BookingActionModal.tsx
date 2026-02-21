@@ -475,13 +475,31 @@ export default function BookingActionModal({
 
         setLoading(true);
         try {
-            const ids = relatedBookings.map(b => b.id);
-
-            // Get current end times and add 1 hour
+            // 1. Check conflicts FIRST for all stations before changing anything
             for (const booking of relatedBookings) {
                 const currentEnd = new Date(booking.end_time);
                 const newEnd = new Date(currentEnd.getTime() + 60 * 60000); // +1 hour
 
+                const { data: conflicts } = await supabase
+                    .from('bookings')
+                    .select('id')
+                    .eq('station_id', booking.station_id)
+                    .neq('id', booking.id)
+                    .neq('status', 'CANCELLED')
+                    .lt('start_time', newEnd.toISOString())
+                    .gt('end_time', currentEnd.toISOString());
+
+                if (conflicts && conflicts.length > 0) {
+                    const name = (booking.stations as any)?.name || booking.station_id;
+                    alert(`❌ Cannot extend: ${name} is already booked for the next hour.`);
+                    setLoading(false);
+                    return;
+                }
+            }
+
+            // 2. All clear — extend all stations
+            for (const booking of relatedBookings) {
+                const newEnd = new Date(new Date(booking.end_time).getTime() + 60 * 60000);
                 // @ts-ignore - group_id not in types yet
                 await (supabase as any)
                     .from('bookings')
@@ -489,7 +507,7 @@ export default function BookingActionModal({
                     .eq('id', booking.id);
             }
 
-            alert(`Extended ${relatedBookings.length} stations by 1 hour!`);
+            alert(`✅ Extended ${relatedBookings.length} stations by 1 hour!`);
             onSuccess();
             onClose();
         } catch (err: any) {
