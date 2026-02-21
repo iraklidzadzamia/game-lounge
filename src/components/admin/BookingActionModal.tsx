@@ -687,10 +687,25 @@ export default function BookingActionModal({
                                 </div>
                             </div>
 
+                            {/* Deposit Info */}
+                            {((existingBooking as any)?.deposit_amount > 0) && (
+                                <div className="p-2 bg-orange-900/20 border border-orange-500/30 rounded flex justify-between items-center">
+                                    <span className="text-orange-300 text-xs font-semibold">✅ Deposit already paid:</span>
+                                    <span className="text-orange-400 font-bold">{(existingBooking as any).deposit_amount} ₾</span>
+                                </div>
+                            )}
+
                             <div className="p-3 bg-blue-900/20 border border-blue-500/30 rounded text-center">
                                 <p className="text-blue-200 text-sm">
-                                    💰 Collect: <span className="font-bold text-white text-lg ml-1">{groupFinalPrice || 0} ₾</span>
+                                    💰 Collect: <span className="font-bold text-white text-lg ml-1">
+                                        {Math.max(0, (groupFinalPrice || 0) - ((existingBooking as any)?.deposit_amount || 0))} ₾
+                                    </span>
                                 </p>
+                                {(existingBooking as any)?.deposit_amount > 0 && (
+                                    <p className="text-orange-400/80 text-xs mt-0.5">
+                                        ({groupFinalPrice} ₾ total − {(existingBooking as any).deposit_amount} ₾ deposit)
+                                    </p>
+                                )}
                                 <p className="text-blue-400/60 text-xs mt-1">Please collect payment before confirming.</p>
                             </div>
 
@@ -778,10 +793,25 @@ export default function BookingActionModal({
                                 </div>
                             </div>
 
+                            {/* Deposit Info - Single Station */}
+                            {depositAmount > 0 && (
+                                <div className="p-2 bg-orange-900/20 border border-orange-500/30 rounded flex justify-between items-center">
+                                    <span className="text-orange-300 text-xs font-semibold">✅ Deposit already paid:</span>
+                                    <span className="text-orange-400 font-bold">{depositAmount} ₾</span>
+                                </div>
+                            )}
+
                             <div className="p-3 bg-blue-900/20 border border-blue-500/30 rounded text-center">
                                 <p className="text-blue-200 text-sm">
-                                    Charging: <span className="font-bold text-white text-lg ml-1">{finalPrice || 0} ₾</span>
+                                    💰 Collect: <span className="font-bold text-white text-lg ml-1">
+                                        {Math.max(0, (finalPrice || 0) - depositAmount)} ₾
+                                    </span>
                                 </p>
+                                {depositAmount > 0 && (
+                                    <p className="text-orange-400/80 text-xs mt-0.5">
+                                        ({finalPrice} ₾ total − {depositAmount} ₾ deposit)
+                                    </p>
+                                )}
                                 <p className="text-blue-400/60 text-xs mt-1">Please collect payment before confirming.</p>
                             </div>
 

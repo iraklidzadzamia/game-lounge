@@ -25,7 +25,8 @@ export async function GET(request: Request) {
         let todayQuery = supabase
             .from('bookings')
             .select('total_price, start_time, end_time, payment_status, deposit_amount')
-            .gte('start_time', startOfDayISO)
+            .gte('end_time', startOfDayISO)  // Count by when the session ENDED (covers stopped sessions)
+            .lte('end_time', new Date().toISOString())
             .in('payment_status', ['paid', 'deposit']); // Count paid AND deposit bookings
 
         if (branchId !== 'all') {
@@ -54,8 +55,8 @@ export async function GET(request: Request) {
             let rangeQuery = supabase
                 .from('bookings')
                 .select('total_price, payment_status, deposit_amount')
-                .gte('start_time', fromDate.toISOString())
-                .lte('start_time', toDate.toISOString())
+                .gte('end_time', fromDate.toISOString())   // Count by when session ENDED
+                .lte('end_time', toDate.toISOString())
                 .in('payment_status', ['paid', 'deposit']);
 
             if (branchId !== 'all') {
