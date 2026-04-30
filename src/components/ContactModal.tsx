@@ -89,7 +89,7 @@ export default function ContactModal({
                             <div className="space-y-4">
                                 {/* WhatsApp */}
                                 <a
-                                    href={`https://api.whatsapp.com/send?phone=${phoneNumber}`}
+                                    href={`https://wa.me/${phoneNumber}`}
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     onClick={() => reportConversion(GTAG_CONVERSIONS.whatsapp)}
@@ -121,7 +121,7 @@ export default function ContactModal({
 
                                 {/* Instagram */}
                                 <a
-                                    href="https://www.instagram.com/direct/t/116085059785693/"
+                                    href="https://ig.me/m/gamelounge_tbilisi"
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     onClick={() => reportConversion(GTAG_CONVERSIONS.instagramDm)}

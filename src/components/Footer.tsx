@@ -79,7 +79,7 @@ export default function Footer() {
                             </svg>
                         </a>
                         <a
-                            href="https://api.whatsapp.com/send?phone=995555201414"
+                            href="https://wa.me/995555201414"
                             target="_blank"
                             rel="noopener noreferrer"
                             onClick={() => reportConversion(GTAG_CONVERSIONS.whatsapp)}
