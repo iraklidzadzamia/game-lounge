@@ -13,17 +13,17 @@ export const BRANCHES: Branch[] = [
         id: 'chikovani',
         name: 'Simon Chikovani',
         slug: 'chikovani',
-        address: '4 Simon Chikovani St',
-        phone: '+995 555 123 456', // Update with real phone
-        googleMapsUrl: 'https://maps.app.goo.gl/example', // Update with real URL
+        address: '4 Simon Chikovani St, Tbilisi, Georgia',
+        phone: '+995555201414',
+        googleMapsUrl: 'https://share.google/TYNY1WyToYO47aZuY',
     },
     {
         id: 'dinamo',
         name: 'Dinamo',
         slug: 'dinamo',
-        address: '2 David Kipiani St',
-        phone: '+995 555 123 456', // Update with real phone
-        googleMapsUrl: 'https://maps.app.goo.gl/example', // Update with real URL
+        address: '2 David Kipiani St, Tbilisi, Georgia',
+        phone: '+995555201414',
+        googleMapsUrl: 'https://share.google/S9y2L2r3Dxx2gvhDh',
     }
 ];
 
