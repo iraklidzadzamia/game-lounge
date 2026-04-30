@@ -435,7 +435,7 @@ function TextOverlay({
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
                     >
-                        BOOK YOUR STATION
+                        GET IN TOUCH
                     </motion.button>
                 )}
             </div>
