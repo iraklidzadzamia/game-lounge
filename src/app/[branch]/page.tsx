@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import BiosLoader from "@/components/BiosLoader";
 import VideoHero from "@/components/VideoHero";
@@ -13,6 +13,19 @@ import ScrollToTop from "@/components/ScrollToTop";
 
 export default function Home({ params }: { params: { branch: string } }) {
     const [isLoading, setIsLoading] = useState(true);
+
+    // Fire Google Ads conversion on Dinamo page load
+    useEffect(() => {
+        if (params.branch === "dinamo" && typeof window !== "undefined") {
+            // @ts-expect-error - gtag is injected by the global Google tag script
+            if (typeof window.gtag === "function") {
+                // @ts-expect-error - gtag global
+                window.gtag("event", "conversion", {
+                    send_to: "AW-18120790872/O9YcCPT6uaUcENim1cBD",
+                });
+            }
+        }
+    }, [params.branch]);
 
     return (
         <main className="relative bg-void min-h-screen">
