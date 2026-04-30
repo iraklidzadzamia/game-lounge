@@ -7,6 +7,7 @@ import GlitchText from "./GlitchText";
 import ContactModal from "./ContactModal";
 import LocationBadge from "./LocationBadge";
 import { getBranchBySlug } from "@/config/branches";
+import { GTAG_CONVERSIONS, reportConversion } from "@/lib/gtag";
 
 interface VideoHeroProps {
     branchSlug?: string;
@@ -114,6 +115,7 @@ export default function VideoHero({ branchSlug }: VideoHeroProps) {
                             href="https://share.google/TYNY1WyToYO47aZuY"
                             target="_blank"
                             rel="noopener noreferrer"
+                            onClick={() => reportConversion(GTAG_CONVERSIONS.getDirections)}
                             className="group flex flex-col items-center gap-1"
                             title="Get Directions"
                         >
@@ -128,6 +130,7 @@ export default function VideoHero({ branchSlug }: VideoHeroProps) {
                         {/* Call */}
                         <a
                             href="tel:+995555201414"
+                            onClick={() => reportConversion(GTAG_CONVERSIONS.callUs)}
                             className="group flex flex-col items-center gap-1"
                             title="Call Us"
                         >

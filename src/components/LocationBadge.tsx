@@ -2,6 +2,7 @@
 
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useRef, useEffect } from "react";
+import { GTAG_CONVERSIONS, reportConversion } from "@/lib/gtag";
 
 interface LocationBadgeProps {
     address: string;
@@ -93,6 +94,7 @@ export default function LocationBadge({
                                 href={googleMapsUrl}
                                 target="_blank"
                                 rel="noopener noreferrer"
+                                onClick={() => reportConversion(GTAG_CONVERSIONS.getDirections)}
                                 className="flex items-center justify-center gap-2 w-full px-4 py-2 bg-neon-cyan/10 hover:bg-neon-cyan/20 text-neon-cyan rounded-lg text-sm font-bold font-orbitron transition-all duration-300 border border-neon-cyan/20 hover:border-neon-cyan/50"
                             >
                                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">

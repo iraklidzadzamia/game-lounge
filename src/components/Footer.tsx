@@ -1,5 +1,7 @@
 "use client";
 
+import { GTAG_CONVERSIONS, reportConversion } from "@/lib/gtag";
+
 export default function Footer() {
     return (
         <footer className="relative py-12 px-4 md:px-8 bg-void border-t border-white/5">
@@ -80,6 +82,7 @@ export default function Footer() {
                             href="https://api.whatsapp.com/send?phone=995555201414"
                             target="_blank"
                             rel="noopener noreferrer"
+                            onClick={() => reportConversion(GTAG_CONVERSIONS.whatsapp)}
                             className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-white/50 hover:text-green-400 hover:bg-green-500/10 transition-colors"
                         >
                             <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">

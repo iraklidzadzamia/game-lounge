@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 
 import { BRANCHES, getBranchBySlug } from "@/config/branches";
+import { GTAG_CONVERSIONS, reportConversion } from "@/lib/gtag";
 
 interface ContactSectionProps {
     branchSlug?: string;
@@ -72,6 +73,7 @@ export default function ContactSection({ branchSlug }: ContactSectionProps) {
                                     href={branch?.googleMapsUrl || "https://maps.google.com"}
                                     target="_blank"
                                     rel="noopener noreferrer"
+                                    onClick={() => reportConversion(GTAG_CONVERSIONS.getDirections)}
                                     className="inline-flex items-center gap-2 text-neon-cyan hover:text-white transition-colors text-sm font-orbitron tracking-wider border-b border-neon-cyan/50 hover:border-white pb-1"
                                 >
                                     GET DIRECTIONS
@@ -130,6 +132,7 @@ export default function ContactSection({ branchSlug }: ContactSectionProps) {
                             </div>
                             <a
                                 href={`tel:${branch?.phone || ''}`}
+                                onClick={() => reportConversion(GTAG_CONVERSIONS.callUs)}
                                 className="ml-[52px] inline-flex items-center gap-2 px-6 py-3 bg-green-500/20 border border-green-500/50 rounded-lg text-green-400 font-inter font-medium hover:bg-green-500/30 transition-colors"
                             >
                                 <span>{branch?.phone || "Call Us"}</span>

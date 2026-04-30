@@ -2,6 +2,7 @@
 
 import { motion, AnimatePresence } from "framer-motion";
 import { useEffect } from "react";
+import { GTAG_CONVERSIONS, reportConversion } from "@/lib/gtag";
 
 interface ContactModalProps {
     isOpen: boolean;
@@ -91,6 +92,7 @@ export default function ContactModal({
                                     href={`https://api.whatsapp.com/send?phone=${phoneNumber}`}
                                     target="_blank"
                                     rel="noopener noreferrer"
+                                    onClick={() => reportConversion(GTAG_CONVERSIONS.whatsapp)}
                                     className="group block w-full"
                                 >
                                     <motion.div
@@ -122,6 +124,7 @@ export default function ContactModal({
                                     href="https://www.instagram.com/direct/t/116085059785693/"
                                     target="_blank"
                                     rel="noopener noreferrer"
+                                    onClick={() => reportConversion(GTAG_CONVERSIONS.instagramDm)}
                                     className="group block w-full"
                                 >
                                     <motion.div
@@ -153,6 +156,7 @@ export default function ContactModal({
                                     href="https://m.me/gamelounge.ge"
                                     target="_blank"
                                     rel="noopener noreferrer"
+                                    onClick={() => reportConversion(GTAG_CONVERSIONS.messenger)}
                                     className="group block w-full"
                                 >
                                     <motion.div
@@ -182,6 +186,7 @@ export default function ContactModal({
                                 {/* Call */}
                                 <a
                                     href={`tel:+${phoneNumber}`}
+                                    onClick={() => reportConversion(GTAG_CONVERSIONS.callUs)}
                                     className="group block w-full"
                                 >
                                     <motion.div

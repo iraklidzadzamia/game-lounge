@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import BiosLoader from "@/components/BiosLoader";
+import { GTAG_CONVERSIONS, reportConversion } from "@/lib/gtag";
 import VideoHero from "@/components/VideoHero";
 import FeaturesSection from "@/components/FeaturesSection";
 import PricingSection from "@/components/PricingSection";
@@ -16,14 +17,8 @@ export default function Home({ params }: { params: { branch: string } }) {
 
     // Fire Google Ads conversion on Dinamo page load
     useEffect(() => {
-        if (params.branch === "dinamo" && typeof window !== "undefined") {
-            // @ts-expect-error - gtag is injected by the global Google tag script
-            if (typeof window.gtag === "function") {
-                // @ts-expect-error - gtag global
-                window.gtag("event", "conversion", {
-                    send_to: "AW-18120790872/O9YcCPT6uaUcENim1cBD",
-                });
-            }
+        if (params.branch === "dinamo") {
+            reportConversion(GTAG_CONVERSIONS.pageViewDinamo);
         }
     }, [params.branch]);
 
