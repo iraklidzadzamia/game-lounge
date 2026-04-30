@@ -129,7 +129,7 @@ export default function VideoHero({ branchSlug }: VideoHeroProps) {
 
                         {/* Call */}
                         <a
-                            href="tel:+995555201414"
+                            href={`tel:${branch?.phone ?? "+995555201414"}`}
                             onClick={() => reportConversion(GTAG_CONVERSIONS.callUs)}
                             className="group flex flex-col items-center gap-1"
                             title="Call Us"
@@ -174,6 +174,7 @@ export default function VideoHero({ branchSlug }: VideoHeroProps) {
             <ContactModal
                 isOpen={isContactModalOpen}
                 onClose={() => setIsContactModalOpen(false)}
+                branchSlug={branchSlug}
             />
         </section>
     );

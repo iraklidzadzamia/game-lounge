@@ -1,8 +1,21 @@
 "use client";
 
 import { GTAG_CONVERSIONS, reportConversion } from "@/lib/gtag";
+import { getBranchBySlug } from "@/config/branches";
 
-export default function Footer() {
+interface FooterProps {
+    branchSlug?: string;
+}
+
+function digitsOnly(phone: string): string {
+    return phone.replace(/\D/g, "");
+}
+
+export default function Footer({ branchSlug }: FooterProps = {}) {
+    const branch = branchSlug ? getBranchBySlug(branchSlug) : undefined;
+    const whatsappPhone = digitsOnly(
+        branch?.whatsappPhone ?? branch?.phone ?? "+995555201414"
+    );
     return (
         <footer className="relative py-12 px-4 md:px-8 bg-void border-t border-white/5">
             <div className="max-w-7xl mx-auto">
@@ -79,7 +92,7 @@ export default function Footer() {
                             </svg>
                         </a>
                         <a
-                            href="https://wa.me/995555201414"
+                            href={`https://wa.me/${whatsappPhone}`}
                             target="_blank"
                             rel="noopener noreferrer"
                             onClick={() => reportConversion(GTAG_CONVERSIONS.whatsapp)}

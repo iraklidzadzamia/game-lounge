@@ -6,7 +6,11 @@ import { useState } from "react";
 import GlitchText from "./GlitchText";
 import ContactModal from "./ContactModal";
 
-export default function FeaturesSection() {
+interface FeaturesSectionProps {
+    branchSlug?: string;
+}
+
+export default function FeaturesSection({ branchSlug }: FeaturesSectionProps = {}) {
     const [isContactModalOpen, setIsContactModalOpen] = useState(false);
 
     return (
@@ -138,6 +142,7 @@ export default function FeaturesSection() {
             <ContactModal
                 isOpen={isContactModalOpen}
                 onClose={() => setIsContactModalOpen(false)}
+                branchSlug={branchSlug}
             />
         </section>
     );

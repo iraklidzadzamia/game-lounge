@@ -49,7 +49,7 @@ export default function Home({ params }: { params: { branch: string } }) {
                         <VideoHero branchSlug={params.branch} />
 
                         {/* VIP Room Features */}
-                        <FeaturesSection />
+                        <FeaturesSection branchSlug={params.branch} />
 
                         {/* Pricing Section */}
                         <PricingSection />
@@ -61,7 +61,7 @@ export default function Home({ params }: { params: { branch: string } }) {
                         <ContactSection branchSlug={params.branch} />
 
                         {/* Footer */}
-                        <Footer />
+                        <Footer branchSlug={params.branch} />
 
                         {/* Scroll to Top Button */}
                         <ScrollToTop />

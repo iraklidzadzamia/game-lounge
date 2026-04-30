@@ -3,18 +3,27 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useEffect } from "react";
 import { GTAG_CONVERSIONS, reportConversion } from "@/lib/gtag";
+import { getBranchBySlug } from "@/config/branches";
 
 interface ContactModalProps {
     isOpen: boolean;
     onClose: () => void;
-    phoneNumber?: string;
+    branchSlug?: string;
+}
+
+// Strip "+" and any non-digit characters for use in tel: / wa.me links.
+function digitsOnly(phone: string): string {
+    return phone.replace(/\D/g, "");
 }
 
 export default function ContactModal({
     isOpen,
     onClose,
-    phoneNumber = "995555201414"
+    branchSlug,
 }: ContactModalProps) {
+    const branch = branchSlug ? getBranchBySlug(branchSlug) : undefined;
+    const callPhone = digitsOnly(branch?.phone ?? "+995555201414");
+    const whatsappPhone = digitsOnly(branch?.whatsappPhone ?? branch?.phone ?? "+995555201414");
     // Close on Escape key
     useEffect(() => {
         const handleEscape = (e: KeyboardEvent) => {
@@ -89,7 +98,7 @@ export default function ContactModal({
                             <div className="space-y-4">
                                 {/* WhatsApp */}
                                 <a
-                                    href={`https://wa.me/${phoneNumber}`}
+                                    href={`https://wa.me/${whatsappPhone}`}
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     onClick={() => reportConversion(GTAG_CONVERSIONS.whatsapp)}
@@ -185,7 +194,7 @@ export default function ContactModal({
 
                                 {/* Call */}
                                 <a
-                                    href={`tel:+${phoneNumber}`}
+                                    href={`tel:+${callPhone}`}
                                     onClick={() => reportConversion(GTAG_CONVERSIONS.callUs)}
                                     className="group block w-full"
                                 >
@@ -216,7 +225,7 @@ export default function ContactModal({
 
                             {/* Footer note */}
                             <p className="text-center text-white/40 text-xs font-inter mt-6">
-                                Available 24/7 • +{phoneNumber}
+                                Available 24/7 • +{callPhone}
                             </p>
                         </div>
                     </motion.div>
