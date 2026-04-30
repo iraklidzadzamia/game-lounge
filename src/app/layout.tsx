@@ -7,6 +7,9 @@ export const metadata: Metadata = {
     description: "Premium gaming experience in Tbilisi. RTX 40-Series PCs, 360Hz monitors, VIP PS5 rooms. Open 24/7.",
     keywords: ["gaming lounge", "Tbilisi", "PC gaming", "PS5", "esports", "Game Lounge"],
     authors: [{ name: "Game Lounge" }],
+    verification: {
+        google: "v2QZid5iLXdNI82aQ23dbl6xUI6dibCeP8Oo3IVZpIs",
+    },
     openGraph: {
         title: "Game Lounge | Tbilisi's Premier Gaming Destination",
         description: "Premium gaming experience in Tbilisi. RTX 40-Series PCs, 360Hz monitors, VIP PS5 rooms. Open 24/7.",
