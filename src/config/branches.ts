@@ -17,6 +17,7 @@ export const BRANCHES: Branch[] = [
         slug: 'chikovani',
         address: '4 Simon Chikovani St, Tbilisi, Georgia',
         phone: '+995555201414',
+        whatsappPhone: '+995555554343',
         googleMapsUrl: 'https://share.google/TYNY1WyToYO47aZuY',
     },
     {
